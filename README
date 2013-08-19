@@ -1,0 +1,7 @@
+SSB - Simple Script Board
+----
+A Simple Board script coded in php that runs on flatfile databases. It requires 
+no setup (except setting properties in the index.php script). SSB is released 
+under the CC-BY-NC v3.0 unported. 
+
+SSB was written by Chris Dorman, 2012-2013 <cdorm245@gmail.com>
