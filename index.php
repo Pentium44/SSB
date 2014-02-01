@@ -1,14 +1,53 @@
 <?php
 //	SSB - Simple Script Board
-//	(C) Chris Dorman, 2012-2013
+//	(C) Chris Dorman, 2012, 2013, 2014
 //	License: CC-BY-NC version 3.0
 //	http://github.com/crazycoder13/SSB
 
 $title = ""; // Board Title
 $pw = ""; // Password needed to make topics
-$css = "@import url(http://fonts.googleapis.com/css?family=Open+Sans);\n body { color:#e3e3e3;background:#020202;font-size:13px;font-family:\"Open Sans\"; }\n .title { font-size:36px;text-align:center;padding:8px; }\n a {color:#A901DB;text-decoration:none;}\n a:hover {color:#e5e5e5;text-decoration:none;}\n .contain {max-width:600px;margin:auto;}\n ";
-$header = "<html>\n<head>\n<title>$title</title>\n<style type='text/css'>\n$css\n</style>\n</head>\n<body>\n<div class='contain'>\n<div class='title'>$title</div>\n<br>\n";
-$footer = "<br><center>Powered By SSB</center>\n</div>\n</body>\n</html>";
+
+$css = "
+@import url(http://fonts.googleapis.com/css?family=Open+Sans);
+body { 
+color:#e3e3e3;
+background:#020202;
+font-size:13px;
+font-family:\"Open Sans\"; 
+}
+.title { 
+font-size:36px;
+text-align:center;
+padding:8px; 
+}
+a {
+color:#A901DB;
+text-decoration:none;
+} 
+a:hover {
+color:#e5e5e5;
+text-decoration:none;
+}
+.contain {
+max-width:600px;
+margin:auto;
+}";
+
+$header = "<html>
+<head>
+<title>$title</title>
+<style type='text/css'>\n$css\n</style>
+</head>
+<body>
+<div class='contain'>
+<div class='title'>$title</div>
+<br>";
+
+$footer = "<br>
+<center>Powered By SSB</center>
+</div>
+</body>
+</html>";
 
 if(!file_exists(ssb_db))
 {
