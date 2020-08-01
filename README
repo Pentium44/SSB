@@ -1,14 +1,22 @@
-SSB - Simple Script Board
+SSB - Simple Social Board
 ----
-A Simple Board script coded in php that runs on flatfile databases. It requires 
-no setup (except setting properties in the index.php script). SSB is released 
-under the CC-BY-NC v3.0 unported. 
+A Simple social media board script coded in php that runs on flatfile databases. It requires 
+no setup (except setting properties in the config.php script). SSB is released 
+under the CC-BY-NC-SA v3.0 unported.
 
-SSB was written by Chris Dorman, 2012-2013 <cdorm245@gmail.com>
+SSB was written by Chris Dorman, 2012-2020 <https://cddo.cf>
 
 
 ChangeLog
 ----
+
+8/1/2020 - v0.0.1
+* Official release of SSB, now known Simple Social Board.
+* Added userbase to database.
+* Separated form functions into separate PHP doc for cleanliness.
+* CSS and HTML modifications
+* NOTE: Feed is public across all users currently. Working on friends system
+* NOTE: Friends list and messaging still in progress.
 
 2/1/2014 -
 	Little fixing up
