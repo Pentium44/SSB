@@ -10,6 +10,12 @@ SSB was written by Chris Dorman, 2012-2020 <https://cddo.cf>
 ChangeLog
 ----
 
+8/1/2020 - v0.0.2
+* Reconstructed posting database for friends list and feed processing
+* Separated some files (CSS, and functions within index.php)
+* More CSS clean up.
+* User base is also capable of replying, and posting. Feed still not operational.
+
 8/1/2020 - v0.0.1
 * Official release of SSB, now known Simple Social Board.
 * Added userbase to database.
