@@ -9,6 +9,10 @@ SSB was written by Chris Dorman, 2012-2020 <https://cddo.cf>
 
 ChangeLog
 ----
+8/1/2020 - v0.1.0
+* Working friends list to be incorporated into each users news feed output (in dev)
+* Some more CSS cleaning, more streamline website. More mobile friendly 
+* NOTE: I'm just pumping out work on this LOL
 
 8/1/2020 - v0.0.2
 * Reconstructed posting database for friends list and feed processing

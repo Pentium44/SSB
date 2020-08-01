@@ -22,7 +22,7 @@ body {
 }
 
 #navcontainer {
-	width: 700px;
+	width: 712px;
 	margin: 0 auto;
 	background-color: #ffffff;
 }
@@ -35,7 +35,7 @@ body {
 	padding-top: 6px;
 	padding-bottom: 5px;
 	background-color: #ffffff;
-	color: #555555;
+	color: #5577ff;
 	width: 120px;
 	display: inline-block;
 }
@@ -49,14 +49,17 @@ table { padding: 1px; border: solid 1px #888888; }
 tr, td { padding: 2px; }
 
 a {
-	color: #A901DB;
+	color: #5577ff;
 	text-decoration: none;
 }
 a:hover {
-	color: #e5e5e5;
+	color: #aabbff;
 	text-decoration: none;
 }
 .contain {
+	background-color: #121212;
+	border: solid 1px #565656;
 	max-width: 700px;
 	margin: 0 auto;
+	padding: 0px 5px 2px 5px;
 }

@@ -41,7 +41,6 @@ $username = $_SESSION['ssb-user'];
 </head>
 <body>
 
-<div class='contain'>
 <div id="navcontainer">
         <div id="navbar"><!--
         <?php if(!isset($username)) { ?>
@@ -55,12 +54,36 @@ $username = $_SESSION['ssb-user'];
         <?php } ?>
         --></div>
 </div>
+<div class='contain'>
 <div class='title'><?php echo $title; ?></div>
 <br>
 
 <?php
 
-if(isset($_GET['view']) && isset($_GET['user']))
+if(isset($_GET['forms']))
+{
+        $forms = $_GET['forms'];
+        $id = $_GET['pid'];
+        if($forms=="register") {
+                registerForm();
+        }
+        else if($forms=="login") {
+                loginForm();
+        }
+	else if($forms=="friendreq") {
+		friendReqForm();
+	}
+        else if($forms=="post")
+        {
+                postForm();
+        }
+        else if($forms=="clean")
+        {
+                cleanForm();
+        }
+        else { echo "ERROR: Unknown form-name<br>"; }
+}
+else if(isset($_GET['view']) && isset($_GET['user']))
 {
 	$puser = $_GET['user'];
 	$id = $_GET['view'];
@@ -73,82 +96,80 @@ if(isset($_GET['view']) && isset($_GET['user']))
 		echo ${"reply" . $x};
 	}
 
-	replyForm($id, $puser);
-}
-else if(isset($_GET['forms']))
-{
-	$forms = $_GET['forms'];
-	$id = $_GET['pid'];
-	if($forms=="register") {
-                registerForm();
-        }
-	else if($forms=="login") {
-		loginForm();
+	if (!isset($_SESSION['ssb-user']) || !isset($_SESSION['ssb-pass'])) { 
+		echo "Login to reply...";
+	} else {
+		replyForm($id, $puser);
 	}
-	else if($forms=="post")
-	{
-		postForm();
-	}
-	else if($forms=="clean")
-	{
-		cleanForm();
-	}
-	else { echo "ERROR: Unknown form-name<br>"; }
 }
 else if(isset($_GET['do']))
 {
 	$do = $_GET['do'];
 	if($do=="post")
 	{
-		if(isset($username) && $_POST['topic']!="" && $_POST['body']!="")
-		{
-			$date = date("YmdHis"); // timestamp in year, month, date, hour, minute, and second.
-			$body = nl2br(htmlentities(stripcslashes($_POST['body'])));
-			//$username = stripcslashes(htmlentities($username));
-			$topic = htmlentities(stripcslashes($_POST['topic']));
-			$list_string = "<a href=\"?view=$rand_id\">$topic</a><span style='float:right;'>Posted by: $username</span><br>";
-			$post_file = "ssb_db/posts/post_" . $username . "_" . $date . ".php";
-			$post_string = "<?php\n\$postowner = \"" . $username . "\";\n\$postcontent = \"<h2><b><a href='?view=" . $date . "'>" . $topic . "</a></b></h2>\n<table border='1'><tr><td style='width:100px;padding:4px;vertical-align:top;'>" . $username . "</td><td style='width:492px;padding:4px;vertical-align:top;'>" . $body . "</td></tr></table>\";\n?>\n";
-			file_put_contents($post_file, $post_string);
-			file_put_contents("ssb_db/posts/" . $date . ".post", "post_" . $username . "_" . $date . ".php");
-			file_put_contents("ssb_db/posts/reply_" . $username . "_" . $date . ".count", "0");
-			echo "Redirecting in 3 seconds, if redirection fails, <a href=\"?view=$date&user=$username\">Click Here</a><br>";
-			header( "refresh:3;url=?view=$date&user=$username" );
+		if (!isset($_SESSION['ssb-user']) || !isset($_SESSION['ssb-pass'])) { loginForm(); } else {
+			if(isset($username) && $_POST['topic']!="" && $_POST['body']!="")
+			{
+				$date = date("YmdHis"); // timestamp in year, month, date, hour, minute, and second.
+				$body = nl2br(htmlentities(stripcslashes($_POST['body'])));
+				//$username = stripcslashes(htmlentities($username));
+				$topic = htmlentities(stripcslashes($_POST['topic']));
+				$post_file = "ssb_db/posts/post_" . $username . "_" . $date . ".php";
+				$post_string = "<?php\n\$postowner = \"" . $username . "\";\n\$postcontent = \"<h2><b><a href='?view=" . $date . "&user=" . $username . "'>" . $topic . "</a></b></h2>\n<table border='1'><tr><td style='width:100px;padding:4px;vertical-align:top;'>" . $username . "</td><td style='width:492px;padding:4px;vertical-align:top;'>" . $body . "</td></tr></table>\";\n?>\n";
+				file_put_contents($post_file, $post_string);
+				file_put_contents("ssb_db/posts/" . $date . ".post", "post_" . $username . "_" . $date . ".php");
+				file_put_contents("ssb_db/posts/reply_" . $username . "_" . $date . ".count", "0");
+				echo "Redirecting in 3 seconds, if redirection fails, <a href=\"?view=$date&user=$username\">Click Here</a><br>";
+				header( "refresh:3;url=?view=$date&user=$username" );
+			}
+			else
+			{
+				echo "ERROR: Missing form data<br>";
+			}
 		}
-		else
-		{
-			echo "ERROR: Missing form data<br>";
-		}	
 	}
 	
 	if($do=="reply")
 	{
-		if(!isset($_GET['pid']) or !file_exists("ssb_db/posts/" . $_GET['pid'] . ".post")) { echo "ERROR: Post ID is not set, or invalid"; } else {
-		if(isset($_POST['reply']) && isset($username) && $_POST['body']!="")
-		{
-			$pid = $_GET['pid'];
-			$body = nl2br(htmlentities(stripcslashes($_POST['body'])));
-			//$username = stripcslashes(htmlentities($username));
-			$post_file_name = file_get_contents("ssb_db/posts/$pid.post");
-			include "ssb_db/posts/" . $post_file_name;
-			$old_content = file_get_contents("ssb_db/posts/" . $post_file_name);
-			$reply_count = file_get_contents("ssb_db/posts/reply_" . $postowner  . "_" . $pid . ".count");
+		if (!isset($_SESSION['ssb-user']) || !isset($_SESSION['ssb-pass'])) { loginForm(); } else {
+			if(!isset($_GET['pid']) or !file_exists("ssb_db/posts/" . $_GET['pid'] . ".post")) { echo "ERROR: Post ID is not set, or invalid"; } else {
+				if(isset($_POST['reply']) && isset($username) && $_POST['body']!="")
+				{
+					$pid = $_GET['pid'];
+					$body = nl2br(htmlentities(stripcslashes($_POST['body'])));
+					//$username = stripcslashes(htmlentities($username));
+					$post_file_name = file_get_contents("ssb_db/posts/$pid.post");
+					include "ssb_db/posts/" . $post_file_name;
+					$old_content = file_get_contents("ssb_db/posts/" . $post_file_name);
+					$reply_count = file_get_contents("ssb_db/posts/reply_" . $postowner  . "_" . $pid . ".count");
 
-			$reply_count = $reply_count+1;
+					$reply_count = $reply_count+1;
 
-			$post_string = "<?php \n\$reply" . $reply_count . " = \"<table border='1'><tr><td style='width:100px;padding:4px;vertical-align:top;'>" . $username . "</td><td style='width:492px;padding:4px;vertical-align:top;'>" . $body . "</td></tr></table>\";\n?>\n";
-			file_put_contents("ssb_db/posts/" . $post_file_name, $old_content . $post_string);
-			file_put_contents("ssb_db/posts/reply_" . $postowner . "_" . $pid . ".count", $reply_count);
-			echo "Redirecting in 3 seconds, if redirection fails, <a href=\"?view=$pid&user=$postowner\">Click Here</a><br>";
-			header( "refresh:3;url=?view=$pid&user=$postowner" );
-		}
-		else
-		{
-			echo "ERROR: Missing form data<br>";
-		}
+					$post_string = "<?php \n\$reply" . $reply_count . " = \"<table border='1'><tr><td style='width:100px;padding:4px;vertical-align:top;'>" . $username . "</td><td style='width:492px;padding:4px;vertical-align:top;'>" . $body . "</td></tr></table>\";\n?>\n";
+					file_put_contents("ssb_db/posts/" . $post_file_name, $old_content . $post_string);
+					file_put_contents("ssb_db/posts/reply_" . $postowner . "_" . $pid . ".count", $reply_count);
+					echo "Redirecting in 3 seconds, if redirection fails, <a href=\"?view=$pid&user=$postowner\">Click Here</a><br>";
+					header( "refresh:3;url=?view=$pid&user=$postowner" );
+				}
+				else
+				{
+					echo "ERROR: Missing form data<br>";
+				}
+			}
 		}
 	}
 	
+	if($do=="clrpending") 
+	{
+		 if (!isset($_SESSION['ssb-user']) || !isset($_SESSION['ssb-pass'])) { loginForm(); } else {
+			include "ssb_db/users/" . $username . ".php";
+			if($user_password === $_SESSION['ssb-pass']) {
+				file_put_contents("ssb_db/friends/" . $username . ".pending", "");
+				header("Location: index.php?do=friends");
+			}
+		}
+	}
+
 	if($do=="clean")
 	{
 		if($_POST['password']!="" && $_POST['password']==$pw)
@@ -167,27 +188,36 @@ else if(isset($_GET['do']))
 		}
 	}
 
-	if($do=="users")
-	{
-		echo "<h2>Registered Users";
-		echo "<table>";
-		foreach(glob("ssb_db/users/*.name") as $userfile) {
-			$user = get_file_contents($userfile);
-			include "ssb_db/users/$user.php";
-			$userposts = file_get_contents("ssb_db/users/$user.postnumber");
-			print <<<EOD
-			<tr>
-				<td style="width: 25%;">
-					$user
-				</td>
-				<td style="width: 25%;">
-					Posts: $userposts
-				</td>
-			</tr>
-EOD;
+
+	// grab session values and send friend request functions.
+	if($do=="sendfr") {
+		if (!isset($_SESSION['ssb-user']) || !isset($_SESSION['ssb-pass'])) { loginForm(); } else {
+			if(isset($_POST['user'])) {
+				//check if user exists first lol
+				$givenUser = htmlentities(stripcslashes($_POST['user']));
+				if(file_exists("ssb_db/users/" . $givenUser . ".php")) {
+					sendFriendRequest($_SESSION['ssb-user'], $givenUser);
+					header("Location: ?do=friends");
+				} else {
+					echo "Error: Provided username does not exist in the database!";
+				}
+			} else {
+				echo "Error: users not set in GET value...";
+			}
 		}
-		echo "</table>\n";
 	}
+
+	if($do=="accfr") {
+                if (!isset($_SESSION['ssb-user']) || !isset($_SESSION['ssb-pass'])) { loginForm(); } else {
+                        if(isset($_GET['user']) && isset($_GET['friend'])) {
+                                acceptFriendRequest($_GET['user'], $_GET['friend']);
+				header("Location: ?do=friends");
+                        } else {
+                                echo "Error: users not set in GET &amp; SESSION value...";
+                        }
+                }
+        }
+
 
 	if($do=="msg")
 	{
@@ -201,7 +231,43 @@ EOD;
 
 	if($do=="friends")
         {
-                echo "<b>This page is still in development...</b>";
+		if (!isset($_SESSION['ssb-user']) || !isset($_SESSION['ssb-pass'])) { loginForm(); } else {
+        	        echo "<b>This page is still in development...</b><br />";
+			$friendpend = "ssb_db/friends/" . $username . ".pending";
+			$handle = fopen($friendpend, "r");
+
+			echo "<h4>Notifications &bull; <a href='?do=clrpending'>Clear history</a> &bull; <a href='?forms=friendreq'>Send friend request</a></h4>";
+			echo "<div style='background:#545454;border: solid 1px #898989;'>";
+
+			if ($handle) {
+    				while (($line = fgets($handle)) !== false) {
+        				echo "Pending friend request from " . $line . "! <a href='?do=accfr&friend=" . $line . "&user=" . $username . "'>Accept</a><br />";
+    				}
+				fclose($handle);
+			} else {
+			    echo "No pending friend requests<br />";
+			} 
+
+			echo "</div>";
+
+			// Friends list if you have any.
+			echo "<h3>Friends list</h3><br />";
+
+			$friendc = file_get_contents("ssb_db/friends/" . $username . ".count");
+			if($friendc == "0")
+			{
+				echo "<b style='color:red;'>We're sorry... no friends found on your user account...</b>";
+			}
+			else
+			{
+				$friendcount = file_get_contents("ssb_db/friends/" . $username . ".count");
+				include "ssb_db/friends/" . $username . ".php";
+				for($x = 1; $x <= $friendcount; $x++)
+				{
+					echo "&bull; " . ${"friend" . $x} . " &bull; <a href='?user=" . ${"friend" . $x} . "'>View user's feed!</a><br />";
+				}
+			}
+		}
         }
 
 	if($do=="login")
@@ -245,6 +311,8 @@ EOD;
 						file_put_contents("ssb_db/users/" . $_POST['username'] . ".php", "<?php\n \$user_password = \"" . sha1(md5($_POST['password'])) . "\";\n \$user_color = \"" . $colors[array_rand($colors)] . "\"; \$user_fullname = \"" . $_POST['fullname'] . "\"; \n?>");
 						file_put_contents("ssb_db/users/" . $_POST['username'] . ".name", $_POST['username']);
 						file_put_contents("ssb_db/users/" . $_POST['username'] . ".postnumber", "0");
+						file_put_contents("ssb_db/friends/" . $_POST['username'] . ".count", "0");
+						file_put_contents("ssb_db/friends/" . $_POST['username'] . ".php", "<?php ?>\n");
 						header("Location: index.php");
 					} else {
 						header("Location: index.php?notify=6");
@@ -263,16 +331,18 @@ EOD;
 }
 else if(isset($_GET['notify'])) 
 {
-        if($_GET['notify']=="1") { echo "Error: User not found"; }
-        else if($_GET['notify']=="2") { echo "Error: Incorrect password provided"; }
-        else if($_GET['notify']=="3") { echo "Error: Please fill out all the text boxes"; }
-      	else if($_GET['notify']=="4") { echo "Error: The provided passwords did not match"; }
-   	else if($_GET['notify']=="5") { echo "Error: Special characters cannot be used in your username"; }
-      	else if($_GET['notify']=="6") { echo "Error: This username is already in use"; }
-} 
+	$notify = $_GET['notify'];
+        if($notify=="1") { echo "Error: User not found"; }
+        else if($notify=="2") { echo "Error: Incorrect password provided"; }
+        else if($notify=="3") { echo "Error: Please fill out all the text boxes"; }
+      	else if($notify=="4") { echo "Error: The provided passwords did not match"; }
+   	else if($notify=="5") { echo "Error: Special characters cannot be used in your username"; }
+      	else if($notify=="6") { echo "Error: This username is already in use"; }
+	else { echo "Error: unknown error... this is quite unusual..."; }
+}
 else if (!isset($_SESSION['ssb-user']) || !isset($_SESSION['ssb-pass']))
 {
-     	loginForm();
+        loginForm();
 } 
 else
 {
