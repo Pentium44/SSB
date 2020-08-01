@@ -24,9 +24,10 @@ function registerForm() {
         <div class="login">
                 <form action="<?php echo $_SERVER['PHP_SELF']; ?>?do=register" method="post">
                         Username: <input style="padding: 2px;" class="text" type="text" name="username"><br />
+			Full name: <input style="padding: 2px;" class="text" type="text" name="fullname"><br />
                         Password: <input style="padding: 2px;" class="text" type="password" name="password"><br />
                         Password Again: <input style="padding: 2px;" class="text" type="password" name="password-again"><br />
-                        <input style="padding: 2px;" class="text" type="submit" name="submitBtn" value="Login">
+                        <input style="padding: 2px;" class="text" type="submit" name="submitBtn" value="Register">
                 </form>
         </div>
 <?php
@@ -36,18 +37,18 @@ function postForm() {
 ?>
 	<br />
 		<form action="?do=post" method="post">
-                Topic: <input type="text" name="topic" id="topic">
-                Body: <textarea rows="5" cols="60" name="body"></textarea>
+                Topic: <input type="text" name="topic" id="topic"><br />
+                Body: <br /><textarea rows="5" cols="60" name="body"></textarea><br />
                 <input type="submit" name="post" value="Post">
                 </form>
 <?php
 }
 
-function replyForm($id) {
+function replyForm($id, $puser) {
 ?>
 	<br />
-		<form action="?do=reply&pid=<?php echo $id; ?>" method="post">
-                Body:<br /> <textarea rows="5" cols="30" name="body"></textarea><br />
+		<form action="?do=reply&pid=<?php echo $id; ?>&user=<?php echo $puser; ?>" method="post">
+                <br /> <textarea rows="7" cols="60" name="body"></textarea><br />
                 <input type="submit" name="reply" value="Reply">
                 </form>
 
@@ -65,5 +66,8 @@ function cleanForm() {
 <?php
 }
 
-
+function sendFriendRequest($user, $friend) {
+	$pending = file_get_contents("ssb_db/friends/" . $user . ".pending");
+	file_put_contents("ssb_db/friends/" . $friend . ".pending", $pending . "\n" . $user);
+}
 ?>

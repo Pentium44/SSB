@@ -19,79 +19,25 @@ if(!file_exists(ssb_db/users))
         mkdir("ssb_db/users", 0777);
 }
 
+if(!file_exists(ssb_db/posts))
+{
+	mkdir("ssb_db/posts", 0777);
+}
+
+if(!file_exists(ssb_db/friends))
+{
+	mkdir("ssb_db/friends", 0777);
+}
+
 $username = $_SESSION['ssb-user'];
 
 ?>
-<html>
+<html lang="us-en">
 <head>
 <title><?php echo $title; ?></title>
-
-    <meta http-equiv="content-type" content="text/html; charset=utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><meta name="description" content="<?php echo $title; ?>">
-<style type='text/css'>
-@import url(http://fonts.googleapis.com/css?family=Open+Sans);
-body {
-	color: #e3e3e3;
-	margin: 0 auto;
-	background: #020202;
-	font-size: 13px;
-	font-family: "Open Sans";
-}
-.title {
-	font-size: 36px;
-	text-align: center;
-	padding: 8px;
-}
-
-#navbar {
-	margin: 0 auto;
-	/*width: 100%;
-	/*background-color: #ffffff;*/
-	top: 1px;
-	left: 1px;
-	padding-bottom: 0px;
-}
-
-#navcontainer {
-	width: 700px;
-	margin: 0 auto;
-	background-color: #ffffff;
-}
-
-#navbar a {
-	text-decoration: none;
-	font-family: "Time Burner", sans-serif;
-	font-size: 24px;
-	text-align: center;
-	padding-top: 6px;
-	padding-bottom: 5px;
-	background-color: #ffffff;
-	color: #555555;
-	width: 120px;
-	display: inline-block;
-}
-
-#navbar a:hover {
-	background-color: #999999;
-	color: #323232;
-}
-
-table { padding: 1px; border: solid 1px #888888; }
-tr, td { padding: 2px; }
-
-a {
-	color: #A901DB;
-	text-decoration: none;
-}
-a:hover {
-	color: #e5e5e5;
-	text-decoration: none;
-}
-.contain {
-	max-width: 700px;
-	margin: 0 auto;
-}
-</style>
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><meta name="description" content="<?php echo $title; ?>">
+<link rel="stylesheet" type="text/css" href="style.css">
 </head>
 <body>
 
@@ -114,23 +60,26 @@ a:hover {
 
 <?php
 
-if(isset($_GET['view']))
+if(isset($_GET['view']) && isset($_GET['user']))
 {
+	$puser = $_GET['user'];
 	$id = $_GET['view'];
-	$post = file_get_contents("ssb_db/" . $_GET['view'] . ".txt");
-	
-	echo $post;
-	echo "<br><a href='?forms=reply&pid=$id'>Reply</a>";
+	$postc = file_get_contents("ssb_db/posts/reply_" . $puser . "_" . $id . ".count");
+	include "ssb_db/posts/post_" . $puser . "_" . $id . ".php";
+
+	echo $postcontent;
+
+	for($x = 0; $x <= $postc; $x++) {
+		echo ${"reply" . $x};
+	}
+
+	replyForm($id, $puser);
 }
 else if(isset($_GET['forms']))
 {
 	$forms = $_GET['forms'];
 	$id = $_GET['pid'];
-	if($forms=="reply")
-	{
-		replyForm($id);
-	}
-	else if($forms=="register") {
+	if($forms=="register") {
                 registerForm();
         }
 	else if($forms=="login") {
@@ -153,25 +102,18 @@ else if(isset($_GET['do']))
 	{
 		if(isset($username) && $_POST['topic']!="" && $_POST['body']!="")
 		{
-			$rand_id = substr(md5(microtime()),rand(0,26),4);
+			$date = date("YmdHis"); // timestamp in year, month, date, hour, minute, and second.
 			$body = nl2br(htmlentities(stripcslashes($_POST['body'])));
 			//$username = stripcslashes(htmlentities($username));
 			$topic = htmlentities(stripcslashes($_POST['topic']));
 			$list_string = "<a href=\"?view=$rand_id\">$topic</a><span style='float:right;'>Posted by: $username</span><br>";
-			$post_list = "ssb_db/ssb_posts.txt";
-			if(file_exists($post_list))
-			{
-				$oldcontent = file_get_contents($post_list);
-				file_put_contents($post_list, $list_string . $oldcontent);
-			}
-			else
-			{
-				file_put_contents($post_list, $list_string);
-			}
-			$post_string = "<h2><b>$topic</b></h2>\n<table border='1'><tr><td style='width:100px;padding:4px;vertical-align:top;'>$username</td><td style='width:492px;padding:4px;vertical-align:top;'>$body</td></tr></table>";
-			file_put_contents("ssb_db/$rand_id.txt", $post_string);
-			echo "Redirecting in 3 seconds, if redirection fails, <a href=\"?view=$rand_id\">Click Here</a><br>";
-			header( "refresh:3;url=?view=$rand_id" );
+			$post_file = "ssb_db/posts/post_" . $username . "_" . $date . ".php";
+			$post_string = "<?php\n\$postowner = \"" . $username . "\";\n\$postcontent = \"<h2><b><a href='?view=" . $date . "'>" . $topic . "</a></b></h2>\n<table border='1'><tr><td style='width:100px;padding:4px;vertical-align:top;'>" . $username . "</td><td style='width:492px;padding:4px;vertical-align:top;'>" . $body . "</td></tr></table>\";\n?>\n";
+			file_put_contents($post_file, $post_string);
+			file_put_contents("ssb_db/posts/" . $date . ".post", "post_" . $username . "_" . $date . ".php");
+			file_put_contents("ssb_db/posts/reply_" . $username . "_" . $date . ".count", "0");
+			echo "Redirecting in 3 seconds, if redirection fails, <a href=\"?view=$date&user=$username\">Click Here</a><br>";
+			header( "refresh:3;url=?view=$date&user=$username" );
 		}
 		else
 		{
@@ -181,17 +123,24 @@ else if(isset($_GET['do']))
 	
 	if($do=="reply")
 	{
-		if(!isset($_GET['pid']) or !file_exists("ssb_db/" . $_GET['pid'] . ".txt")) { echo "ERROR: Post ID is not set, or invalid"; } else {
+		if(!isset($_GET['pid']) or !file_exists("ssb_db/posts/" . $_GET['pid'] . ".post")) { echo "ERROR: Post ID is not set, or invalid"; } else {
 		if(isset($_POST['reply']) && isset($username) && $_POST['body']!="")
 		{
 			$pid = $_GET['pid'];
 			$body = nl2br(htmlentities(stripcslashes($_POST['body'])));
 			//$username = stripcslashes(htmlentities($username));
-			$old_content = file_get_contents("ssb_db/$pid.txt");
-			$post_string = "<table border='1'><tr><td style='width:100px;padding:4px;vertical-align:top;'>$username</td><td style='width:492px;padding:4px;vertical-align:top;'>$body</td></tr></table>";
-			file_put_contents("ssb_db/$pid.txt", $old_content . $post_string);
-			echo "Redirecting in 3 seconds, if redirection fails, <a href=\"?view=$pid\">Click Here</a><br>";
-			header( "refresh:3;url=?view=$pid" );
+			$post_file_name = file_get_contents("ssb_db/posts/$pid.post");
+			include "ssb_db/posts/" . $post_file_name;
+			$old_content = file_get_contents("ssb_db/posts/" . $post_file_name);
+			$reply_count = file_get_contents("ssb_db/posts/reply_" . $postowner  . "_" . $pid . ".count");
+
+			$reply_count = $reply_count+1;
+
+			$post_string = "<?php \n\$reply" . $reply_count . " = \"<table border='1'><tr><td style='width:100px;padding:4px;vertical-align:top;'>" . $username . "</td><td style='width:492px;padding:4px;vertical-align:top;'>" . $body . "</td></tr></table>\";\n?>\n";
+			file_put_contents("ssb_db/posts/" . $post_file_name, $old_content . $post_string);
+			file_put_contents("ssb_db/posts/reply_" . $postowner . "_" . $pid . ".count", $reply_count);
+			echo "Redirecting in 3 seconds, if redirection fails, <a href=\"?view=$pid&user=$postowner\">Click Here</a><br>";
+			header( "refresh:3;url=?view=$pid&user=$postowner" );
 		}
 		else
 		{
@@ -216,6 +165,28 @@ else if(isset($_GET['do']))
 		{
 			echo "ERROR: Wrong Password<br>";
 		}
+	}
+
+	if($do=="users")
+	{
+		echo "<h2>Registered Users";
+		echo "<table>";
+		foreach(glob("ssb_db/users/*.name") as $userfile) {
+			$user = get_file_contents($userfile);
+			include "ssb_db/users/$user.php";
+			$userposts = file_get_contents("ssb_db/users/$user.postnumber");
+			print <<<EOD
+			<tr>
+				<td style="width: 25%;">
+					$user
+				</td>
+				<td style="width: 25%;">
+					Posts: $userposts
+				</td>
+			</tr>
+EOD;
+		}
+		echo "</table>\n";
 	}
 
 	if($do=="msg")
@@ -266,12 +237,14 @@ else if(isset($_GET['do']))
 
 	if($do=="register")
 	{
-		if($_POST['username']!="" && $_POST['password']!="" && $_POST['password-again']!="") {
+		if($_POST['username']!="" && $_POST['password']!="" && $_POST['password-again']!="" && $_POST['fullname']!="") {
 			if($_POST['password']==$_POST['password-again']) {
 				if(!preg_match('/[^a-z0-9]/i', $_POST['username'])) {
 					if(!file_exists("ssb_db/users/" . $_POST['username'] . ".php")) {
 						$colors = array("0000ff", "9900cc", "0080ff", "008000", "ededed");
-						file_put_contents("ssb_db/users/" . $_POST['username'] . ".php", "<?php\n \$user_password = \"" . sha1(md5($_POST['password'])) . "\";\n \$user_color = \"" . $colors[array_rand($colors)] . "\"; \n?>");
+						file_put_contents("ssb_db/users/" . $_POST['username'] . ".php", "<?php\n \$user_password = \"" . sha1(md5($_POST['password'])) . "\";\n \$user_color = \"" . $colors[array_rand($colors)] . "\"; \$user_fullname = \"" . $_POST['fullname'] . "\"; \n?>");
+						file_put_contents("ssb_db/users/" . $_POST['username'] . ".name", $_POST['username']);
+						file_put_contents("ssb_db/users/" . $_POST['username'] . ".postnumber", "0");
 						header("Location: index.php");
 					} else {
 						header("Location: index.php?notify=6");
@@ -311,7 +284,7 @@ else
 ?>
 
 <br>
-<center>Powered By SSB</center>
+<center>Powered By SSB <?php echo $version; ?></center>
 </div>
 </body>
 </html>
