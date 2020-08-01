@@ -25,6 +25,9 @@ $username = $_SESSION['ssb-user'];
 <html>
 <head>
 <title><?php echo $title; ?></title>
+
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><meta name="description" content="<?php echo $title; ?>">
 <style type='text/css'>
 @import url(http://fonts.googleapis.com/css?family=Open+Sans);
 body {
@@ -301,9 +304,8 @@ else if (!isset($_SESSION['ssb-user']) || !isset($_SESSION['ssb-pass']))
 else
 {
 	$post_list = file_get_contents("ssb_db/ssb_posts.txt");
-	echo "<br><a href='?forms=post'>New Post</a><span style='float:right;'><a href='?forms=clean'>Clean Database</a></span><hr><br>";
+	echo "<br><a href='?forms=post'>New Post</a><br />";
 	echo $post_list;
-	echo "<br><hr><a href='?forms=post'>New Post</a><span style='float:right;'><a href='?forms=clean'>Clean Database</a></span>";
 }
 
 ?>
