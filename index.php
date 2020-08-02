@@ -37,13 +37,15 @@ if(!file_exists(ssb_db/friends))
 
 $username = $_SESSION['ssb-user'];
 
+$_SESSION['ssb-topic'] = $ssbtopic;
+
 ?>
 <!DOCTYPE html>
 <html lang="en-us">
 <head>
-<title><?php echo $title; ?></title>
+<title><?php echo $ssbtitle; ?></title>
 <meta http-equiv="content-type" content="text/html; charset=utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><meta name="description" content="<?php echo $title; ?>">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><meta name="description" content="<?php echo $ssbtitle . " - " . $desc; ?>">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <link rel="stylesheet" type="text/css" href="style.css">
 </head>
@@ -66,8 +68,8 @@ $username = $_SESSION['ssb-user'];
         --><a href="?forms=login">Login</a><!--
         --><a href="?do=about">About</a><!--
         <?php } else { ?>
-        --><a style="width:50px;" href="?forms=post" title="Create a Post!"><i style="padding:2px 2px 3px 2px;" class="fa fa-plus-square"></i></a><!--
-        --><a style="width:50px;" href="?do=pubmsg" title="Create a Post!"><i style="padding:2px 2px 3px 2px;" class="fa fa-comments-o"></i></a><!--
+        --><a style="width:50px;" href="?forms=post" title="Post on your feed!"><i style="padding:2px 2px 3px 2px;" class="fa fa-plus-square"></i></a><!--
+        --><a style="width:50px;" href="?do=pubmsg" title="Public Chat!"><i style="padding:2px 2px 3px 2px;" class="fa fa-comments-o"></i></a><!--
         --><a href="index.php">Feed</a><!--
         --><a href="?do=friends">Friends</a><!--
         --><a href="?do=about">About</a><!--
@@ -76,7 +78,7 @@ $username = $_SESSION['ssb-user'];
         --></div>
 </div>
 <div class='contain'>
-<div class='title'><?php echo $title; ?></div>
+<div class='title'><?php echo $ssbtitle; ?></div>
 <br>
 
 <?php
@@ -128,8 +130,9 @@ else if(isset($_GET['userfeed']))
 
                 	if($postowner == $username)
                 	{
-                	        echo bbcode_format($postcontent);
-
+                	        echo "<h3>User information</h3>";
+                                echo "Username: " . $username . "@" . $domain . "<br />";
+                                echo "Full name: " . $user_fullname . "<br />";
 			}
 		}
 
@@ -142,19 +145,18 @@ else if(isset($_GET['userfeed']))
                 	for($x = 1; $x <= $friendcount; $x++)
                 	{
                         	if($postowner == ${"friend" . $x}) {
-                                	echo bbcode_format($postcontent);
                                 	$imgExts = array("gif", "jpeg", "jpg", "png", "bmp", "ico", "png");
                                 	foreach(array_reverse(glob("ssb_db/uploads/" . $postowner . "_" . $postid . ".*")) as $postfile)
                                 	{
                                 	        if(in_array(end(explode(".", $postfile)), $imgExts))
                                 	        {
                                 	                echo "<div class='attachment'>";
-                                	                echo "Attachment: left click to enlarge, right click to download...<br />";
-                                	                echo "<a href='ssb_db/uploads/" . $postowner . "_" . $postid . "." . end(explode(".", $postfile)) . "'>";
+                                	                echo "<a href='ssb_db/uploads/" . $postowner . "_" . $postid . "." . end(explode(".", $postfile)) . "' title='Attachment: left click to enlarge, right click to download...'>";
                                 	                echo "<img src='ssb_db/uploads/" . $postowner . "_" . $postid . "." . end(explode(".", $postfile)) . "'>";
                                 	                echo "</a></div>";
                                	        	}
 					}
+					echo bbcode_format($postcontent);
 					echo "<br />";
 				}
 			}
@@ -169,7 +171,7 @@ else if(isset($_GET['view']) && isset($_GET['user']))
 	$postc = file_get_contents("ssb_db/posts/reply_" . $puser . "_" . $id . ".count");
 	include "ssb_db/posts/post_" . $puser . "_" . $id . ".php";
 
-	echo "<div class='post'>" . bbcode_format($postcontent) . "</div>";
+	echo "<div class='post'>";
 
 	$imgExts = array("gif", "jpeg", "jpg", "png", "bmp", "ico", "png");
 	foreach(array_reverse(glob("ssb_db/uploads/" . $puser . "_" . $id . ".*")) as $postfile) 
@@ -182,6 +184,9 @@ else if(isset($_GET['view']) && isset($_GET['user']))
 			echo "<img src='ssb_db/uploads/" . $puser . "_" . $id . "." . end(explode(".", $postfile)) . "'>";
 			echo "</a></div>";
 		}
+
+		echo bbcode_format($postcontent) . "</div>";
+
 	}
 
 	for($x = 0; $x <= $postc; $x++) {
@@ -485,7 +490,8 @@ else if(isset($_GET['do']))
 
 	if($do=="about")
         {
-                echo "<b>This page is still in development...</b>";
+                echo "<h2>About</h2>";
+		echo $desc;
         }
 
 	if($do=="friends")

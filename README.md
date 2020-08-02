@@ -9,6 +9,10 @@ SSB was written by Chris Dorman, 2012-2020 <https://cddo.cf>
 
 ChangeLog
 ----
+8/2/2020 - v1.0.1 - hotfix
+* Felt it was needed to finish the about page.
+* A couple UI tweaks, will probably have more minor version releases but meh.
+
 8/1/2020 - v1.0.0
 * Cleaned up functions, added more functions
 * View profiles from friends list, user info and feed.
