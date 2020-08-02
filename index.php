@@ -398,7 +398,7 @@ else if(isset($_GET['do']))
                 if (!isset($_SESSION['ssb-user']) || !isset($_SESSION['ssb-pass'])) { loginForm(); } else {
                         if(isset($_GET['user']) && isset($_GET['friend'])) {
                                 acceptFriendRequest($_GET['user'], $_GET['friend']);
-				//header("Location: ?do=friends");
+				header("Location: ?do=friends");
                         } else {
                                 echo "Error: users not set in GET &amp; SESSION value...";
                         }
