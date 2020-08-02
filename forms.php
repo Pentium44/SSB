@@ -171,44 +171,41 @@ function acceptFriendRequest($user, $friend) {
     	// check if friend request is really pending.
 
 	$friendc = file_get_contents("ssb_db/friends/" . $user . ".count");
-       	if($friendc == "0")
-       	{
-          	echo "<b style='color:red;'>We're sorry... no friends found on your user account...</b>";
-       	}
-        else
-     	{
-               	include "ssb_db/friends/" . $user . ".php";
-              	for($x = 1; $x <= $friendc; $x++)
-                {
-                   	if(${"friend" . $x} == $friend) { echo "Already following!"; exit(1); } else { echo "<br />" . ${"friend" . $x} . "<br />" . $friend . "Different strings..."; }
-                }
+        include "ssb_db/friends/" . $user . ".php";
+        for($x = 1; $x <= $friendc; $x++)
+        {
+             if(${"friend" . $x} == $friend) { echo "Already following!"; exit(1); } else { echo "<br />" . ${"friend" . $x} . "<br />" . $friend . "Different strings..."; }
+        }
 
-		$handle = fopen($friendpending, "r");
-        	if ($handle) {
- 			while (($line = fgets($handle)) !== false) {
+	$handle = fopen($friendpending, "r");
+        if ($handle) {
+		$xx = 0;
+ 		while (($line = fgets($handle)) !== false) {
+			if($xx >= "1") {
 				$line = str_replace("\n","",$line);
-				echo $line . "<br />";
-				echo $friend . "<br />";
-				if($friend == $line)
-				{
-					// populate both users databases with each other.
-					$friendcountFriend = file_get_contents("ssb_db/friends/" . $friend . ".count");
-					$friendcountFriend = $friendcountFriend + 1;
-					echo $friendcountFriend;
-					file_put_contents("ssb_db/friends/" . $friend . ".php", $frienddb . "\n <?php \$friend" . $friendcountFriend ." = \"" . $user . "\";?>");
-					$friendcount = file_get_contents("ssb_db/friends/" . $user . ".count");
-					$friendcount = $friendcount + 1;
-					echo $friendcount;
-     					file_put_contents("ssb_db/friends/" . $user . ".php", $friendlist . "\n <?php \$friend" . $friendcount . " = \"" . $friend . "\";?>");
-					file_put_contents("ssb_db/friends/" . $user . ".count", $friendcount);
-					file_put_contents("ssb_db/friends/" . $friend . ".count", $friendcountFriend);
-					break;
-				}
-      			}
-   			fclose($handle);
-     		} else {
-      			echo "ERROR: Friend: " . $friend . " not found in friend pending database.<br />";
-    		}
-	}
+			}
+			$xx++;
+			echo $line . "<br />";
+			echo $friend . "<br />";
+			if($friend == $line)
+			{
+				// populate both users databases with each other.
+				$friendcountFriend = file_get_contents("ssb_db/friends/" . $friend . ".count");
+				$friendcountFriend = $friendcountFriend + 1;
+				echo $friendcountFriend;
+				file_put_contents("ssb_db/friends/" . $friend . ".php", $frienddb . "\n <?php \$friend" . $friendcountFriend ." = \"" . $user . "\";?>");
+				$friendcount = file_get_contents("ssb_db/friends/" . $user . ".count");
+				$friendcount = $friendcount + 1;
+				echo $friendcount;
+     				file_put_contents("ssb_db/friends/" . $user . ".php", $friendlist . "\n <?php \$friend" . $friendcount . " = \"" . $friend . "\";?>");
+				file_put_contents("ssb_db/friends/" . $user . ".count", $friendcount);
+				file_put_contents("ssb_db/friends/" . $friend . ".count", $friendcountFriend);
+				break;
+			}
+      		}
+   		fclose($handle);
+     	} else {
+      		echo "ERROR: Friend: " . $friend . " not found in friend pending database.<br />";
+    	}
 }
 ?>
