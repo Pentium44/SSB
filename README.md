@@ -14,6 +14,7 @@ ChangeLog
 * Public chat room with short term message buffer room. Great for chitchat.
 * Personal messaging in progress.
 * CSS clean up, added FontAwesome.
+* Added form input BB code parsing!
 * Known bugs: can send multi friend requests and spam another users notification box.
 
 8/1/2020 - v0.1.0
