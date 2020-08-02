@@ -12,5 +12,6 @@ $pw = "meowmix1234"; // Password to wipe DB
 $version = "0.2.0"; // version
 $chat_db = "ssb_db/friends/chatdb.txt"; //Temp chat db
 $server_msgcount = "52"; // for chat page
+$user_max_upload = "4194304";
 
 ?>

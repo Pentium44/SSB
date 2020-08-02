@@ -25,6 +25,11 @@ if(!file_exists(ssb_db/posts))
 	mkdir("ssb_db/posts", 0777);
 }
 
+if(!file_exists(ssb_db/uploads))
+{
+	mkdir("ssb_db/uploads", 0777);
+}
+
 if(!file_exists(ssb_db/friends))
 {
 	mkdir("ssb_db/friends", 0777);
@@ -174,7 +179,7 @@ else if(isset($_GET['do']))
 		 if (!isset($_SESSION['ssb-user']) || !isset($_SESSION['ssb-pass'])) { loginForm(); } else {
 			include "ssb_db/users/" . $username . ".php";
 			if($user_password === $_SESSION['ssb-pass']) {
-				file_put_contents("ssb_db/friends/" . $username . ".pending", "");
+				unlink("ssb_db/friends/" . $username . ".pending");
 				header("Location: index.php?do=friends");
 			}
 		}
@@ -368,7 +373,6 @@ else if(isset($_GET['do']))
 	if($do=="friends")
         {
 		if (!isset($_SESSION['ssb-user']) || !isset($_SESSION['ssb-pass'])) { loginForm(); } else {
-        	        echo "<b>This page is still in development...</b><br />";
 			$friendpend = "ssb_db/friends/" . $username . ".pending";
 			$handle = fopen($friendpend, "r");
 
