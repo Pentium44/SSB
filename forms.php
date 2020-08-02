@@ -58,6 +58,11 @@ function registerForm() {
 			Full name: <input style="padding: 2px;" class="text" type="text" name="fullname"><br />
                         Password: <input style="padding: 2px;" class="text" type="password" name="password"><br />
                         Password Again: <input style="padding: 2px;" class="text" type="password" name="password-again"><br />
+			<label for="acct">Choose profile type:</label>
+			<select id="acct" name="acct">
+			  <option value="private">Private</option>
+			  <option value="public">Public</option>
+			</select>
                         <input style="padding: 2px;" class="text" type="submit" name="submitBtn" value="Register">
                 </form>
         </div>
@@ -123,6 +128,25 @@ function sendFriendRequest($user, $friend) {
 	} else {
 		file_put_contents("ssb_db/friends/" . $friend . ".pending", $user);
 	}
+}
+
+function acceptPublicFriendRequest($user, $friend) {
+        $friendpending = "ssb_db/friends/" . $user . ".pending";
+        $friendlist = file_get_contents("ssb_db/friends/" . $user . ".php");
+        $frienddb = file_get_contents("ssb_db/friends/" . $friend . ".php");
+        // check if friend request is really pending.
+
+        // populate both users databases with each other.
+        $friendcountFriend = file_get_contents("ssb_db/friends/" . $friend . ".count");
+       	$friendcountFriend = $friendcountFriend + 1;
+       	echo $friendcountFriend;
+      	file_put_contents("ssb_db/friends/" . $friend . ".php", $frienddb . "\n <?php \$friend" . $friendcountFriend ." = \"" . $user . "\";?>");
+      	$friendcount = file_get_contents("ssb_db/friends/" . $user . ".count");
+       	$friendcount = $friendcount + 1;
+       	echo $friendcount;
+       	file_put_contents("ssb_db/friends/" . $user . ".php", $friendlist . "\n <?php \$friend" . $friendcount . " = \"" . $friend . "\";?>");
+    	file_put_contents("ssb_db/friends/" . $user . ".count", $friendcount);
+       	file_put_contents("ssb_db/friends/" . $friend . ".count", $friendcountFriend);
 }
 
 function acceptFriendRequest($user, $friend) {

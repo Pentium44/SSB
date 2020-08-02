@@ -45,7 +45,7 @@ $_SESSION['ssb-topic'] = $ssbtopic;
 <head>
 <title><?php echo $ssbtitle; ?></title>
 <meta http-equiv="content-type" content="text/html; charset=utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><meta name="description" content="<?php echo $ssbtitle . " - " . $desc; ?>">
+<meta name="viewport" content="width=device-width, initial-scale=.75, shrink-to-fit=no"><meta name="description" content="<?php echo $ssbtitle . " - " . $desc; ?>">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <link rel="stylesheet" type="text/css" href="style.css">
 </head>
@@ -145,7 +145,8 @@ else if(isset($_GET['userfeed']))
                 	for($x = 1; $x <= $friendcount; $x++)
                 	{
                         	if($postowner == ${"friend" . $x}) {
-                                	$imgExts = array("gif", "jpeg", "jpg", "png", "bmp", "ico", "png");
+                                	echo bbcode_format($postcontent);
+					$imgExts = array("gif", "jpeg", "jpg", "png", "bmp", "ico", "png");
                                 	foreach(array_reverse(glob("ssb_db/uploads/" . $postowner . "_" . $postid . ".*")) as $postfile)
                                 	{
                                 	        if(in_array(end(explode(".", $postfile)), $imgExts))
@@ -156,7 +157,6 @@ else if(isset($_GET['userfeed']))
                                 	                echo "</a></div>";
                                	        	}
 					}
-					echo bbcode_format($postcontent);
 					echo "<br />";
 				}
 			}
@@ -350,8 +350,17 @@ else if(isset($_GET['do']))
 				//check if user exists first lol
 				$givenUser = htmlentities(stripcslashes($_POST['user']));
 				if(file_exists("ssb_db/users/" . $givenUser . ".php")) {
-					sendFriendRequest($_SESSION['ssb-user'], $givenUser);
-					header("Location: ?do=friends");
+					include "ssb_db/users/" . $givenUser . ".php";
+
+					if($accttype == "private") {
+						sendFriendRequest($_SESSION['ssb-user'], $givenUser);
+						header("Location: ?do=friends");
+					} else if($accttype == "public") {
+						acceptPublicFriendRequest($username, $givenUser);
+						header("Location: ?do=friends");
+					} else {
+						echo "ERROR: Issues parsing account type...";
+					}
 				} else {
 					echo "Error: Provided username does not exist in the database!";
 				}
@@ -567,12 +576,13 @@ else if(isset($_GET['do']))
 
 	if($do=="register")
 	{
-		if($_POST['username']!="" && $_POST['password']!="" && $_POST['password-again']!="" && $_POST['fullname']!="") {
+		if($_POST['username']!="" && $_POST['password']!="" && $_POST['password-again']!="" && $_POST['fullname']!="" && isset($_POST['acct'])) {
 			if($_POST['password']==$_POST['password-again']) {
 				if(!preg_match('/[^a-z0-9]/i', $_POST['username'])) {
 					if(!file_exists("ssb_db/users/" . $_POST['username'] . ".php")) {
 						$colors = array("0000ff", "9900cc", "0080ff", "008000", "ededed");
-						file_put_contents("ssb_db/users/" . $_POST['username'] . ".php", "<?php\n \$user_password = \"" . sha1(md5($_POST['password'])) . "\";\n \$user_color = \"" . $colors[array_rand($colors)] . "\"; \$user_fullname = \"" . $_POST['fullname'] . "\"; \n?>");
+						$acct = $_POST['acct'];
+						file_put_contents("ssb_db/users/" . $_POST['username'] . ".php", "<?php\n\$accttype = \"" . $acct . "\";\n\$user_password = \"" . sha1(md5($_POST['password'])) . "\";\n \$user_color = \"" . $colors[array_rand($colors)] . "\"; \$user_fullname = \"" . $_POST['fullname'] . "\"; \n?>");
 						file_put_contents("ssb_db/users/" . $_POST['username'] . ".name", $_POST['username']);
 						file_put_contents("ssb_db/users/" . $_POST['username'] . ".postnumber", "0");
 						file_put_contents("ssb_db/friends/" . $_POST['username'] . ".count", "0");

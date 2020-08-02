@@ -1,8 +1,12 @@
 @import url(https://fonts.googleapis.com/css?family=Open+Sans);
-body {
+html, body {
+	background-color: #d5d5d5;
+	background-repeat: no-repeat;
+	background-attachment: fixed;
+	background-position: center; 
+	/*background-image: url('data/bg.jpg');*/
 	color: #e3e3e3;
 	margin: 0 auto;
-	background: #020202;
 	font-size: 13px;
 	font-family: "Open Sans";
 }
@@ -59,7 +63,7 @@ textarea {
 	padding: 4px;
 }
 
-input, button {
+input, button, select {
 	background-color: #343434;
 	border: solid 1px #171717;
 	outline: none;

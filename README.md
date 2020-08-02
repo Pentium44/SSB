@@ -9,6 +9,9 @@ SSB was written by Chris Dorman, 2012-2020 <https://cddo.cf>
 
 ChangeLog
 ----
+8/2/2020 - v1.0.2
+* Added private and public accounts for public figures, pages, meme groups.
+
 8/2/2020 - v1.0.1 - hotfix
 * Felt it was needed to finish the about page.
 * A couple UI tweaks, will probably have more minor version releases but meh.
