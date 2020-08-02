@@ -111,7 +111,7 @@ else if(isset($_GET['userfeed']))
 	$userid = $_GET['userfeed'];
 	// Make sure we're friends or is my account.
 	include "ssb_db/users/" . $userid . ".php";
-	
+	if ($accttype == "private") {
 	if (isset($_SESSION['ssb-user']) || isset($_SESSION['ssb-pass'])) {
 		$friendcount = file_get_contents("ssb_db/friends/" . $username . ".count");
                 include "ssb_db/friends/" . $username . ".php";
@@ -163,6 +163,30 @@ else if(isset($_GET['userfeed']))
 		}
 		echo "<!-- Gen done...-->";
 	}
+	}
+	else
+	{
+		echo "<h3>User information</h3>";
+     		echo "Username: " . $userid . "@" . $domain . "<br />";
+    		echo "Full name: " . $user_fullname . "<br />";
+		foreach(array_reverse(glob("ssb_db/posts/post_" . $userid . "_" . "*.php")) as $postfile) {
+                        //echo $postfile;
+                        include $postfile;
+    			echo bbcode_format($postcontent);
+   			$imgExts = array("gif", "jpeg", "jpg", "png", "bmp", "ico", "png");
+                 	foreach(array_reverse(glob("ssb_db/uploads/" . $postowner . "_" . $postid . ".*")) as $postfile)
+         		{
+                        	if(in_array(end(explode(".", $postfile)), $imgExts))
+                              	{
+                               		echo "<div class='attachment'>";
+                                   	echo "<a href='ssb_db/uploads/" . $postowner . "_" . $postid . "." . end(explode(".", $postfile)) . "' title='Attachment: left click to enlarge, right click to download...'>";
+                                       	echo "<img src='ssb_db/uploads/" . $postowner . "_" . $postid . "." . end(explode(".", $postfile)) . "'>";
+                                       	echo "</a></div>";
+                                }
+                        }
+                        echo "<br />";
+      		}
+     	}
 }
 else if(isset($_GET['view']) && isset($_GET['user']))
 {
