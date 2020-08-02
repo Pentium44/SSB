@@ -492,12 +492,14 @@ else
            	{
         		if($postowner == ${"friend" . $x}) {
 				echo bbcode_format($postcontent);
+				echo "<br />\n";
 			}
               	}
 
 		if($postowner == $username)
 		{
 			echo bbcode_format($postcontent);
+			echo "<br />\n";
 		}
 	}
 }
