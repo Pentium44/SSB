@@ -9,6 +9,10 @@ SSB was written by Chris Dorman, 2012-2020 <https://cddo.cf>
 
 ChangeLog
 ----
+8/2/2020 - v1.0.3 - hotfix
+* After live version went online, noticed a bug with accepting friend requests multiple times
+* Check to see if public user is already followed by user.
+
 8/2/2020 - v1.0.2
 * Added private and public accounts for public figures, pages, meme groups.
 
