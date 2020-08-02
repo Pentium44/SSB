@@ -9,6 +9,14 @@ SSB was written by Chris Dorman, 2012-2020 <https://cddo.cf>
 
 ChangeLog
 ----
+8/1/2020 - v1.0.0
+* Cleaned up functions, added more functions
+* View profiles from friends list, user info and feed.
+* Image upload capabilities.
+* CSS clean up, still things to be done.
+* Fully functioning public web chat!
+* Considered operational, and beta released!
+
 8/1/2020 - v0.2.0
 * Working home feed with personal and friends posts in order by date newest to oldest!
 * Public chat room with short term message buffer room. Great for chitchat.

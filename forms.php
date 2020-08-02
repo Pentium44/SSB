@@ -27,15 +27,10 @@ function loginForm() {
 <?php
 }
 
-function uploadForm() {
+/*function uploadForm() {
 
        	print <<<EOD
 			Upload
-			<div class="progress">
-				<div class="bar"></div >
-				<div class="percent">0%</div >
-			</div>
-			<div id="status"></div>
 			<table style="margin:auto;">
 				
 				<form action="upload.php" method="post" enctype="multipart/form-data">
@@ -50,50 +45,9 @@ function uploadForm() {
 				</form>
 				
 				</table>
-			
-			<script src="data/jquery.1.7.js"></script>
-			<script src="data/jquery.form.js"></script>
-			<script>
-			(function() {
-    
-			var bar = $('.bar');
-			var percent = $('.percent');
-			var status = $('#status');
-   
-			$('form').ajaxForm({
-			
-			beforeSend: function() {
-			status.empty();
-    			    var percentVal = '0%';
-    			    bar.width(percentVal)
-    			    percent.html(percentVal);
-   			},
-			
-			uploadProgress: function(event, position, total, percentComplete) {
-			        var percentVal = percentComplete + '%';
-			        bar.width(percentVal)
-			        percent.html(percentVal);
-			},
-    		
-    		success: function() {
-    			    var percentVal = '100%';
-    			    bar.width(percentVal)
-    			    percent.html(percentVal);
-    		},
-	
-			complete: function(xhr) {
-					status.html(xhr.responseText);
-			}
-			
-			}); 
-
-			})();       
-			</script>
-			
 EOD;
 
-}
-
+}*/
 
 function registerForm() {
 ?>
@@ -112,115 +66,29 @@ function registerForm() {
 
 function postForm() {
 	print <<<EOD
-			<div class="progress">
-				<div class="bar"></div >
-				<div class="percent">0%</div >
-			</div>
-			<div id="status"></div>
-			<form action="?do=post" method="post" enctype="multipart/form-data">
-                	<input type="file" name="file[]" id="file" multiple><br>
-               		Body: <br /><textarea rows="5" cols="60" name="body"></textarea><br />
-               		<input type="submit" name="post" value="Post">
-			</form>
-
-			<script src="data/jquery.1.7.js"></script>
-			<script src="data/jquery.form.js"></script>
-			<script>
-			(function() {
-    
-			var bar = $('.bar');
-			var percent = $('.percent');
-			var status = $('#status');
-   
-			$('form').ajaxForm({
-			
-			beforeSend: function() {
-			status.empty();
-    			    var percentVal = '0%';
-    			    bar.width(percentVal)
-    			    percent.html(percentVal);
-   			},
-			
-			uploadProgress: function(event, position, total, percentComplete) {
-			        var percentVal = percentComplete + '%';
-			        bar.width(percentVal)
-			        percent.html(percentVal);
-			},
-    		
-    		success: function() {
-    			    var percentVal = '100%';
-    			    bar.width(percentVal)
-    			    percent.html(percentVal);
-    		},
-	
-			complete: function(xhr) {
-					status.html(xhr.responseText);
-			}
-			
-			}); 
-
-			})();       
-			</script>
-			
+		<button onclick="javascript:wrapBBCode('i');">Italic</button>
+                <button onclick="javascript:wrapBBCode('u');">Underline</button>
+                <button onclick="javascript:wrapBBCode('b');">Bold</button>
+                <button onclick="javascript:wrapBBCode('url');">URL</button>
+		<form action="?do=post" method="post" enctype="multipart/form-data">
+                <input type="file" name="file[]" id="file" multiple><br />
+               	Body: <br /><textarea rows="5" cols="60" id="msg" name="body"></textarea><br />
+               	<input type="submit" name="post" value="Post">
+		</form>
 EOD;
 }
 
 function replyForm($id, $puser) {
 ?>
-		<div class="progress">
-			<div class="bar"></div >
-			<div class="percent">0%</div >
-		</div>
-
-		<form action="?do=reply&pid=<?php echo $id; ?>&user=<?php echo $puser; ?>" method="post" enctype="multipart/form-data">
-                <input type="file" name="file[]" id="file" multiple>
-		<br /> <textarea rows="7" cols="60" name="body"></textarea><br />
+		<button onclick="javascript:wrapBBCode('i');">Italic</button>
+                <button onclick="javascript:wrapBBCode('u');">Underline</button>
+                <button onclick="javascript:wrapBBCode('b');">Bold</button>
+                <button onclick="javascript:wrapBBCode('url');">URL</button>
+		<form action="?do=reply&pid=<?php echo $id; ?>&user=<?php echo $puser; ?>" method="post">
+		<textarea rows="7" cols="60" id="msg" name="body">Reply</textarea><br />
                 <input type="submit" name="reply" value="Reply">
                 </form>
 <?php
-
-	print <<<EOD
-
-			<script src="data/jquery.1.7.js"></script>
-			<script src="data/jquery.form.js"></script>
-			<script>
-			(function() {
-    
-			var bar = $('.bar');
-			var percent = $('.percent');
-			var status = $('#status');
-   
-			$('form').ajaxForm({
-			
-			beforeSend: function() {
-			status.empty();
-    			    var percentVal = '0%';
-    			    bar.width(percentVal)
-    			    percent.html(percentVal);
-   			},
-			
-			uploadProgress: function(event, position, total, percentComplete) {
-			        var percentVal = percentComplete + '%';
-			        bar.width(percentVal)
-			        percent.html(percentVal);
-			},
-    		
-    		success: function() {
-    			    var percentVal = '100%';
-    			    bar.width(percentVal)
-    			    percent.html(percentVal);
-    		},
-	
-			complete: function(xhr) {
-					status.html(xhr.responseText);
-			}
-			
-			}); 
-
-			})();       
-			</script>
-			
-EOD;
 
 }
 

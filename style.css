@@ -59,12 +59,17 @@ textarea {
 	padding: 4px;
 }
 
-input {
+input, button {
 	background-color: #343434;
 	border: solid 1px #171717;
 	outline: none;
 	border-radius: 6px;
 	color: #d7d7d7;
+}
+
+#msgbox {
+	display: block;
+	margin: 0 auto;
 }
 
 #msgs { 
@@ -81,6 +86,16 @@ input {
 .replycontain {
 	margin: 0 auto;
 	width: 600px;
+}
+
+.attachment {
+	max-height: 250px;
+	display: block;
+	margin: 0 auto;
+}
+
+.attachment img {
+	max-width: 180px;
 }
 
 .post {
