@@ -37,7 +37,6 @@ function postForm() {
 ?>
 	<br />
 		<form action="?do=post" method="post">
-                Topic: <input type="text" name="topic" id="topic"><br />
                 Body: <br /><textarea rows="5" cols="60" name="body"></textarea><br />
                 <input type="submit" name="post" value="Post">
                 </form>

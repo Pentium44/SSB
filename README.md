@@ -9,6 +9,13 @@ SSB was written by Chris Dorman, 2012-2020 <https://cddo.cf>
 
 ChangeLog
 ----
+8/1/2020 - v0.2.0
+* Working home feed with personal and friends posts in order by date newest to oldest!
+* Public chat room with short term message buffer room. Great for chitchat.
+* Personal messaging in progress.
+* CSS clean up, added FontAwesome.
+* Known bugs: can send multi friend requests and spam another users notification box.
+
 8/1/2020 - v0.1.0
 * Working friends list to be incorporated into each users news feed output (in dev)
 * Some more CSS cleaning, more streamline website. More mobile friendly 

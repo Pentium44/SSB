@@ -1,4 +1,4 @@
-@import url(http://fonts.googleapis.com/css?family=Open+Sans);
+@import url(https://fonts.googleapis.com/css?family=Open+Sans);
 body {
 	color: #e3e3e3;
 	margin: 0 auto;
@@ -14,7 +14,7 @@ body {
 
 #navbar {
 	margin: 0 auto;
-	/*width: 100%;
+	/*width: 100%;*/
 	/*background-color: #ffffff;*/
 	top: 1px;
 	left: 1px;
@@ -32,7 +32,7 @@ body {
 	font-family: "Time Burner", sans-serif;
 	font-size: 24px;
 	text-align: center;
-	padding-top: 6px;
+	padding-top: 4px;
 	padding-bottom: 5px;
 	background-color: #ffffff;
 	color: #5577ff;
@@ -45,8 +45,59 @@ body {
 	color: #323232;
 }
 
-table { padding: 1px; border: solid 1px #888888; }
+table { padding: 1px; }
 tr, td { padding: 2px; }
+
+textarea {
+	background-color: #232323;
+	border-radius: 10px;
+    	border: 1px solid transparent;
+	outline: none;
+	resize: none;
+	color: #d7d7d7;
+	width: 98%;
+	padding: 4px;
+}
+
+input {
+	background-color: #343434;
+	border: solid 1px #171717;
+	outline: none;
+	border-radius: 6px;
+	color: #d7d7d7;
+}
+
+#msgs { 
+	background: #333333;
+	border-radius: 5px; 
+	border: solid 1px #131313;
+	padding: 6px;
+	height: 360px;
+	width: 600px;
+	margin: auto;
+	overflow-y: hidden; 
+}
+
+.replycontain {
+	margin: 0 auto;
+	width: 600px;
+}
+
+.post {
+	padding: 6px;
+	border-radius: 5px;
+	background-color: #373737;
+	color: #ffffff;
+	font-size: 14px;
+}
+
+.reply {
+	background-color: #000000;
+	border-radius: 4px 10px 10px;
+	border: solid 1px #171717;
+	padding: 6px;
+	color: #d7d7d7;
+}
 
 a {
 	color: #5577ff;
