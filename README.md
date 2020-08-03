@@ -9,6 +9,10 @@ SSB was written by Chris Dorman, 2012-2020 <https://cddo.cf>
 
 ChangeLog
 ----
+8/2/2020 - v1.1.1 - hotfix
+* Mobile CSS and viewport tweaks
+* Couple of missed bug tweaks
+
 8/2/2020 - v1.1.0
 * Added friend to friend private messaging
 * Fixed a few friend request bugs
