@@ -39,7 +39,7 @@ if (isset($_GET['msg']) && $_GET['msg']!="" && isset($_GET['nick']) && !isset($_
 			$msg  = bbcode_format(htmlentities(stripcslashes($_GET['msg'])));
 			$line = "<?php \$msg" . $msgCount . " = \"<b>$nick</b>: $msg<br />\"; ?>\n";
 			$old_content = file_get_contents("ssb_db/friends/" . ${"friend_chat_db" . $x} . ".php");
-			$noifications = file_get_contents("ssb_db/friends/" . ${"friend" . $x} . ".notifications");
+			$notifications = file_get_contents("ssb_db/friends/" . ${"friend" . $x} . ".notifications");
 			// update conversation message count
 			file_put_contents("ssb_db/friends/" . ${"friend_chat_db" . $x} . ".count", $msgCount);
 			// conents into database
