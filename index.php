@@ -720,7 +720,9 @@ else if(isset($_GET['do']))
 				include "ssb_db/friends/" . $username . ".php";
 				for($x = 1; $x <= $friendcount; $x++)
 				{
-					echo ${"friend" . $x} . " &bull; <a href='?userfeed=" . ${"friend" . $x} . "'>View user profile</a> &bull; <a href='?do=privmsg&friend=" . ${"friend" . $x} . "'>Private message</a><br />";
+					if(isset(${"friend" . $x})) {
+						echo ${"friend" . $x} . " &bull; <a href='?userfeed=" . ${"friend" . $x} . "'>View user profile</a> &bull; <a href='?do=privmsg&friend=" . ${"friend" . $x} . "'>Private message</a><br />";
+					}
 				}
 			}
 		}
