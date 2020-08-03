@@ -1,14 +1,14 @@
-@import url(https://fonts.googleapis.com/css?family=Open+Sans);
+@import url('https://fonts.googleapis.com/css2?family=Roboto&family=Ubuntu&display=swap');
 html, body {
 	background-color: #d5d5d5;
 	background-repeat: no-repeat;
 	background-attachment: fixed;
 	background-position: center; 
-	/*background-image: url('data/bg.jpg');*/
+	background-image: url('data/bg.jpg');
 	color: #e3e3e3;
 	margin: 0 auto;
 	font-size: 13px;
-	font-family: "Open Sans";
+	font-family: "Ubuntu", "Roboto", sans-serif;
 }
 .title {
 	font-size: 36px;
@@ -26,15 +26,17 @@ html, body {
 }
 
 #navcontainer {
-	width: 712px;
+	width: 702px;
+	max-width: 702px;
+	min-width: 702px;
 	margin: 0 auto;
 	background-color: #ffffff;
 }
 
 #navbar a {
 	text-decoration: none;
-	font-family: "Time Burner", sans-serif;
-	font-size: 24px;
+	font-family: "Ubuntu", "Roboto", sans-serif;
+	font-size: 26px;
 	text-align: center;
 	padding-top: 4px;
 	padding-bottom: 5px;
@@ -55,7 +57,7 @@ tr, td { padding: 2px; }
 textarea {
 	background-color: #232323;
 	border-radius: 10px;
-    	border: 1px solid transparent;
+    border: 1px solid transparent;
 	outline: none;
 	resize: none;
 	color: #d7d7d7;
@@ -93,7 +95,7 @@ input, button, select {
 }
 
 .attachment {
-	max-height: 250px;
+	/*max-height: 250px;*/
 	display: block;
 	margin: 0 auto;
 }
@@ -129,7 +131,14 @@ a:hover {
 .contain {
 	background-color: #121212;
 	border: solid 1px #565656;
-	max-width: 700px;
+	width: 690px;
+	max-width: 690px;
+	min-width: 690px;
 	margin: 0 auto;
-	padding: 0px 5px 2px 5px;
+	padding: 5px;
+}
+
+.maincontain {
+	margin: 0 auto;
+	width: 702px;
 }

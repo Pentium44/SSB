@@ -45,13 +45,14 @@ $_SESSION['ssb-topic'] = $ssbtopic;
 <head>
 <title><?php echo $ssbtitle; ?></title>
 <meta http-equiv="content-type" content="text/html; charset=utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=.75, shrink-to-fit=no"><meta name="description" content="<?php echo $ssbtitle . " - " . $desc; ?>">
+<meta name="viewport" content="width=device-width, initial-scale=.55, shrink-to-fit=yes"><meta name="description" content="<?php echo $ssbtitle . " - " . $desc; ?>">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <link rel="stylesheet" type="text/css" href="style.css">
 </head>
 <body <?php if($_GET['do']=="pubmsg" || $_GET['do']=="privmsg") { echo "onload=\"UpdateTimer();\""; } ?>>
 
 <script type="text/javascript">
+
                 function wrapBBCode(tag) {
                         var msgInput = document.getElementById('msg');
                         var content = msgInput.value;
@@ -61,19 +62,19 @@ $_SESSION['ssb-topic'] = $ssbtopic;
                         msgInput.value = beforeContent + '[' + tag + ']' + selectedContent + '[/' + tag + ']' + afterContent;
                 }
 </script>
-
+<div class="maincontain">
 <div id="navcontainer">
         <div id="navbar"><!--
         <?php if(!isset($username)) { ?>
         --><a href="?forms=login">Login</a><!--
         --><a href="?do=about">About</a><!--
         <?php } else { ?>
-        --><a style="width:50px;" href="?forms=post" title="Post on your feed!"><i style="padding:2px 2px 3px 2px;" class="fa fa-plus-square"></i></a><!--
-        --><a style="width:50px;" href="?do=pubmsg" title="Public Chat!"><i style="padding:2px 2px 3px 2px;" class="fa fa-comments-o"></i></a><!--
+        --><a style="width:50px;" href="?forms=post" title="Post on your feed!"><i style="padding:2px 2px 2px 2px;" class="fa fa-plus-square"></i></a><!--
+        --><a style="width:50px;" href="?do=pubmsg" title="Public Chat!"><i style="padding:2px 2px 2px 2px;" class="fa fa-comments-o"></i></a><!--
         --><a href="index.php">Feed</a><!--
         --><a href="?do=friends">Friends</a><!--
         --><a href="?do=about">About</a><!--
-        --><a href="?do=logout">Logout</a><!--
+        --><a style="width:50px;" href="?do=logout"><i style="padding:2px 2px 2px 2px;" class="fa fa-sign-out"></i></a><!--
         <?php } ?>
         --></div>
 </div>
@@ -846,5 +847,6 @@ else
 <br>
 <center>Powered By SSB <?php echo $version; ?></center>
 </div>
+</div> <!-- main contain -->
 </body>
 </html>
