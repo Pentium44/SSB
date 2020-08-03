@@ -63,7 +63,7 @@ if (isset($_GET['msg']) && $_GET['msg']!="" && isset($_GET['nick']) && !isset($_
 			for($y = 1; $y <= $msgCount; $y++) {
 				echo ${"msg" . $y};
 			}
-		} else { echo "Not friend!"; }
+		} //else { echo "Not friend!"; }
 		//echo "Finding friend in slot " . $x;
 	} 
 } else if (isset($_GET['all'])) {

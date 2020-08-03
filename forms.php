@@ -176,7 +176,7 @@ function acceptPublicFriendRequest($user, $friend) {
     	file_put_contents("ssb_db/friends/" . $user . ".count", $friendcount);
        	file_put_contents("ssb_db/friends/" . $friend . ".count", $friendcountFriend);
 		file_put_contents("ssb_db/friends/" . $user . $friend . ".count", "1");
-		file_put_contents("ssb_db/friends/" . $user . $friend . ".php", "<?php \$msg1 = \"" . $user . " and " . $friend . " are now friends!\";?>");
+		file_put_contents("ssb_db/friends/" . $user . $friend . ".php", "<?php \$msg1 = \"" . $user . " and " . $friend . " are now friends!<br />\";?>");
 
 }
 
