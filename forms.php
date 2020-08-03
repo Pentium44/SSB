@@ -122,12 +122,32 @@ function friendReqForm() {
 
 function sendFriendRequest($user, $friend) {
 	$friendLocation = "ssb_db/friends/" . $friend . ".pending";
+	$handle = fopen($friendLocation, "r");
+    if ($handle) {
+		while (($line = fgets($handle)) !== false) {
+			if($line == $friend) { break; } // request already pending
+		}
+		fclose($handle);
+	}
+	
+	// Check if user is itself
+	if($user == $friend) { header("Location: index.php?do=friends"); exit(1); } // dont request from self.
+	
+	$friendc = file_get_contents("ssb_db/friends/" . $user . ".count");
+	$friendcount = file_get_contents("ssb_db/friends/" . $user . ".count");
+	include "ssb_db/friends/" . $user . ".php";
+       for($x = 1; $x <= $friendcount; $x++)
+       {
+		if(${"friend" . $x} == $friend) { header("Location: index.php?do=friends"); echo "Already following!"; exit(1); }
+	}
+	
 	if(file_exists($friendLocation)) {
 		$pending = file_get_contents("ssb_db/friends/" . $friend . ".pending");
 		file_put_contents("ssb_db/friends/" . $friend . ".pending", $pending . "\n" . $user);
 	} else {
 		file_put_contents("ssb_db/friends/" . $friend . ".pending", $user);
 	}
+	
 }
 
 function acceptPublicFriendRequest($user, $friend) {
@@ -136,32 +156,28 @@ function acceptPublicFriendRequest($user, $friend) {
         $frienddb = file_get_contents("ssb_db/friends/" . $friend . ".php");
         // check if already on friends list.
 
-	$friendc = file_get_contents("ssb_db/friends/" . $username . ".count");
-        if($friendc == "0")
-        {
-           	 echo "<b style='color:red;'>We're sorry... no friends found on your user account...</b>";
-        }
-       	else
-        {
-            	$friendcount = file_get_contents("ssb_db/friends/" . $username . ".count");
-                include "ssb_db/friends/" . $username . ".php";
+	$friendc = file_get_contents("ssb_db/friends/" . $user . ".count");
+            	$friendcount = file_get_contents("ssb_db/friends/" . $user . ".count");
+                include "ssb_db/friends/" . $user . ".php";
                 for($x = 1; $x <= $friendcount; $x++)
                 {
                		if(${"friend" . $x} == $friend) { echo "Already following!"; exit(1); }
                 }
-        }
 
         // populate both users databases with each other.
         $friendcountFriend = file_get_contents("ssb_db/friends/" . $friend . ".count");
        	$friendcountFriend = $friendcountFriend + 1;
        	echo $friendcountFriend;
-      	file_put_contents("ssb_db/friends/" . $friend . ".php", $frienddb . "\n <?php \$friend" . $friendcountFriend ." = \"" . $user . "\";?>");
+      	file_put_contents("ssb_db/friends/" . $friend . ".php", $frienddb . "\n <?php \$friend" . $friendcountFriend ." = \"" . $user . "\";\n\$friend_chat_db" . $friendcountFriend . " = \"" . $user . $friend . "\";?>");
       	$friendcount = file_get_contents("ssb_db/friends/" . $user . ".count");
        	$friendcount = $friendcount + 1;
        	echo $friendcount;
-       	file_put_contents("ssb_db/friends/" . $user . ".php", $friendlist . "\n <?php \$friend" . $friendcount . " = \"" . $friend . "\";?>");
+       	file_put_contents("ssb_db/friends/" . $user . ".php", $friendlist . "\n <?php \$friend" . $friendcount . " = \"" . $friend . "\";\n\$friend_chat_db" . $friendcount . " = \"" . $user . $friend . "\";?>");
     	file_put_contents("ssb_db/friends/" . $user . ".count", $friendcount);
        	file_put_contents("ssb_db/friends/" . $friend . ".count", $friendcountFriend);
+		file_put_contents("ssb_db/friends/" . $user . $friend . ".count", "1");
+		file_put_contents("ssb_db/friends/" . $user . $friend . ".php", "<?php \$msg1 = \"" . $user . " and " . $friend . " are now friends!\";?>");
+
 }
 
 function acceptFriendRequest($user, $friend) {
@@ -193,14 +209,15 @@ function acceptFriendRequest($user, $friend) {
 				$friendcountFriend = file_get_contents("ssb_db/friends/" . $friend . ".count");
 				$friendcountFriend = $friendcountFriend + 1;
 				echo $friendcountFriend;
-				file_put_contents("ssb_db/friends/" . $friend . ".php", $frienddb . "\n <?php \$friend" . $friendcountFriend ." = \"" . $user . "\";?>");
+				file_put_contents("ssb_db/friends/" . $friend . ".php", $frienddb . "\n <?php \$friend" . $friendcountFriend ." = \"" . $user . "\";\n\$friend_chat_db" . $friendcountFriend . " = \"" . $user . $friend . "\";?>");
 				$friendcount = file_get_contents("ssb_db/friends/" . $user . ".count");
 				$friendcount = $friendcount + 1;
 				echo $friendcount;
-     				file_put_contents("ssb_db/friends/" . $user . ".php", $friendlist . "\n <?php \$friend" . $friendcount . " = \"" . $friend . "\";?>");
+				file_put_contents("ssb_db/friends/" . $user . ".php", $friendlist . "\n <?php \$friend" . $friendcount . " = \"" . $friend . "\";\n\$friend_chat_db" . $friendcount . " = \"" . $user . $friend . "\";?>");
 				file_put_contents("ssb_db/friends/" . $user . ".count", $friendcount);
 				file_put_contents("ssb_db/friends/" . $friend . ".count", $friendcountFriend);
-				break;
+				file_put_contents("ssb_db/friends/" . $user . $friend . ".count", "1");
+				file_put_contents("ssb_db/friends/" . $user . $friend . ".php", "<?php \$msg1 = \"" . $user . " and " . $friend . " are now friends!<br />\";?>");
 			}
       		}
    		fclose($handle);

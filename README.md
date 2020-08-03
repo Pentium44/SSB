@@ -9,6 +9,20 @@ SSB was written by Chris Dorman, 2012-2020 <https://cddo.cf>
 
 ChangeLog
 ----
+8/2/2020 - v1.1.0
+* Added friend to friend private messaging
+* Fixed a few friend request bugs
+   -- Look for self sent friend requests and block
+   -- Look for and block already accepted or pending friend requests
+* Friend request and new message notifications with wipe function.
+* Version bump, new ideas include:
+   -- Owner / admin post removal
+   -- Video media support
+   -- Possible remove of public chat
+   -- Password change
+   -- Profile pictures
+   -- Bot verification prompt for registeration.
+
 8/2/2020 - v1.0.3 - hotfix
 * After live version went online, noticed a bug with accepting friend requests multiple times
 * Check to see if public user is already followed by user.

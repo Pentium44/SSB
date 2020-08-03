@@ -49,7 +49,7 @@ $_SESSION['ssb-topic'] = $ssbtopic;
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <link rel="stylesheet" type="text/css" href="style.css">
 </head>
-<body <?php if($_GET['do']=="pubmsg" || $_GET['do']=="msg") { echo "onload=\"UpdateTimer();\""; } ?>>
+<body <?php if($_GET['do']=="pubmsg" || $_GET['do']=="privmsg") { echo "onload=\"UpdateTimer();\""; } ?>>
 
 <script type="text/javascript">
                 function wrapBBCode(tag) {
@@ -122,10 +122,6 @@ else if(isset($_GET['userfeed']))
 				echo "<h3>User information</h3>";
 				echo "Username: " . $userid . "@" . $domain . "<br />";
                                 echo "Full name: " . $user_fullname . "<br />";
-			}
-			else
-			{
-				echo "Not your friend...";
 			}
 
                 	if($postowner == $username)
@@ -208,10 +204,10 @@ else if(isset($_GET['view']) && isset($_GET['user']))
 			echo "<img src='ssb_db/uploads/" . $puser . "_" . $id . "." . end(explode(".", $postfile)) . "'>";
 			echo "</a></div>";
 		}
-
-		echo bbcode_format($postcontent) . "</div>";
-
 	}
+
+	// Let the text process if no images xD
+	echo bbcode_format($postcontent) . "</div>";
 
 	for($x = 0; $x <= $postc; $x++) {
 		echo bbcode_format(${"reply" . $x});
@@ -333,6 +329,17 @@ else if(isset($_GET['do']))
 				{
 					echo "ERROR: Missing form data<br>";
 				}
+			}
+		}
+	}
+	
+	if($do=="clrnote") 
+	{
+		 if (!isset($_SESSION['ssb-user']) || !isset($_SESSION['ssb-pass'])) { loginForm(); } else {
+			include "ssb_db/users/" . $username . ".php";
+			if($user_password === $_SESSION['ssb-pass']) {
+				unlink("ssb_db/friends/" . $username . ".notifications");
+				header("Location: index.php?do=friends");
 			}
 		}
 	}
@@ -520,6 +527,131 @@ else if(isset($_GET['do']))
 
 		}
 	}
+	
+	if($do=="privmsg")
+	{
+		if (!isset($_SESSION['ssb-user']) || !isset($_SESSION['ssb-pass'])) { loginForm(); } else {
+			
+		//check if friend is set
+		if(!isset($_GET['friend'])) { echo "ERROR: No username defined!"; exit(1); } else {
+		// set friend username
+		$friendNick = htmlentities(stripslashes($_GET['friend']));
+		
+		$friendcount = file_get_contents("ssb_db/friends/" . $username . ".count");
+		include "ssb_db/friends/" . $username . ".php";
+		for($x = 1; $x <= $friendcount; $x++)
+        {
+			if($friendNick == ${"friend" . $x}) {
+		?>
+<script language="javascript" type="text/javascript">
+    <!--
+		var httpObject = null;
+		var link = "";
+		var timerID = 0;
+		var friendNick = "<?php echo $friendNick; ?>";
+		var nickName = "<?php echo $_SESSION['ssb-user']; ?>";
+		var userColor = "<?php echo $_SESSION['ssb-color'];; ?>";
+
+		// Get the HTTP Object
+		function getHTTPObject() {
+			if (window.ActiveXObject) return new ActiveXObject("Microsoft.XMLHTTP");
+			else if (window.XMLHttpRequest) return new XMLHttpRequest();
+			else {
+				alert("Your browser does not support AJAX.");
+				return null;
+			}
+		}   
+
+		// Change the value of the outputText field
+		function setHtml() {
+			if(ajaxVar.readyState == 4){
+				var response = ajaxVar.responseText;
+				var msgBox = document.getElementById("msgs");
+				msgBox.innerHTML += response;
+				msgBox.scrollTop = msgBox.scrollHeight;
+			}
+		}
+
+		// Change the value of the outputText field
+		function setAll() {
+			if(ajaxVar.readyState == 4){
+				var response = ajaxVar.responseText;
+				var msgBox = document.getElementById("msgs");
+				msgBox.innerHTML = response;
+				msgBox.scrollTop = msgBox.scrollHeight;
+			}
+		}
+
+		// Implement business logic    
+		function serverWrite() {    
+			ajaxVar = getHTTPObject();
+			if (ajaxVar != null) {
+				link = "chatserver.php?nick="+nickName+"&friend="+friendNick+"&msg="+document.getElementById('msg').value; 
+				ajaxVar.open("GET", link , true);
+				ajaxVar.onreadystatechange = setHtml;
+				ajaxVar.send(null);
+			}
+		}
+      
+		function getInput() {
+			// Send the server function the input
+			var userInput = document.getElementById('msg');
+			serverWrite(userInput.value);
+			
+			// Clean out the input values
+			var msgBar = document.getElementById("msg");
+			msgBar.value = "";
+            msgBar.focus();
+		}
+
+		// Implement business logic    
+		function serverReload() {    
+			ajaxVar = getHTTPObject();
+			//var randomnumber=Math.floor(Math.random()*10000);
+			if (ajaxVar != null) {
+				link = "chatserver.php?get=<?php echo $friendNick; ?>";
+				ajaxVar.open("GET", link , true);
+				ajaxVar.onreadystatechange = setAll;
+				ajaxVar.send(null);
+			}
+		}
+	
+		function UpdateTimer() {
+			serverReload();   
+			setTimeout(UpdateTimer, 1000);
+		}
+    
+		function keypressed(e) {
+			if(e.keyCode=='13'){
+				getInput();
+			}
+		}
+    //-->
+    </script> 
+<div class="replycontain">
+		<div id="msgs">
+		<?php 
+			echo "<div class=\"msgbox\">";
+			echo "</div>";
+		?>
+		</div>
+		<div id="msgbox" onkeyup="keypressed(event);">
+
+		<button onclick="javascript:wrapBBCode('i');">Italic</button>
+     		<button onclick="javascript:wrapBBCode('u');">Underline</button>
+        	<button onclick="javascript:wrapBBCode('b');">Bold</button>
+    		<button onclick="javascript:wrapBBCode('url');">URL</button><br />
+		<textarea style="width: 98%;" name="msg" id="msg"></textarea>
+		<button style="width: 50px;" onclick="getInput();">Send</button>
+		</div>
+</div>
+
+	<?php
+		} // Check friend end
+		} // Check loop end
+		} // GET friend set end
+		} // session check end
+	} // function end
 
 	if($do=="about")
         {
@@ -530,10 +662,11 @@ else if(isset($_GET['do']))
 	if($do=="friends")
         {
 		if (!isset($_SESSION['ssb-user']) || !isset($_SESSION['ssb-pass'])) { loginForm(); } else {
+			
 			$friendpend = "ssb_db/friends/" . $username . ".pending";
 			$handle = fopen($friendpend, "r");
 
-			echo "<h4>Notifications &bull; <a href='?do=clrpending'>Clear history</a> &bull; <a href='?forms=friendreq'>Send friend request</a></h4>";
+			echo "<h4>Friend requests &bull; <a href='?do=clrpending'>Clear history</a> &bull; <a href='?forms=friendreq'>Send friend request</a></h4>";
 			echo "<div style='background:#545454;border: solid 1px #898989;'>";
 
 			if ($handle) {
@@ -543,6 +676,24 @@ else if(isset($_GET['do']))
 				fclose($handle);
 			} else {
 			    echo "No pending friend requests<br />";
+			} 
+
+			echo "</div>";
+
+			// PM notifications
+			$notifications = "ssb_db/friends/" . $username . ".notifications";
+			$handle = fopen($notifications, "r");
+
+			echo "<h4>Notifications &bull; <a href='?do=clrnote'>Clear history</a></h4>";
+			echo "<div style='background:#545454;border: solid 1px #898989;'>";
+
+			if ($handle) {
+    				while (($line = fgets($handle)) !== false) {
+        				echo $line;
+    				}
+				fclose($handle);
+			} else {
+			    echo "No messages<br />";
 			} 
 
 			echo "</div>";
@@ -561,7 +712,7 @@ else if(isset($_GET['do']))
 				include "ssb_db/friends/" . $username . ".php";
 				for($x = 1; $x <= $friendcount; $x++)
 				{
-					echo ${"friend" . $x} . " &bull; <a href='?userfeed=" . ${"friend" . $x} . "'>View user profile</a><br />";
+					echo ${"friend" . $x} . " &bull; <a href='?userfeed=" . ${"friend" . $x} . "'>View user profile</a> &bull; <a href='?do=privmsg&friend=" . ${"friend" . $x} . "'>Private message</a><br />";
 				}
 			}
 		}
