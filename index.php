@@ -630,6 +630,13 @@ else if(isset($_GET['do']))
     //-->
     </script> 
 <div class="replycontain">
+		<?php
+		
+		// Header
+		include "ssb_db/users/" . $friendNick . ".php";
+		echo "<h3><a href='?userfeed=" . $friendNick . "'>" . $friendNick . ": " . $user_fullname . "</a></h3>";
+		
+		?>
 		<div id="msgs">
 		<?php 
 			echo "<div class=\"msgbox\">";
@@ -844,8 +851,8 @@ else
 
 ?>
 
-<br>
-<center>Powered By SSB <?php echo $version; ?></center>
+<br /><br />
+<center style="background-color: #555555; padding 3px;">Powered By SSB <?php echo $version; ?></center>
 </div>
 </div> <!-- main contain -->
 </body>

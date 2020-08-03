@@ -125,7 +125,7 @@ function sendFriendRequest($user, $friend) {
 	$handle = fopen($friendLocation, "r");
     if ($handle) {
 		while (($line = fgets($handle)) !== false) {
-			if($line == $friend) { break; } // request already pending
+			if($line == $user) { break; } // request already pending
 		}
 		fclose($handle);
 	}

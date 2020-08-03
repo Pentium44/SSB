@@ -4,7 +4,7 @@ html, body {
 	background-repeat: no-repeat;
 	background-attachment: fixed;
 	background-position: center; 
-	/*background-image: url('data/bg.jpg');*/
+	background-image: url('data/bg.jpg');
 	color: #e3e3e3;
 	margin: 0 auto;
 	font-size: 13px;
