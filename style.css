@@ -71,6 +71,33 @@ input, button, select {
 	outline: none;
 	border-radius: 6px;
 	color: #d7d7d7;
+	padding: 4px; 
+}
+
+.button {
+        background-color: #343434;
+        border: solid 1px #171717;
+        outline: none;
+	font-size: 14px;
+        border-radius: 6px;
+        color: #d7d7d7;
+	margin: auto;
+	padding: 4px;
+	display: inline-flex;
+}
+
+.avatar {
+	border-radius: 50%;
+	background: 50% 50% no-repeat; /* 50% 50% centers image in div */
+	width: 180px;
+ 	height: 180px;
+}
+
+.avatar_small {
+        border-radius: 50%;
+        background: 50% 50% no-repeat; /* 50% 50% centers image in div */
+        width: 48px;
+        height: 48px;
 }
 
 #msgbox {

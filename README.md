@@ -9,6 +9,12 @@ SSB was written by Chris Dorman, 2012-2020 <https://cddo.cf>
 
 ChangeLog
 ----
+8/3/2020 - v1.2.1 - feature update
+* Added user settings panel for changing account passwords and avatar images.
+* Display profile images in posts and user profile page.
+* Bug fixes for unauthorized posts by users not friends with people when post links are directly connected to.
+* Large CSS changes, more mobile device friendly. More changes to come.
+
 8/2/2020 - v1.1.2 - hotfix
 * Minor tweaks
 * Another duplicate friend request bugfix
@@ -27,8 +33,8 @@ ChangeLog
    -- Owner / admin post removal
    -- Video media support
    -- Possible remove of public chat
-   -- Password change
-   -- Profile pictures
+   -- Password change (done)
+   -- Profile pictures (done)
    -- Bot verification prompt for registeration.
 
 8/2/2020 - v1.0.3 - hotfix

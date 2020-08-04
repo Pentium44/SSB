@@ -17,15 +17,46 @@ function loginForm() {
 ?>
         <br />
         <div class="login">
-                <a href="<?php echo $_SERVER['PHP_SELF']; ?>?forms=register">Register</a>
+                <a class="button" href="<?php echo $_SERVER['PHP_SELF']; ?>?forms=register">Register</a>
                 <form action="<?php echo $_SERVER['PHP_SELF']; ?>?do=login" method="post">
-                        Username: <input style="padding: 2px;" class="text" type="text" name="username"><br />
-                        Password: <input style="padding: 2px;" class="text" type="password" name="password"><br />
+			<table><tr><td>
+                        Username:</td><td> <input class="text" type="text" name="username"></td></tr><tr><td>
+                        Password:</td><td> <input class="text" type="password" name="password"></td></tr></table>
                         <input style="padding: 2px;" class="text" type="submit" name="submitBtn" value="Login">
                 </form>
         </div>
 <?php
 }
+
+function changePassForm() {
+?>
+        <br />
+        <div class="chgpass">
+                <form action="<?php echo $_SERVER['PHP_SELF']; ?>?do=changepass" method="post">
+			<table><tr><td>
+                        Old password:</td><td> <input class="text" type="password" name="oldpass"></td></tr><tr><td>
+                        Password:</td><td> <input class="text" type="password" name="password"></td></tr><tr><td>
+			Password Again:</td><td> <input class="text" type="password" name="password_again"></td></tr>
+			</table>
+                        <input class="text" type="submit" name="submitBtn" value="Change">
+                </form>
+        </div>
+<?php
+}
+
+function uploadAvatarForm() {
+?>
+        <br />
+        <div class="upload">
+                <form action="<?php echo $_SERVER['PHP_SELF']; ?>?do=avatarupload" method="post" enctype="multipart/form-data">
+                        Choose profile avatar: <br />
+			<input type="file" name="file[]" id="file" multiple><br />
+                        <input class="text" type="submit" name="submit" value="Set">
+                </form>
+        </div>
+<?php
+}
+
 
 /*function uploadForm() {
 
@@ -54,16 +85,18 @@ function registerForm() {
         <br />
         <div class="login">
                 <form action="<?php echo $_SERVER['PHP_SELF']; ?>?do=register" method="post">
-                        Username: <input style="padding: 2px;" class="text" type="text" name="username"><br />
-			Full name: <input style="padding: 2px;" class="text" type="text" name="fullname"><br />
-                        Password: <input style="padding: 2px;" class="text" type="password" name="password"><br />
-                        Password Again: <input style="padding: 2px;" class="text" type="password" name="password-again"><br />
-			<label for="acct">Choose profile type:</label>
+                        <table><tr><td>
+			Username:</td><td> <input class="text" type="text" name="username"></td></tr><tr><td>
+			Full name:</td><td> <input class="text" type="text" name="fullname"></td></tr><tr><td>
+                        Password:</td><td> <input class="text" type="password" name="password"></td></tr><tr><td>
+                        Password Again:</td><td> <input class="text" type="password" name="password-again"></td></tr><tr><td>
+			<label for="acct">Profile type:</label>
 			<select id="acct" name="acct">
 			  <option value="private">Private</option>
 			  <option value="public">Public</option>
-			</select>
-                        <input style="padding: 2px;" class="text" type="submit" name="submitBtn" value="Register">
+			</select></td><td>
+                        <input class="text" type="submit" name="submitBtn" value="Register">
+			</td></tr></table>
                 </form>
         </div>
 <?php
