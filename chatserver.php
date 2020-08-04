@@ -11,7 +11,7 @@ if (isset($_GET['msg']) && $_GET['msg']!="" && isset($_GET['nick']) && !isset($_
 
 	$nick = $_GET['nick'];
 	$msg  = bbcode_format(htmlentities(stripcslashes($_GET['msg'])));
-	$line = "<b>$nick</b>: $msg<br>\n";
+	$line = "<table><tr><td><img class='avatar_chat' src='?do=avatarlocation&user=" . $nick . "' title='User Avatar'></td><td class='message'><b>$nick</b>: $msg</td></tr></table>\n";
 	$old_content = file_get_contents($chat_db);
 
 	$lines = count(file($chat_db));
@@ -29,7 +29,7 @@ if (isset($_GET['msg']) && $_GET['msg']!="" && isset($_GET['nick']) && !isset($_
 	$nick = $_SESSION['ssb-user'];
 
 	$friendcount = file_get_contents("ssb_db/friends/" . $nick . ".count");
-    include "ssb_db/friends/" . $nick . ".php";
+   	include "ssb_db/friends/" . $nick . ".php";
 	// Checking if you're friend
     for($x = 1; $x <= $friendcount; $x++)
     {
@@ -37,7 +37,7 @@ if (isset($_GET['msg']) && $_GET['msg']!="" && isset($_GET['nick']) && !isset($_
 			$msgCount = file_get_contents("ssb_db/friends/" . ${"friend_chat_db" . $x} . ".count");
 			$msgCount = $msgCount + 1;
 			$msg  = bbcode_format(htmlentities(stripcslashes($_GET['msg'])));
-			$line = "<?php \$msg" . $msgCount . " = \"<b>$nick</b>: $msg<br />\"; ?>\n";
+			$line = "<?php \$msg" . $msgCount . " = \"<table><tr><td><img class='avatar_chat' src='?do=avatarlocation&user=" . $nick . "' title='User Avatar'></td><td class='message'><b>$nick</b>: $msg</td></tr></table>\"; ?>\n";
 			$old_content = file_get_contents("ssb_db/friends/" . ${"friend_chat_db" . $x} . ".php");
 			$notifications = file_get_contents("ssb_db/friends/" . ${"friend" . $x} . ".notifications");
 			// update conversation message count

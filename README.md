@@ -9,6 +9,10 @@ SSB was written by Chris Dorman, 2012-2020 <https://cddo.cf>
 
 ChangeLog
 ----
+8/3/2020 - v1.2.2 - hotfix
+* Private and public chat CSS updates
+* Bugfix for user profile avatars not loading on pages when not logged in
+
 8/3/2020 - v1.2.1 - feature update
 * Added user settings panel for changing account passwords and avatar images.
 * Display profile images in posts and user profile page.

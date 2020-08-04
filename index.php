@@ -828,12 +828,10 @@ else if(isset($_GET['do']))
 	// Push user avatar to specific avatar image location
 	if($do=="avatarlocation")
 	{
-		if (!isset($_SESSION['ssb-user']) || !isset($_SESSION['ssb-pass'])) { loginForm(); } else {
-			if(isset($_GET['user'])) {
-				$user = htmlentities(stripslashes($_GET['user']));
-				include "ssb_db/users/" . $user . ".php";
-				header("Location: ssb_db/uploads/" . $user_avatar);
-			}
+		if(isset($_GET['user'])) {
+			$user = htmlentities(stripslashes($_GET['user']));
+			include "ssb_db/users/" . $user . ".php";
+			header("Location: ssb_db/uploads/" . $user_avatar);
 		}
 	}
 
