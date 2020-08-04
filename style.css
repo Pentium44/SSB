@@ -100,9 +100,25 @@ input, button, select {
         height: 48px;
 }
 
+.avatar_chat {
+        border-radius: 50%;
+        background: 50% 50% no-repeat; /* 50% 50% centers image in div */
+        width: 28px;
+        height: 28px;
+}
+
 #msgbox {
 	display: block;
 	margin: 0 auto;
+}
+
+.message {
+	padding: 6px;
+	border-radius: 5px 11px 11px;
+	background-color: #2255ff;
+	color: #ffffff;
+	overflow-wrap: break-word;
+	max-width: 500px;
 }
 
 #msgs { 
