@@ -70,7 +70,8 @@ $_SESSION['ssb-topic'] = $ssbtopic;
         --><a href="?do=about">About</a><!--
         <?php } else { ?>
         --><a style="width:50px;" href="?forms=post" title="Post on your feed!"><i style="padding:2px 2px 2px 2px;" class="fa fa-plus-square"></i></a><!--
-        --><a style="width:50px;" href="?do=pubmsg" title="Public Chat!"><i style="padding:2px 2px 2px 2px;" class="fa fa-comments-o"></i></a><!--
+        --><a style="width:50px;" href="?do=pubmsg" title="Public chat!"><i style="padding:2px 2px 2px 2px;" class="fa fa-comments-o"></i></a><!--
+        --><a style="width:50px;" href="?userfeed=<?php echo $username; ?>" title="Your profile!"><i style="padding:2px 2px 2px 2px;" class="fa fa-user"></i></a><!--
         --><a href="index.php">Feed</a><!--
         --><a href="?do=friends">Friends</a><!--
         --><a href="?do=about">About</a><!--

@@ -12,6 +12,7 @@ ChangeLog
 8/3/2020 - v1.2.2 - hotfix
 * Private and public chat CSS updates
 * Bugfix for user profile avatars not loading on pages when not logged in
+* Add "my profile" button on navbar
 
 8/3/2020 - v1.2.1 - feature update
 * Added user settings panel for changing account passwords and avatar images.
