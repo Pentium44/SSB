@@ -7,11 +7,11 @@ html, body {
 	background-image: url('data/bg.jpg');
 	color: #e3e3e3;
 	margin: 0 auto;
-	font-size: 13px;
+	font-size: 18px;
 	font-family: "Ubuntu", "Roboto", sans-serif;
 }
 .title {
-	font-size: 36px;
+	font-size: 46px;
 	text-align: center;
 	padding: 8px;
 }
@@ -36,13 +36,13 @@ html, body {
 #navbar a {
 	text-decoration: none;
 	font-family: "Ubuntu", "Roboto", sans-serif;
-	font-size: 26px;
+	font-size: 34px;
 	text-align: center;
 	padding-top: 4px;
 	padding-bottom: 5px;
 	background-color: #ffffff;
 	color: #5577ff;
-	width: 120px;
+	width: 145px;
 	display: inline-block;
 }
 
@@ -78,7 +78,7 @@ input, button, select {
         background-color: #343434;
         border: solid 1px #171717;
         outline: none;
-	font-size: 14px;
+	font-size: 18px;
         border-radius: 6px;
         color: #d7d7d7;
 	margin: auto;
@@ -129,7 +129,7 @@ input, button, select {
 	height: 360px;
 	width: 600px;
 	margin: auto;
-	overflow-y: hidden; 
+	overflow-y: scroll;
 }
 
 .replycontain {
@@ -152,7 +152,7 @@ input, button, select {
 	border-radius: 5px;
 	background-color: #373737;
 	color: #ffffff;
-	font-size: 14px;
+	font-size: 16px;
 }
 
 .reply {

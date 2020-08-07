@@ -35,7 +35,9 @@ if(!file_exists(ssb_db/friends))
 	mkdir("ssb_db/friends", 0777);
 }
 
-$username = $_SESSION['ssb-user'];
+if(isset($_SESSION['ssb-user'])) {
+	$username = $_SESSION['ssb-user'];
+}
 
 $_SESSION['ssb-topic'] = $ssbtopic;
 
@@ -43,9 +45,9 @@ $_SESSION['ssb-topic'] = $ssbtopic;
 <!DOCTYPE html>
 <html lang="en-us">
 <head>
-<title><?php echo $ssbtitle; ?></title>
+<title><?php echo htmlentities(stripslashes($ssbtitle)); ?></title>
 <meta http-equiv="content-type" content="text/html; charset=utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=.55, shrink-to-fit=yes"><meta name="description" content="<?php echo $ssbtitle . " - " . $desc; ?>">
+<meta name="viewport" content="width=device-width, initial-scale=.55, shrink-to-fit=yes"><meta name="description" content="<?php echo htmlentities($ssbtitle) . " - " . $desc; ?>">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <link rel="stylesheet" type="text/css" href="style.css">
 </head>
@@ -65,19 +67,20 @@ $_SESSION['ssb-topic'] = $ssbtopic;
 <div class="maincontain">
 <div id="navcontainer">
         <div id="navbar"><!--
-        <?php if(!isset($username)) { ?>
-        --><a href="?forms=login">Login</a><!--
-        --><a href="?do=about">About</a><!--
-        <?php } else { ?>
-        --><a style="width:50px;" href="?forms=post" title="Post on your feed!"><i style="padding:2px 2px 2px 2px;" class="fa fa-plus-square"></i></a><!--
+        <?php if(isset($_SESSION['ssb-user']) && isset($_SESSION['ssb-pass'])) { ?>
+	--><a style="width:50px;" href="?forms=post" title="Post on your feed!"><i style="padding:2px 2px 2px 2px;" class="fa fa-plus-square"></i></a><!--
         --><a style="width:50px;" href="?do=pubmsg" title="Public chat!"><i style="padding:2px 2px 2px 2px;" class="fa fa-comments-o"></i></a><!--
         --><a style="width:50px;" href="?userfeed=<?php echo $username; ?>" title="Your profile!"><i style="padding:2px 2px 2px 2px;" class="fa fa-user"></i></a><!--
         --><a href="index.php">Feed</a><!--
         --><a href="?do=friends">Friends</a><!--
         --><a href="?do=about">About</a><!--
         --><a style="width:50px;" href="?do=userctrl"><i style="padding:2px 2px 2px 2px;" class="fa fa-cog"></i></a><!--
-	--><a style="width:50px;" href="?do=logout"><i style="padding:2px 2px 2px 2px;" class="fa fa-sign-out"></i></a><!--
+        --><a style="width:50px;" href="?do=logout"><i style="padding:2px 2px 2px 2px;" class="fa fa-sign-out"></i></a><!--
+        <?php } else {?>
+        --><a href="?forms=login">Login</a><!--
+        --><a href="?do=about">About</a><!--
         <?php } ?>
+  
         --></div>
 </div>
 <div class='contain'>
@@ -117,6 +120,17 @@ if(isset($_GET['forms']))
                 cleanForm();
         }
         else { echo "ERROR: Unknown form-name<br>"; }
+}
+else if(isset($_GET['notify']))
+{
+        $notify = $_GET['notify'];
+        if($notify=="1") { echo "Error: User not found"; }
+        else if($notify=="2") { echo "Error: Incorrect password provided"; }
+        else if($notify=="3") { echo "Error: Please fill out all the text boxes"; }
+        else if($notify=="4") { echo "Error: The provided passwords did not match"; }
+        else if($notify=="5") { echo "Error: Special characters cannot be used in your username"; }
+        else if($notify=="6") { echo "Error: This username is already in use"; }
+        else { echo "Error: unknown error... this is quite unusual..."; }
 }
 else if(isset($_GET['userfeed'])) 
 {
@@ -915,16 +929,13 @@ else if(isset($_GET['do']))
 				$_SESSION['ssb-user'] = $user;
 				$_SESSION['ssb-pass'] = $pass;
 				$_SESSION['ssb-color'] = $color;
+				header("Location: index.php");
 			} else {
-				header("Location: index.php?notify=2");
+				echo "Wrong password!";
 			}
-			$name = isset($_POST['username']) ? $_POST['username'] : "Unnamed";
-			$_SESSION['ssb-user'] = $name;
 		} else {
-			header("Location: index.php?notify=1");
+			echo "User $username not found!";
 		}
-
-		header("Location: index.php");
 	}
 
 	if($do=="logout")
