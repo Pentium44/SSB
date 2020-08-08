@@ -51,13 +51,21 @@ html, body {
 	color: #323232;
 }
 
+.notifications {
+	background-color: #222222;
+	border-radius: 4px;
+	border: solid 1px #343434;
+	padding: 4px;
+}
+
 table { padding: 1px; }
 tr, td { padding: 2px; }
 
 textarea {
-	background-color: #232323;
+	background-color: #222222;
 	border-radius: 10px;
-    border: 1px solid transparent;
+	border: 1px solid #323232;
+	font-family: "Roboto Sans", Ubuntu, sans-serif;
 	outline: none;
 	resize: none;
 	color: #d7d7d7;
@@ -66,8 +74,8 @@ textarea {
 }
 
 input, button, select {
-	background-color: #343434;
-	border: solid 1px #171717;
+	background-color: #222222;
+	border: solid 1px #323232;
 	outline: none;
 	border-radius: 6px;
 	color: #d7d7d7;
@@ -75,8 +83,8 @@ input, button, select {
 }
 
 .button {
-        background-color: #343434;
-        border: solid 1px #171717;
+        background-color: #222222;
+        border: solid 1px #323232;
         outline: none;
 	font-size: 18px;
         border-radius: 6px;
@@ -89,6 +97,10 @@ input, button, select {
 .avatar {
 	border-radius: 50%;
 	background: 50% 50% no-repeat; /* 50% 50% centers image in div */
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: cover;
+	object-fit: cover;
 	width: 180px;
  	height: 180px;
 }
@@ -96,6 +108,10 @@ input, button, select {
 .avatar_small {
         border-radius: 50%;
         background: 50% 50% no-repeat; /* 50% 50% centers image in div */
+	background-position: center;
+        background-repeat: no-repeat;
+        background-size: cover;
+        object-fit: cover;
         width: 48px;
         height: 48px;
 }
@@ -103,6 +119,10 @@ input, button, select {
 .avatar_chat {
         border-radius: 50%;
         background: 50% 50% no-repeat; /* 50% 50% centers image in div */
+	background-position: center;
+        background-repeat: no-repeat;
+        background-size: cover;
+        object-fit: cover;
         width: 28px;
         height: 28px;
 }
@@ -116,20 +136,21 @@ input, button, select {
 	padding: 6px;
 	border-radius: 5px 11px 11px;
 	background-color: #2255ff;
+	border: solid 1px #1865ff;
 	color: #ffffff;
 	overflow-wrap: break-word;
-	max-width: 500px;
+	max-width: 520px;
 }
 
 #msgs { 
-	background: #333333;
+	background: #222222;
 	border-radius: 5px; 
-	border: solid 1px #131313;
+	border: solid 1px #323232;
 	padding: 6px;
-	height: 360px;
-	width: 600px;
+	height: 400px;
+	width: 578px;
 	margin: auto;
-	overflow-y: scroll;
+	overflow-y: hidden;
 }
 
 .replycontain {
@@ -144,21 +165,23 @@ input, button, select {
 }
 
 .attachment img {
-	max-width: 180px;
+	max-width: 580px;
+	max-height: 200px;
 }
 
 .post {
 	padding: 6px;
 	border-radius: 5px;
-	background-color: #373737;
+	border: solid 1px #424242;
+	background-color: #333333;
 	color: #ffffff;
 	font-size: 16px;
 }
 
 .reply {
-	background-color: #000000;
+	background-color: #222222;
 	border-radius: 4px 10px 10px;
-	border: solid 1px #171717;
+	border: solid 1px #323232;
 	padding: 6px;
 	color: #d7d7d7;
 }

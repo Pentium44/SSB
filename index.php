@@ -35,9 +35,7 @@ if(!file_exists(ssb_db/friends))
 	mkdir("ssb_db/friends", 0777);
 }
 
-if(isset($_SESSION['ssb-user'])) {
-	$username = $_SESSION['ssb-user'];
-}
+$username = $_SESSION['ssb-user'];
 
 $_SESSION['ssb-topic'] = $ssbtopic;
 
@@ -148,7 +146,7 @@ else if(isset($_GET['userfeed']))
 			if($userid == ${"friend" . $x}) {
 				echo "<table><tr><td>";
 				// Get user avatar if set
-				if(isset($user_avatar)) { echo "<img class='avatar' src='?do=avatarlocation&user=" . $userid . "' title='User Avatar'><br />"; }
+				if(isset($user_avatar)) { echo "<div class='avatar' style=\"background-image: url('index.php?do=avatarlocation&user=" . $userid . "');\" title='User Avatar'></div><br />"; }
 				// DONE
 				echo "</td><td>";
 				echo "<h3>User information</h3>";
@@ -164,7 +162,7 @@ else if(isset($_GET['userfeed']))
              	{
                    	echo "<table><tr><td>";
               		// Get user avatar if set
-            		if(isset($user_avatar)) { echo "<img class='avatar' src='?do=avatarlocation&user=" . $userid . "' title='User Avatar'><br />"; }
+            		if(isset($user_avatar)) { echo "<div class='avatar' style=\"background-image: url('index.php?do=avatarlocation&user=" . $userid . "');\" title='User Avatar'></div><br />"; }
              		// DONE
               		echo "</td><td>";
                      	echo "<h3>User information</h3>";
@@ -378,7 +376,7 @@ else if(isset($_GET['do']))
 				include "ssb_db/users/" . $username . ".php";
 				$post_file = "ssb_db/posts/post_" . $username . "_" . $date . ".php";
 				if(isset($user_avatar)) {
-					$post_string = "<?php\n\$postowner = \"" . $username . "\";\n\$postid=\"" . $date . "\";\n\$postcontent = \"<div class='post'><table><tr><td><img class='avatar_small' src='?do=avatarlocation&user=" . $username . "' title='User Avatar'></td><td><h3>" . $username . " <a href='?view=" . $date . "&user=" . $username . "'> <i class='fa fa-reply'></i></a> <span style='font-size: 8px; color: #888888;'>" . $titledate . "</span></h3><p>" . $body . "</p></td></tr></table></div>\";\n?>\n";
+					$post_string = "<?php\n\$postowner = \"" . $username . "\";\n\$postid=\"" . $date . "\";\n\$postcontent = \"<div class='post'><table><tr><td><div class='avatar_small' style=\\\"background-image: url('index.php?do=avatarlocation&user=" . $username . "');\\\" title='User Avatar'></div></td><td><h3>" . $username . " <a href='?view=" . $date . "&user=" . $username . "'> <i class='fa fa-reply'></i></a> <span style='font-size: 8px; color: #888888;'>" . $titledate . "</span></h3><p>" . $body . "</p></td></tr></table></div>\";\n?>\n";
 				} else {
 					$post_string = "<?php\n\$postowner = \"" . $username . "\";\n\$postid=\"" . $date . "\";\n\$postcontent = \"<div class='post'><h3>" . $username . " <a href='?view=" . $date . "&user=" . $username . "'> <i class='fa fa-reply'></i></a> <span style='font-size: 8px; color: #888888;'>" . $titledate . "</span></h3><p>" . $body . "</p></div>\";\n?>\n";
 				}
@@ -864,7 +862,7 @@ else if(isset($_GET['do']))
 			$handle = fopen($friendpend, "r");
 
 			echo "<h3>Friend requests</h3> <a class='button' href='?do=clrpending'>Clear history</a> <a class='button' href='?forms=friendreq'>Send friend request</a>";
-			echo "<div style='background:#545454;border: solid 1px #898989;'>";
+			echo "<div class='notifications'>";
 
 			if ($handle) {
     				while (($line = fgets($handle)) !== false) {
@@ -882,7 +880,7 @@ else if(isset($_GET['do']))
 			$handle = fopen($notifications, "r");
 
 			echo "<h3>Notifications</h3><a class='button' href='?do=clrnote'>Clear history</a>";
-			echo "<div style='background:#545454;border: solid 1px #898989;'>";
+			echo "<div class='notifications'>";
 
 			if ($handle) {
     				while (($line = fgets($handle)) !== false) {
@@ -973,17 +971,6 @@ else if(isset($_GET['do']))
 		}
 		header("Location: index.php");
 	}
-}
-else if(isset($_GET['notify'])) 
-{
-	$notify = $_GET['notify'];
-        if($notify=="1") { echo "Error: User not found"; }
-        else if($notify=="2") { echo "Error: Incorrect password provided"; }
-        else if($notify=="3") { echo "Error: Please fill out all the text boxes"; }
-      	else if($notify=="4") { echo "Error: The provided passwords did not match"; }
-   	else if($notify=="5") { echo "Error: Special characters cannot be used in your username"; }
-      	else if($notify=="6") { echo "Error: This username is already in use"; }
-	else { echo "Error: unknown error... this is quite unusual..."; }
 }
 else if (!isset($_SESSION['ssb-user']) || !isset($_SESSION['ssb-pass']))
 {
