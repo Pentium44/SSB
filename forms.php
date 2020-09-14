@@ -50,7 +50,10 @@ function uploadAvatarForm() {
         <div class="upload">
                 <form action="<?php echo $_SERVER['PHP_SELF']; ?>?do=avatarupload" method="post" enctype="multipart/form-data">
                         Choose profile avatar: <br />
-			<input type="file" name="file[]" id="file" multiple><br />
+			<label class="input-upload">
+			    <input type="file" name="file[]" id="file" multiple>
+			    <i class="fa fa-cloud-upload"></i> Upload image
+			</label>
                         <input class="text" type="submit" name="submit" value="Set">
                 </form>
         </div>
@@ -109,8 +112,11 @@ function postForm() {
                 <button onclick="javascript:wrapBBCode('b');">Bold</button>
                 <button onclick="javascript:wrapBBCode('url');">URL</button>
 		<form action="?do=post" method="post" enctype="multipart/form-data">
-                <input type="file" name="file[]" id="file" multiple><br />
-               	Body: <br /><textarea rows="5" cols="60" id="msg" name="body"></textarea><br />
+                <label class="input-upload">
+                   <input type="file" name="file[]" id="file" multiple>
+                   <i class="fa fa-cloud-upload"></i> Upload image
+                </label>
+               	<br /><textarea rows="5" cols="60" id="msg" name="body"></textarea><br />
                	<input type="submit" name="post" value="Post">
 		</form>
 EOD;
@@ -200,11 +206,11 @@ function acceptPublicFriendRequest($user, $friend) {
         // populate both users databases with each other.
         $friendcountFriend = file_get_contents("ssb_db/friends/" . $friend . ".count");
        	$friendcountFriend = $friendcountFriend + 1;
-       	echo $friendcountFriend;
+       	//echo $friendcountFriend;
       	file_put_contents("ssb_db/friends/" . $friend . ".php", $frienddb . "\n <?php \$friend" . $friendcountFriend ." = \"" . $user . "\";\n\$friend_chat_db" . $friendcountFriend . " = \"" . $user . $friend . "\";?>");
       	$friendcount = file_get_contents("ssb_db/friends/" . $user . ".count");
        	$friendcount = $friendcount + 1;
-       	echo $friendcount;
+       	//echo $friendcount;
        	file_put_contents("ssb_db/friends/" . $user . ".php", $friendlist . "\n <?php \$friend" . $friendcount . " = \"" . $friend . "\";\n\$friend_chat_db" . $friendcount . " = \"" . $user . $friend . "\";?>");
     	file_put_contents("ssb_db/friends/" . $user . ".count", $friendcount);
        	file_put_contents("ssb_db/friends/" . $friend . ".count", $friendcountFriend);
@@ -223,7 +229,7 @@ function acceptFriendRequest($user, $friend) {
         include "ssb_db/friends/" . $user . ".php";
         for($x = 1; $x <= $friendc; $x++)
         {
-             if(${"friend" . $x} == $friend) { echo "Already following!"; exit(1); } else { echo "<br />" . ${"friend" . $x} . "<br />" . $friend . "Different strings..."; }
+             if(${"friend" . $x} == $friend) { echo "Already following!"; exit(1); }
         }
 
 	$handle = fopen($friendpending, "r");
@@ -234,18 +240,18 @@ function acceptFriendRequest($user, $friend) {
 				$line = str_replace("\n","",$line);
 			}
 			$xx++;
-			echo $line . "<br />";
-			echo $friend . "<br />";
+			//echo $line . "<br />";
+			//echo $friend . "<br />";
 			if($friend == $line)
 			{
 				// populate both users databases with each other.
 				$friendcountFriend = file_get_contents("ssb_db/friends/" . $friend . ".count");
 				$friendcountFriend = $friendcountFriend + 1;
-				echo $friendcountFriend;
+				//echo $friendcountFriend;
 				file_put_contents("ssb_db/friends/" . $friend . ".php", $frienddb . "\n <?php \$friend" . $friendcountFriend ." = \"" . $user . "\";\n\$friend_chat_db" . $friendcountFriend . " = \"" . $user . $friend . "\";?>");
 				$friendcount = file_get_contents("ssb_db/friends/" . $user . ".count");
 				$friendcount = $friendcount + 1;
-				echo $friendcount;
+				//echo $friendcount;
 				file_put_contents("ssb_db/friends/" . $user . ".php", $friendlist . "\n <?php \$friend" . $friendcount . " = \"" . $friend . "\";\n\$friend_chat_db" . $friendcount . " = \"" . $user . $friend . "\";?>");
 				file_put_contents("ssb_db/friends/" . $user . ".count", $friendcount);
 				file_put_contents("ssb_db/friends/" . $friend . ".count", $friendcountFriend);

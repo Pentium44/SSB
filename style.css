@@ -52,9 +52,9 @@ html, body {
 }
 
 .notifications {
-	background-color: #222222;
+	background-color: #171717;
 	border-radius: 4px;
-	border: solid 1px #343434;
+	border: solid 1px #222222;
 	padding: 4px;
 }
 
@@ -73,13 +73,24 @@ textarea {
 	padding: 4px;
 }
 
-input, button, select {
+input[type="file"] {
+	display: none;
+}
+
+input, button, select, label {
 	background-color: #222222;
 	border: solid 1px #323232;
 	outline: none;
 	border-radius: 6px;
 	color: #d7d7d7;
 	padding: 4px; 
+	font-size: 18px;
+}
+
+.input-upload {
+	display: inline-block;
+	cursor: pointer;
+	padding: 4px;
 }
 
 .button {
@@ -162,6 +173,10 @@ input, button, select {
 	/*max-height: 250px;*/
 	display: block;
 	margin: 0 auto;
+	padding: 6px;
+        border-radius: 5px;
+        border: solid 1px #424242;
+        background-color: #333333;
 }
 
 .attachment img {
@@ -202,6 +217,16 @@ a:hover {
 	min-width: 690px;
 	margin: 0 auto;
 	padding: 5px;
+}
+
+.friendslist {
+	padding: 4px;
+	width: 100%;
+	text-align: center;
+}
+
+.friendslist tr,td {
+	padding: 2px;
 }
 
 .maincontain {

@@ -78,14 +78,32 @@ $_SESSION['ssb-topic'] = $ssbtopic;
         --><a href="?forms=login">Login</a><!--
         --><a href="?do=about">About</a><!--
         <?php } ?>
-  
         --></div>
 </div>
 <div class='contain'>
 <div class='title'><?php echo $ssbtitle; ?></div>
-<br>
 
 <?php
+
+if(isset($username) && isset($_SESSION['ssb-pass'])) {
+	// PM notifications
+	$notifications = "ssb_db/friends/" . $username . ".notifications";
+	$handle = fopen($notifications, "r");
+
+	echo "<div class='notifications'>";
+	echo "<table><tr><td><a class='button' href='?do=clrnote'>Clear notifications</a></td></tr>";
+
+	if ($handle) {
+		while (($line = fgets($handle)) !== false) {
+		 	echo "<tr><td><i class='fa fa-exclamation' aria-hidden='true'></i> " . $line . "</td></tr>";
+		}
+	   	fclose($handle);
+	} else {
+   		echo "<tr><td>No notifications</td></tr>";
+	}
+
+	echo "</table></div><br />";
+}
 
 if(isset($_GET['forms']))
 {
@@ -145,8 +163,7 @@ else if(isset($_GET['userfeed']))
 			// If private, and user is following. Allow
 			if($userid == ${"friend" . $x}) {
 				echo "<table><tr><td>";
-				// Get user avatar if set
-				if(isset($user_avatar)) { echo "<div class='avatar' style=\"background-image: url('index.php?do=avatarlocation&user=" . $userid . "');\" title='User Avatar'></div><br />"; }
+				echo "<div class='avatar' style=\"background-image: url('index.php?do=avatarlocation&user=" . $userid . "');\" title='User Avatar'></div><br />";
 				// DONE
 				echo "</td><td>";
 				echo "<h3>User information</h3>";
@@ -162,7 +179,7 @@ else if(isset($_GET['userfeed']))
              	{
                    	echo "<table><tr><td>";
               		// Get user avatar if set
-            		if(isset($user_avatar)) { echo "<div class='avatar' style=\"background-image: url('index.php?do=avatarlocation&user=" . $userid . "');\" title='User Avatar'></div><br />"; }
+            		echo "<div class='avatar' style=\"background-image: url('index.php?do=avatarlocation&user=" . $userid . "');\" title='User Avatar'></div><br />";
              		// DONE
               		echo "</td><td>";
                      	echo "<h3>User information</h3>";
@@ -313,6 +330,8 @@ else if(isset($_GET['do']))
 			$date = date("YmdHis"); // timestamp in year, month, date, hour, minute, and second.
   			$titledate = date("m-d-Y h:i:sa"); // time stamp for people to read xD
 
+			echo "Uploading media...<br />";
+
 			if(isset($_FILES["file"]["name"]) && isset($username)) {
 				for($i=0; $i<count($_FILES["file"]["name"]); $i++)
 				{
@@ -342,19 +361,19 @@ else if(isset($_GET['do']))
 					{
 						if ($_FILES["file"]["error"][$i] > 0)
 						{
-							echo $_FILES["file"]["name"][$i] . " - Return Code: " . $_FILES["file"]["error"][$i] . "<br>";
+							echo $_FILES["file"]["name"][$i] . " - Return Code: " . $_FILES["file"]["error"][$i] . "<br />";
 						}
 						else
 						{
 							if(file_exists("ssb_db/uploads/" . $_FILES["file"]["name"][$i]))
 							{
-								echo "Error: " . $_FILES["file"]["name"][$i] . " exists.<br>";
+								echo "Error: " . $_FILES["file"]["name"][$i] . " exists.<br />";
 							}
 							else
 							{
 								move_uploaded_file($_FILES["file"]["tmp_name"][$i],
 								"ssb_db/uploads/" . $username . "_" . $date . "." . $extension);
-								//echo "Success: " . $_FILES["file"]["name"][$i] . " Uploaded! Size: " . tomb($_FILES["file"]["size"][$i]) . "<br>";
+								echo "Success: " . $_FILES["file"]["name"][$i] . " Uploaded!<br /> Size: " . tomb($_FILES["file"]["size"][$i]) . "<br />";
 								//rename("ssb_db/uploads/" . $FILES["file"]["name"][$i], "ssb_db/uploads/" . $username . "_" . $date . $extension);
 							}
 						}
@@ -369,26 +388,34 @@ else if(isset($_GET['do']))
 				}
 			}
 
-			if(isset($username) && $_POST['body']!="")
+			if(isset($username) && stripslashes($_POST['body'])!="")
 			{
 				$body = nl2br(htmlentities(stripcslashes($_POST['body'])));
 				//$username = stripcslashes(htmlentities($username));
 				include "ssb_db/users/" . $username . ".php";
 				$post_file = "ssb_db/posts/post_" . $username . "_" . $date . ".php";
-				if(isset($user_avatar)) {
-					$post_string = "<?php\n\$postowner = \"" . $username . "\";\n\$postid=\"" . $date . "\";\n\$postcontent = \"<div class='post'><table><tr><td><div class='avatar_small' style=\\\"background-image: url('index.php?do=avatarlocation&user=" . $username . "');\\\" title='User Avatar'></div></td><td><h3>" . $username . " <a href='?view=" . $date . "&user=" . $username . "'> <i class='fa fa-reply'></i></a> <span style='font-size: 8px; color: #888888;'>" . $titledate . "</span></h3><p>" . $body . "</p></td></tr></table></div>\";\n?>\n";
-				} else {
-					$post_string = "<?php\n\$postowner = \"" . $username . "\";\n\$postid=\"" . $date . "\";\n\$postcontent = \"<div class='post'><h3>" . $username . " <a href='?view=" . $date . "&user=" . $username . "'> <i class='fa fa-reply'></i></a> <span style='font-size: 8px; color: #888888;'>" . $titledate . "</span></h3><p>" . $body . "</p></div>\";\n?>\n";
-				}
+				$post_string = "<?php\n\$postowner = \"" . $username . "\";\n\$postid=\"" . $date . "\";\n\$postcontent = \"<div class='post'><table><tr><td><div class='avatar_small' style=\\\"background-image: url('index.php?do=avatarlocation&user=" . $username . "');\\\" title='User Avatar'></div></td><td><h3>" . $username . " <a href='?view=" . $date . "&user=" . $username . "'> <i class='fa fa-reply'></i></a> <span style='font-size: 10px; color: #888888;'>" . $titledate . "</span></h3><p>" . $body . "</p></td></tr></table></div>\";\n?>\n";
 				file_put_contents($post_file, $post_string);
 				file_put_contents("ssb_db/posts/" . $date . ".post", "post_" . $username . "_" . $date . ".php");
 				file_put_contents("ssb_db/posts/reply_" . $username . "_" . $date . ".count", "0");
-				echo "Post processed... Redirecting in 3 seconds, if redirection fails, <a href=\"?view=$date&user=$username\">Click Here</a><br>";
+				echo "Post processed... Redirecting in 3 seconds, if redirection fails, <a href=\"?view=$date&user=$username\">Click Here</a><br />";
 				header( "refresh: 3; url=?view=$date&user=$username" );
+			}
+			else if (isset($username) && stripslashes($_POST['body'])=="")
+			{
+                                //$username = stripcslashes(htmlentities($username));
+                                include "ssb_db/users/" . $username . ".php";
+                                $post_file = "ssb_db/posts/post_" . $username . "_" . $date . ".php";
+                                $post_string = "<?php\n\$postowner = \"" . $username . "\";\n\$postid=\"" . $date . "\";\n\$postcontent = \"<div class='post'><table><tr><td><div class='avatar_small' style=\\\"background-image: url('index.php?do=avatarlocation&user=" . $username . "');\\\" title='User Avatar'></div></td><td><h3>" . $username . " <a href='?view=" . $date . "&user=" . $username . "'> <i class='fa fa-reply'></i></a> <span style='font-size: 10px; color: #888888;'>" . $titledate . "</span></h3></td></tr></table></div>\";\n?>\n";
+                                file_put_contents($post_file, $post_string);
+                                file_put_contents("ssb_db/posts/" . $date . ".post", "post_" . $username . "_" . $date . ".php");
+                                file_put_contents("ssb_db/posts/reply_" . $username . "_" . $date . ".count", "0");
+                                echo "Post processed... Redirecting in 3 seconds, if redirection fails, <a href=\"?view=$date&user=$username\">Click Here</a><br />";
+                                header( "refresh: 3; url=?view=$date&user=$username" );
 			}
 			else
 			{
-				echo "ERROR: Missing form data<br>";
+				echo "ERROR: Missing post data! Select an image to upload or let us know whats up!<br />";
 			}
 		}
 	}
@@ -465,6 +492,12 @@ else if(isset($_GET['do']))
 					$post_string = "<?php \n\$reply" . $reply_count . " = \"<div class='reply'><b>" . $username . "</b>&nbsp;<span style='font-size: 8px; color: #888888;'>" . $replydate . "</span><br />" . $body . "</div>\";\n?>\n";
 					file_put_contents("ssb_db/posts/" . $post_file_name, $old_content . $post_string);
 					file_put_contents("ssb_db/posts/reply_" . $postowner . "_" . $pid . ".count", $reply_count);
+
+					if($username!=$postowner) {
+						$owner_notifications = file_get_contents("ssb_db/friends/" . $postowner . ".notifications");
+						file_put_contents("ssb_db/friends/" . $postowner . ".notifications", "<b>$username</b> <a href='index.php?view=$pid&user=$postowner'>replied to your post</a>");
+					}
+
 					echo "If you're seeing this; redirection failed: <a href=\"?view=$pid&user=$postowner\">Click Here</a><br>";
 					header( "Location: index.php?view=$pid&user=$postowner" );
 				}
@@ -482,7 +515,7 @@ else if(isset($_GET['do']))
 			include "ssb_db/users/" . $username . ".php";
 			if($user_password === $_SESSION['ssb-pass']) {
 				unlink("ssb_db/friends/" . $username . ".notifications");
-				header("Location: index.php?do=friends");
+				header("Location: index.php");
 			}
 		}
 	}
@@ -866,29 +899,11 @@ else if(isset($_GET['do']))
 
 			if ($handle) {
     				while (($line = fgets($handle)) !== false) {
-        				echo "Pending friend request from " . $line . "! <a href='?do=accfr&friend=" . $line . "&user=" . $username . "'>Accept</a><br />";
+        				echo "Pending friend request from " . $line . "! <a class='button' href='?do=accfr&friend=" . $line . "&user=" . $username . "'>Accept</a><br />";
     				}
 				fclose($handle);
 			} else {
 			    echo "No pending friend requests<br />";
-			} 
-
-			echo "</div>";
-
-			// PM notifications
-			$notifications = "ssb_db/friends/" . $username . ".notifications";
-			$handle = fopen($notifications, "r");
-
-			echo "<h3>Notifications</h3><a class='button' href='?do=clrnote'>Clear history</a>";
-			echo "<div class='notifications'>";
-
-			if ($handle) {
-    				while (($line = fgets($handle)) !== false) {
-        				echo $line;
-    				}
-				fclose($handle);
-			} else {
-			    echo "No messages<br />";
 			} 
 
 			echo "</div>";
@@ -905,12 +920,14 @@ else if(isset($_GET['do']))
 			{
 				$friendcount = file_get_contents("ssb_db/friends/" . $username . ".count");
 				include "ssb_db/friends/" . $username . ".php";
+				echo "<table class='friendslist'>";
 				for($x = 1; $x <= $friendcount; $x++)
 				{
 					if(isset(${"friend" . $x})) {
-						echo ${"friend" . $x} . " &bull; <a href='?userfeed=" . ${"friend" . $x} . "'>View user profile</a> &bull; <a href='?do=privmsg&friend=" . ${"friend" . $x} . "'>Private message</a><br />";
+						echo "<tr><td>" . ${"friend" . $x} . "</td><td><a class='button' href='?userfeed=" . ${"friend" . $x} . "'>View user profile</a></td><td><a class='button' href='?do=privmsg&friend=" . ${"friend" . $x} . "'>Private message</a></td></tr>";
 					}
 				}
+				echo "</table>";
 			}
 		}
         }

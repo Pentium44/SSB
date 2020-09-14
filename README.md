@@ -9,6 +9,11 @@ SSB was written by Chris Dorman, 2012-2020 <https://cddo.cf>
 
 ChangeLog
 ----
+9/13/2020 - v1.3.0 - feature update
+* Modified notification system for more board based features (Post reply notifications, message notifications)
+* CSS modifications, revamped friends list page
+* Little cleanup of unneeded code.
+
 8/3/2020 - v1.2.2 - hotfix
 * Private and public chat CSS updates
 * Bugfix for user profile avatars not loading on pages when not logged in

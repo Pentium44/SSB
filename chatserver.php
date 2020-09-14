@@ -10,8 +10,8 @@ if (!isset($_SESSION['ssb-user']) && !isset($_SESSION['ssb-pass'])) { echo "ERRO
 if (isset($_GET['msg']) && $_GET['msg']!="" && isset($_GET['nick']) && !isset($_GET['friend'])){
 
 	$nick = $_GET['nick'];
-	$msg  = bbcode_format(htmlentities(stripcslashes($_GET['msg'])));
-	$line = "<table><tr><td><img class='avatar_chat' src='?do=avatarlocation&user=" . $nick . "' title='User Avatar'></td><td class='message'><b>$nick</b>: $msg</td></tr></table>\n";
+	$msg  = bbcode_format(nl2br(htmlentities(stripcslashes($_GET['msg']))));
+	$line = "<table><tr><td style='vertical-align: top;'><img class='avatar_chat' src='?do=avatarlocation&user=" . $nick . "' title='User Avatar'></td><td class='message'><b>$nick</b>: $msg</td></tr></table>\n";
 	$old_content = file_get_contents($chat_db);
 
 	$lines = count(file($chat_db));
@@ -36,8 +36,8 @@ if (isset($_GET['msg']) && $_GET['msg']!="" && isset($_GET['nick']) && !isset($_
 		if($friendNick == ${"friend" . $x}) {
 			$msgCount = file_get_contents("ssb_db/friends/" . ${"friend_chat_db" . $x} . ".count");
 			$msgCount = $msgCount + 1;
-			$msg  = bbcode_format(htmlentities(stripcslashes($_GET['msg'])));
-			$line = "<?php \$msg" . $msgCount . " = \"<table><tr><td><img class='avatar_chat' src='?do=avatarlocation&user=" . $nick . "' title='User Avatar'></td><td class='message'><b>$nick</b>: $msg</td></tr></table>\"; ?>\n";
+			$msg  = bbcode_format(nl2br(htmlentities(stripcslashes($_GET['msg']))));
+			$line = "<?php \$msg" . $msgCount . " = \"<table><tr><td style='vertical-align: top;'><img class='avatar_chat' src='?do=avatarlocation&user=" . $nick . "' title='User Avatar'></td><td class='message'><b>$nick</b>: $msg</td></tr></table>\"; ?>\n";
 			$old_content = file_get_contents("ssb_db/friends/" . ${"friend_chat_db" . $x} . ".php");
 			$notifications = file_get_contents("ssb_db/friends/" . ${"friend" . $x} . ".notifications");
 			// update conversation message count
