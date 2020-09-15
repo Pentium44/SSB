@@ -9,6 +9,9 @@ SSB was written by Chris Dorman, 2012-2020 <https://cddo.cf>
 
 ChangeLog
 ----
+9/13/2020 -v1.3.1 - hotfix
+* BBCode bug in database, modified and fixed!
+
 9/13/2020 - v1.3.0 - feature update
 * Modified notification system for more board based features (Post reply notifications, message notifications)
 * CSS modifications, revamped friends list page

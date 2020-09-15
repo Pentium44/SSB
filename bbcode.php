@@ -21,13 +21,13 @@ function bbcode_format($str) {
                 );  
   
     $simple_replace = array(  
-                '<strong>$1</strong>',  
-                '<em>$1</em>',  
-                '<u>$1</u>',  
-                '<a onclick="doLogout();" href="$1" rel="nofollow" title="$2 - $1">$2</a>',  
-                '<a onclick="doLogout();" href="$1" rel="nofollow" title="$1">$1</a>',  
-                '<span style="font-family: $1;">$2</span>',    
-                '<span style="color: $1;">$2</span>', 
+                "<strong>$1</strong>",  
+                "<em>$1</em>",  
+                "<u>$1</u>",  
+                "<a onclick='doLogout();' href='$1' title='$2 - $1'>$2</a>",  
+                "<a onclick='doLogout();' href='$1' title='$1'>$1</a>",  
+                "<span style='font-family: $1;'>$2</span>", 
+                "<span style='color: $1;'>$2</span>", 
                 );  
   
     // Do simple BBCode's  
