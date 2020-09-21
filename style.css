@@ -36,13 +36,13 @@ html, body {
 #navbar a {
 	text-decoration: none;
 	font-family: "Ubuntu", "Roboto", sans-serif;
-	font-size: 34px;
+	font-size: 28px;
 	text-align: center;
 	padding-top: 4px;
 	padding-bottom: 5px;
 	background-color: #ffffff;
 	color: #5577ff;
-	width: 145px;
+	width: 125px;
 	display: inline-block;
 }
 
@@ -174,13 +174,22 @@ input, button, select, label {
 	display: block;
 	margin: 0 auto;
 	padding: 6px;
-        border-radius: 5px;
-        border: solid 1px #424242;
-        background-color: #333333;
+	border-radius: 5px;
+	border: solid 1px #424242;
+	background-color: #333333;
 }
 
 .attachment img {
 	max-width: 580px;
+	margin: 0 auto;
+	display: block;
+	max-height: 600px;
+}
+
+.attachment_chat {
+	max-width: 280px;
+	margin: 0 auto;
+	display: block;
 	max-height: 200px;
 }
 

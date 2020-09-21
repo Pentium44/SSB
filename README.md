@@ -9,6 +9,19 @@ SSB was written by Chris Dorman, 2012-2020 <https://cddo.cf>
 
 ChangeLog
 ----
+9/20/2020 -v2.0.0 - major version bump - release
+* BBCode IMG addition for chat
+* Multi image uploads added
+* Reworked post attachment system
+* Added "send friend request" on public profiles
+* Added public user list (community tab)
+* Attachment CSS updates
+* Bugfixes in multiple redirects
+* Buffixes in image uploads when on slow connections
+* Added user to user tagging within posts & replies (use @<username>)
+* Notification box rework, now available among all pages when logged in.
+* Post reply notifications, tag notifications, and message notifications working properly
+
 9/13/2020 -v1.3.1 - hotfix
 * BBCode bug in database, modified and fixed!
 

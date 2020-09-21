@@ -6,7 +6,7 @@
 
 session_start();
 include "config.php";
-include "forms.php";
+include "functions.php";
 include "bbcode.php";
 
 // check if flatfile database location is populated
@@ -17,7 +17,7 @@ if(!file_exists(ssb_db))
 
 if(!file_exists(ssb_db/users))
 {
-        mkdir("ssb_db/users", 0777);
+	mkdir("ssb_db/users", 0777);
 }
 
 if(!file_exists(ssb_db/posts))
@@ -53,14 +53,14 @@ $_SESSION['ssb-topic'] = $ssbtopic;
 
 <script type="text/javascript">
 
-                function wrapBBCode(tag) {
-                        var msgInput = document.getElementById('msg');
-                        var content = msgInput.value;
-                        var selectedContent = content.substring(msgInput.selectionStart, msgInput.selectionEnd);
-                        var beforeContent = content.substring(0, msgInput.selectionStart);
-                        var afterContent = content.substring(msgInput.selectionEnd, content.length);
-                        msgInput.value = beforeContent + '[' + tag + ']' + selectedContent + '[/' + tag + ']' + afterContent;
-                }
+	function wrapBBCode(tag) {
+		var msgInput = document.getElementById('msg');
+		var content = msgInput.value;
+		var selectedContent = content.substring(msgInput.selectionStart, msgInput.selectionEnd);
+		var beforeContent = content.substring(0, msgInput.selectionStart);
+		var afterContent = content.substring(msgInput.selectionEnd, content.length);
+		msgInput.value = beforeContent + '[' + tag + ']' + selectedContent + '[/' + tag + ']' + afterContent;
+	}
 </script>
 <div class="maincontain">
 <div id="navcontainer">
@@ -72,6 +72,7 @@ $_SESSION['ssb-topic'] = $ssbtopic;
         --><a href="index.php">Feed</a><!--
         --><a href="?do=friends">Friends</a><!--
         --><a href="?do=about">About</a><!--
+	--><a style="width:50px;" href="?do=users" title="Public users!"><i style="padding:2px 2px 2px 2px;" class="fa fa-users"></i></a><!--
         --><a style="width:50px;" href="?do=userctrl"><i style="padding:2px 2px 2px 2px;" class="fa fa-cog"></i></a><!--
         --><a style="width:50px;" href="?do=logout"><i style="padding:2px 2px 2px 2px;" class="fa fa-sign-out"></i></a><!--
         <?php } else {?>
@@ -95,9 +96,9 @@ if(isset($username) && isset($_SESSION['ssb-pass'])) {
 
 	if ($handle) {
 		while (($line = fgets($handle)) !== false) {
-		 	echo "<tr><td><i class='fa fa-exclamation' aria-hidden='true'></i> " . $line . "</td></tr>";
+			echo "<tr><td><i class='fa fa-exclamation' aria-hidden='true'></i> " . $line . "</td></tr>";
 		}
-	   	fclose($handle);
+		fclose($handle);
 	} else {
    		echo "<tr><td>No notifications</td></tr>";
 	}
@@ -107,23 +108,23 @@ if(isset($username) && isset($_SESSION['ssb-pass'])) {
 
 if(isset($_GET['forms']))
 {
-        $forms = $_GET['forms'];
-        $id = $_GET['pid'];
-        if($forms=="register") {
-                registerForm();
-        }
-        else if($forms=="login") {
-                loginForm();
-        }
+	$forms = $_GET['forms'];
+	$id = $_GET['pid'];
+	if($forms=="register") {
+		registerForm();
+	}
+	else if($forms=="login") {
+		loginForm();
+	}
 	else if($forms=="friendreq") {
 		friendReqForm();
 	}
 	else if($forms=="changepass") {
-                changePassForm();
-        }
-        else if($forms=="deleteacct") {
-                deleteAcctForm();
-        }
+		changePassForm();
+	}
+	else if($forms=="deleteacct") {
+		deleteAcctForm();
+	}
 	else if($forms=="avatarupload") {
                 uploadAvatarForm();
         }
@@ -154,83 +155,84 @@ else if(isset($_GET['userfeed']))
 	// Make sure we're friends or is my account.
 	include "ssb_db/users/" . $userid . ".php";
 	if ($accttype == "private") {
-	if (isset($_SESSION['ssb-user']) || isset($_SESSION['ssb-pass'])) {
-		$friendcount = file_get_contents("ssb_db/friends/" . $username . ".count");
-                include "ssb_db/friends/" . $username . ".php";
-                for($x = 1; $x <= $friendcount; $x++)
-                {
+		if (isset($_SESSION['ssb-user']) || isset($_SESSION['ssb-pass'])) {
+			$friendcount = file_get_contents("ssb_db/friends/" . $username . ".count");
+			include "ssb_db/friends/" . $username . ".php";
+			for($x = 1; $x <= $friendcount; $x++)
+			{
 
-			// If private, and user is following. Allow
-			if($userid == ${"friend" . $x}) {
+				// If private, and user is following. Allow
+				if($userid == ${"friend" . $x}) {
+					echo "<table><tr><td>";
+					echo "<div class='avatar' style=\"background-image: url('index.php?do=avatarlocation&user=" . $userid . "');\" title='User Avatar'></div><br />";
+					// DONE
+					echo "</td><td>";
+					echo "<h3>User information</h3>";
+					echo "Username: " . $userid . "@" . $domain . "<br />";
+					echo "Full name: " . $user_fullname . "<br />";
+					echo "<h3>User posts</h3>";
+					echo "</td></tr></table>";
+				}
+			}
+
+			// Check if viewing your own profile
+			if($userid == $username)
+			{
 				echo "<table><tr><td>";
-				echo "<div class='avatar' style=\"background-image: url('index.php?do=avatarlocation&user=" . $userid . "');\" title='User Avatar'></div><br />";
-				// DONE
-				echo "</td><td>";
+				// Get user avatar if set
+            	echo "<div class='avatar' style=\"background-image: url('index.php?do=avatarlocation&user=" . $userid . "');\" title='User Avatar'></div><br />";
+             	// DONE
+              	echo "</td><td>";
 				echo "<h3>User information</h3>";
 				echo "Username: " . $userid . "@" . $domain . "<br />";
-                                echo "Full name: " . $user_fullname . "<br />";
+				echo "Full name: " . $user_fullname . "<br />";
 				echo "<h3>User posts</h3>";
 				echo "</td></tr></table>";
+
 			}
-		}
 
-		// Check if viewing your own profile
-           	if($userid == $username)
-             	{
-                   	echo "<table><tr><td>";
-              		// Get user avatar if set
-            		echo "<div class='avatar' style=\"background-image: url('index.php?do=avatarlocation&user=" . $userid . "');\" title='User Avatar'></div><br />";
-             		// DONE
-              		echo "</td><td>";
-                     	echo "<h3>User information</h3>";
-                     	echo "Username: " . $userid . "@" . $domain . "<br />";
-                      	echo "Full name: " . $user_fullname . "<br />";
-                      	echo "<h3>User posts</h3>";
-                      	echo "</td></tr></table>";
-
-               	}
-
-		// Lets generate the users feed now.
-   		foreach(array_reverse(glob("ssb_db/posts/post_" . $userid . "_" . "*.php")) as $postfile) {
+			// Lets generate the users feed now.
+			foreach(array_reverse(glob("ssb_db/posts/post_" . $userid . "_" . "*.php")) as $postfile) {
 			//echo $postfile;
                		include $postfile;
                 	for($x = 1; $x <= $friendcount; $x++)
                 	{
-                        	if($postowner == ${"friend" . $x}) {
-                                	echo bbcode_format($postcontent);
-					$imgExts = array("gif", "jpeg", "jpg", "png", "bmp", "ico", "png");
-                                	foreach(array_reverse(glob("ssb_db/uploads/" . $postowner . "_" . $postid . ".*")) as $postfile)
-                                	{
-                                	        if(in_array(end(explode(".", $postfile)), $imgExts))
-                                	        {
-                                	                echo "<div class='attachment'>";
-                                	                echo "<a href='ssb_db/uploads/" . $postowner . "_" . $postid . "." . end(explode(".", $postfile)) . "' title='Attachment: left click to enlarge, right click to download...'>";
-                                	                echo "<img src='ssb_db/uploads/" . $postowner . "_" . $postid . "." . end(explode(".", $postfile)) . "'>";
-                                	                echo "</a></div>";
-                               	        	}
+                        if($postowner == ${"friend" . $x}) {
+							echo bbcode_format($postcontent);
+							$imgExts = array("gif", "jpeg", "jpg", "png", "bmp", "ico", "png");
+							foreach(array_reverse(glob("ssb_db/uploads/" . $postowner . "_" . $postid . ".*")) as $postfile)
+							{
+								if(in_array(end(explode(".", $postfile)), $imgExts))
+								{
+									echo "<div class='attachment'>";
+									echo "<a href='ssb_db/uploads/" . $postowner . "_" . $postid . "." . end(explode(".", $postfile)) . "' title='Attachment: left click to enlarge, right click to download...'>";
+									echo "<img src='ssb_db/uploads/" . $postowner . "_" . $postid . "." . end(explode(".", $postfile)) . "'>";
+									echo "</a></div>";
+								}
+							}
+						
+							echo "<br />";
+						}
 					}
-					echo "<br />";
-				}
-			}
 
-			if($postowner == $username) {
-                   		echo bbcode_format($postcontent);
-                  		$imgExts = array("gif", "jpeg", "jpg", "png", "bmp", "ico", "png");
-                   		foreach(array_reverse(glob("ssb_db/uploads/" . $postowner . "_" . $postid . ".*")) as $postfile)
-                       		{
-                             		if(in_array(end(explode(".", $postfile)), $imgExts))
-                       			{
-                                 		echo "<div class='attachment'>";
-                              			echo "<a href='ssb_db/uploads/" . $postowner . "_" . $postid . "." . end(explode(".", $postfile)) . "' title='Attachment: left click to enlarge, right click to download...'>";
-                        			echo "<img src='ssb_db/uploads/" . $postowner . "_" . $postid . "." . end(explode(".", $postfile)) . "'>";
-                        			echo "</a></div>";
-                                	}
-                 		}
-                             	echo "<br />";
-              		}
+				if($postowner == $username) {
+					echo bbcode_format($postcontent);
+					$imgExts = array("gif", "jpeg", "jpg", "png", "bmp", "ico", "png");
+					foreach(array_reverse(glob("ssb_db/uploads/" . $postowner . "_" . $postid . ".*")) as $postfile)
+					{
+						if(in_array(end(explode(".", $postfile)), $imgExts))
+						{
+							echo "<div class='attachment'>";
+							echo "<a href='ssb_db/uploads/" . $postowner . "_" . $postid . "." . end(explode(".", $postfile)) . "' title='Attachment: left click to enlarge, right click to download...'>";
+							echo "<img src='ssb_db/uploads/" . $postowner . "_" . $postid . "." . end(explode(".", $postfile)) . "'>";
+							echo "</a></div>";
+						}
+                 	}
+					echo "<br />";
+              	}
+			}
+			echo "<!-- Gen done...-->";
 		}
-		echo "<!-- Gen done...-->";
-	}
 	}
 	else
 	{
@@ -240,6 +242,22 @@ else if(isset($_GET['userfeed']))
           	if(isset($user_avatar)) { echo "<img class='avatar' src='ssb_db/uploads/" . $user_avatar . "' title='User Avatar'><br />"; }
                	// DONE
              	echo "</td><td>";
+             	// If not friend, allow to send friend request from right here!
+             	$friend = 0;
+             	$friendcount = file_get_contents("ssb_db/friends/" . $username . ".count");
+				include "ssb_db/friends/" . $username . ".php";
+				for($x = 1; $x <= $friendcount; $x++)
+				{
+					// If private, and user is following. Allow
+					if($userid == ${"friend" . $x}) {
+						$friend = 1;
+					}
+				}	
+				
+				if($friend!=1) {
+					echo "<a class='button' href='index.php?do=sendfr&user=$userid'>Send friend request</a><br /><br />";
+				}
+             	
               	echo "Username: " . $userid . "@" . $domain . "<br />";
              	echo "Full name: " . $user_fullname;
               	echo "</td></tr></table>";
@@ -330,12 +348,13 @@ else if(isset($_GET['do']))
 			$date = date("YmdHis"); // timestamp in year, month, date, hour, minute, and second.
   			$titledate = date("m-d-Y h:i:sa"); // time stamp for people to read xD
 
-			echo "Uploading media...<br />";
-
 			if(isset($_FILES["file"]["name"]) && isset($username)) {
+				
+				$uploaded = array(); // empty array for upload names
+				// File selected, upload!
 				for($i=0; $i<count($_FILES["file"]["name"]); $i++)
 				{
-					$allowedExts = array("gif", "jpeg", "jpg", "png", "bmp", "ico", "png");
+					$allowedExts = array("gif", "jpeg", "jpg", "png", "bmp", "ico", "GIF", "JPEG", "JPG", "PNG", "BMP", "ICO");
 					$temp = explode(".", $_FILES["file"]["name"][$i]);
 					$extension = end($temp);
 					if ((($_FILES["file"]["type"][$i] == "image/gif")
@@ -359,6 +378,7 @@ else if(isset($_GET['do']))
 					&& ($_FILES["file"]["size"][$i] < $user_max_upload)
 					&& in_array($extension, $allowedExts))
 					{
+						
 						if ($_FILES["file"]["error"][$i] > 0)
 						{
 							echo $_FILES["file"]["name"][$i] . " - Return Code: " . $_FILES["file"]["error"][$i] . "<br />";
@@ -371,9 +391,11 @@ else if(isset($_GET['do']))
 							}
 							else
 							{
+								$randstring = getRandString("12");
 								move_uploaded_file($_FILES["file"]["tmp_name"][$i],
-								"ssb_db/uploads/" . $username . "_" . $date . "." . $extension);
-								echo "Success: " . $_FILES["file"]["name"][$i] . " Uploaded!<br /> Size: " . tomb($_FILES["file"]["size"][$i]) . "<br />";
+								"ssb_db/uploads/" . $randstring . "." . $extension);
+								array_push($uploaded, $randstring . "." . $extension);
+								echo "Success: " . $_FILES["file"]["name"][$i] . " (" . tomb($_FILES["file"]["size"][$i]) . ") uploaded...<br />";
 								//rename("ssb_db/uploads/" . $FILES["file"]["name"][$i], "ssb_db/uploads/" . $username . "_" . $date . $extension);
 							}
 						}
@@ -385,80 +407,91 @@ else if(isset($_GET['do']))
 							echo "Error: " . $_FILES["file"]["name"][$i] . " is too large, or is a invalid filetype";
 						}
 					}
+				} // end of for loop
+		
+				$checkForUserTag = searchForUserTag($_POST['body']);
+				$taggedUser = substr($checkForUserTag, 1, -1);
+				if(file_exists("ssb_db/users/" . $taggedUser . ".name")) {
+					if($taggedUser!=$username) {
+						$tagged_notification = file_get_contents("ssb_db/friends/" . $taggedUser . ".notifications");
+						file_put_contents("ssb_db/friends/" . $taggedUser . ".notifications", "<b>$username</b> <a href='index.php?view=$date&user=$username'>tagged you in a post</a><br />" . $tagged_notification);
+					}
 				}
-			}
 
-			if(isset($username) && stripslashes($_POST['body'])!="")
-			{
 				$body = nl2br(htmlentities(stripcslashes($_POST['body'])));
 				//$username = stripcslashes(htmlentities($username));
 				include "ssb_db/users/" . $username . ".php";
 				$post_file = "ssb_db/posts/post_" . $username . "_" . $date . ".php";
-				$post_string = "<?php\n\$postowner = \"" . $username . "\";\n\$postid=\"" . $date . "\";\n\$postcontent = \"<div class='post'><table><tr><td><div class='avatar_small' style=\\\"background-image: url('index.php?do=avatarlocation&user=" . $username . "');\\\" title='User Avatar'></div></td><td><h3>" . $username . " <a href='?view=" . $date . "&user=" . $username . "'> <i class='fa fa-reply'></i></a> <span style='font-size: 10px; color: #888888;'>" . $titledate . "</span></h3><p>" . $body . "</p></td></tr></table></div>\";\n?>\n";
-				file_put_contents($post_file, $post_string);
+				$post_attachments = "";
+				$post_string = "<?php\n\$postowner = \"" . $username . "\";\n\$postid=\"" . $date . "\";\n\$postcontent = \"<div class='post'><table><tr><td><div class='avatar_small' style=\\\"background-image: url('index.php?do=avatarlocation&user=" . $username . "');\\\" title='User Avatar'></div></td><td><h3>" . $username . " <a href='?view=" . $date . "&user=" . $username . "'> <i class='fa fa-reply'></i></a> <span style='font-size: 10px; color: #888888;'>" . $titledate . "</span></h3><p>" . $body . "</p></td></tr></table></div>";
+					
+				$attachments = array();
+				foreach($uploaded as &$upload)
+				{
+					if(file_exists("ssb_db/uploads/" . $upload)) {
+						array_push($attachments, "<div class='attachment'><a href='ssb_db/uploads/" . $upload . "'><img src='ssb_db/uploads/" . $upload . "'></a></div>");
+					}
+				}
+				
+				foreach($attachments as &$attachvar)
+				{
+					$post_attachments .= $attachvar;
+				}
+				
+				$post_string_end = "\";\n?>\n";
+				
+				file_put_contents($post_file, $post_string . $post_attachments . $post_string_end);
 				file_put_contents("ssb_db/posts/" . $date . ".post", "post_" . $username . "_" . $date . ".php");
 				file_put_contents("ssb_db/posts/reply_" . $username . "_" . $date . ".count", "0");
 				echo "Post processed... Redirecting in 3 seconds, if redirection fails, <a href=\"?view=$date&user=$username\">Click Here</a><br />";
-				header( "refresh: 3; url=?view=$date&user=$username" );
-			}
-			else if (isset($username) && stripslashes($_POST['body'])=="")
-			{
-                                //$username = stripcslashes(htmlentities($username));
-                                include "ssb_db/users/" . $username . ".php";
-                                $post_file = "ssb_db/posts/post_" . $username . "_" . $date . ".php";
-                                $post_string = "<?php\n\$postowner = \"" . $username . "\";\n\$postid=\"" . $date . "\";\n\$postcontent = \"<div class='post'><table><tr><td><div class='avatar_small' style=\\\"background-image: url('index.php?do=avatarlocation&user=" . $username . "');\\\" title='User Avatar'></div></td><td><h3>" . $username . " <a href='?view=" . $date . "&user=" . $username . "'> <i class='fa fa-reply'></i></a> <span style='font-size: 10px; color: #888888;'>" . $titledate . "</span></h3></td></tr></table></div>\";\n?>\n";
-                                file_put_contents($post_file, $post_string);
-                                file_put_contents("ssb_db/posts/" . $date . ".post", "post_" . $username . "_" . $date . ".php");
-                                file_put_contents("ssb_db/posts/reply_" . $username . "_" . $date . ".count", "0");
-                                echo "Post processed... Redirecting in 3 seconds, if redirection fails, <a href=\"?view=$date&user=$username\">Click Here</a><br />";
-                                header( "refresh: 3; url=?view=$date&user=$username" );
+				//header( "refresh: 3; url=?view=$date&user=$username" );
 			}
 			else
 			{
 				echo "ERROR: Missing post data! Select an image to upload or let us know whats up!<br />";
-			}
+			}		
 		}
 	}
 	
 	if($do=="avatarupload")
 	{
 		if(isset($_FILES["file"]["name"]) && isset($username)) {
-                        $date = date("YmdHis"); // timestamp in year, month, date, hour, minute, and second.
+			$date = date("YmdHis"); // timestamp in year, month, date, hour, minute, and second.
 
-      			for($i=0; $i<count($_FILES["file"]["name"]); $i++)
-                	{
-                      		$allowedExts = array("gif", "jpeg", "jpg", "png", "bmp", "ico", "png");
-                       		$temp = explode(".", $_FILES["file"]["name"][$i]);
-                		$extension = end($temp);
-                   		if ((($_FILES["file"]["type"][$i] == "image/gif")
-                            	|| ($_FILES["file"]["type"][$i] == "image/x-gif")
-                             	|| ($_FILES["file"]["type"][$i] == "image/jpeg")
-                             	|| ($_FILES["file"]["type"][$i] == "image/x-jpeg")
-                              	|| ($_FILES["file"]["type"][$i] == "image/x-jpg")
-                            	|| ($_FILES["file"]["type"][$i] == "image/jpg")
-                             	|| ($_FILES["file"]["type"][$i] == "image/pjpeg")
-                             	|| ($_FILES["file"]["type"][$i] == "image/x-png")
-                              	|| ($_FILES["file"]["type"][$i] == "image/bmp")
-                             	|| ($_FILES["file"]["type"][$i] == "image/x-icon")
-                                || ($_FILES["file"]["type"][$i] == "image/png")
+      		for($i=0; $i<count($_FILES["file"]["name"]); $i++)
+			{
+				$allowedExts = array("gif", "jpeg", "jpg", "png", "bmp", "ico", "png");
+				$temp = explode(".", $_FILES["file"]["name"][$i]);
+               	$extension = end($temp);
+				if ((($_FILES["file"]["type"][$i] == "image/gif")
+				|| ($_FILES["file"]["type"][$i] == "image/x-gif")
+				|| ($_FILES["file"]["type"][$i] == "image/jpeg")
+				|| ($_FILES["file"]["type"][$i] == "image/x-jpeg")
+				|| ($_FILES["file"]["type"][$i] == "image/x-jpg")
+				|| ($_FILES["file"]["type"][$i] == "image/jpg")
+				|| ($_FILES["file"]["type"][$i] == "image/pjpeg")
+				|| ($_FILES["file"]["type"][$i] == "image/x-png")
+				|| ($_FILES["file"]["type"][$i] == "image/bmp")
+				|| ($_FILES["file"]["type"][$i] == "image/x-icon")
+				|| ($_FILES["file"]["type"][$i] == "image/png")
 				|| ($_FILES["file"]["type"][$i] == ""))
-                              	&& ($_FILES["file"]["size"][$i] < $user_max_upload)
-                               	&& in_array($extension, $allowedExts))
-                             	{
-                            		if ($_FILES["file"]["error"][$i] > 0)
-                                    	{
-                              	   		echo $_FILES["file"]["name"][$i] . " - Return Code: " . $_FILES["file"]["error"][$i] . "<br>";
-                                     	}
-                                      	else
-                                    	{
-                                        	if(file_exists("ssb_db/uploads/" . $_FILES["file"]["name"][$i]))
-                                             	{
-                                                 	echo "Error: " . $_FILES["file"]["name"][$i] . " exists.<br>";
-                                             	}
-                                                else
-                                                {
-                                                     	move_uploaded_file($_FILES["file"]["tmp_name"][$i],
-                                                        "ssb_db/uploads/" . $username . "_" . $date . "." . $extension);
+				&& ($_FILES["file"]["size"][$i] < $user_max_upload)
+				&& in_array($extension, $allowedExts))
+				{
+					if ($_FILES["file"]["error"][$i] > 0)
+					{
+						echo $_FILES["file"]["name"][$i] . " - Return Code: " . $_FILES["file"]["error"][$i] . "<br>";
+					}
+					else
+					{
+						if(file_exists("ssb_db/uploads/" . $_FILES["file"]["name"][$i]))
+						{
+							echo "Error: " . $_FILES["file"]["name"][$i] . " exists.<br>";
+						}
+						else
+						{
+							move_uploaded_file($_FILES["file"]["tmp_name"][$i],
+							"ssb_db/uploads/" . $username . "_" . $date . "." . $extension);
 							$oldcontent = file_get_contents("ssb_db/users/" . $username . ".php");
 							file_put_contents("ssb_db/users/" . $username . ".php", $oldcontent . "<?php \$user_avatar = \"" . $username . "_" . $date . "." . $extension . "\"; ?>\n");
 							echo "Avatar uploaded and set! <a href='index.php'>Redirecting</a> in 3 seconds...";
@@ -466,11 +499,29 @@ else if(isset($_GET['do']))
 						}
 					}
 				} else {
-					 echo "Error: " . $_FILES["file"]["name"][$i] . " is too large, or is a invalid filetype";
+					echo "Error: " . $_FILES["file"]["name"][$i] . " is too large, or is a invalid filetype";
 				}
 			}
 		}
 	}
+
+	if($do=="users")
+        {
+                 if (!isset($_SESSION['ssb-user']) || !isset($_SESSION['ssb-pass'])) { loginForm(); } else {
+                        include "ssb_db/users/" . $username . ".php";
+
+			echo "<h2>Community</h2>";
+                        foreach(array_reverse(glob("ssb_db/users/"."*.name")) as $userfile) {
+                		$userhandle = file_get_contents($userfile);
+				include "ssb_db/users/" . $userhandle . ".php";
+                                if($accttype == "public") {
+					echo "<div class='attachment'>";
+                                	echo "<a href='index.php?userfeed=$userhandle'>$userhandle</a>";
+					echo "</div>";
+				}
+			}
+                }
+        }
 
 	if($do=="reply")
 	{
@@ -479,11 +530,20 @@ else if(isset($_GET['do']))
 				if(isset($_POST['reply']) && isset($username) && $_POST['body']!="")
 				{
 					$pid = $_GET['pid'];
+					$post_file_name = file_get_contents("ssb_db/posts/$pid.post");
+                                        include "ssb_db/posts/" . $post_file_name;
+					$checkForUserTag = searchForUserTag($_POST['body']);
+                                	$taggedUser = substr($checkForUserTag, 1, -1);
+                                	if(file_exists("ssb_db/users/" . $taggedUser . ".name")) {
+                                	        if($taggedUser!=$postowner) {
+                                                	$tagged_notifications = file_get_contents("ssb_db/friends/" . $taggedUser . ".notifications");
+                                                	file_put_contents("ssb_db/friends/" . $taggedUser . ".notifications", "<b>$username</b> <a href='index.php?view=$pid&user=$postowner'>tagged you in a comment</a><br />" . $tagged_notifications);
+                                   		}
+                                	}
+
 					$replydate = date("m-d-Y h:i:sa"); // time stamp for people to read xD
 					$body = nl2br(htmlentities(stripcslashes($_POST['body'])));
 					//$username = stripcslashes(htmlentities($username));
-					$post_file_name = file_get_contents("ssb_db/posts/$pid.post");
-					include "ssb_db/posts/" . $post_file_name;
 					$old_content = file_get_contents("ssb_db/posts/" . $post_file_name);
 					$reply_count = file_get_contents("ssb_db/posts/reply_" . $postowner  . "_" . $pid . ".count");
 
@@ -495,7 +555,7 @@ else if(isset($_GET['do']))
 
 					if($username!=$postowner) {
 						$owner_notifications = file_get_contents("ssb_db/friends/" . $postowner . ".notifications");
-						file_put_contents("ssb_db/friends/" . $postowner . ".notifications", "<b>$username</b> <a href='index.php?view=$pid&user=$postowner'>replied to your post</a>");
+						file_put_contents("ssb_db/friends/" . $postowner . ".notifications", "<b>$username</b> <a href='index.php?view=$pid&user=$postowner'>replied to your post</a><br />" . $owner_notifications);
 					}
 
 					echo "If you're seeing this; redirection failed: <a href=\"?view=$pid&user=$postowner\">Click Here</a><br>";
@@ -554,9 +614,15 @@ else if(isset($_GET['do']))
 	// grab session values and send friend request functions.
 	if($do=="sendfr") {
 		if (!isset($_SESSION['ssb-user']) || !isset($_SESSION['ssb-pass'])) { loginForm(); } else {
-			if(isset($_POST['user'])) {
+			if(isset($_POST['user']) || isset($_GET['user'])) {
 				//check if user exists first lol
-				$givenUser = htmlentities(stripcslashes($_POST['user']));
+				if(isset($_POST['user'])) { 
+					$givenUser = htmlentities(stripcslashes($_POST['user']));
+				} else {
+					$givenUser = htmlentities(stripcslashes($_GET['user']));
+				}
+				
+				//check if user exists first lol
 				if(file_exists("ssb_db/users/" . $givenUser . ".php")) {
 					include "ssb_db/users/" . $givenUser . ".php";
 
@@ -582,8 +648,8 @@ else if(isset($_GET['do']))
 	if($do=="accfr") {
                 if (!isset($_SESSION['ssb-user']) || !isset($_SESSION['ssb-pass'])) { loginForm(); } else {
                         if(isset($_GET['user']) && isset($_GET['friend'])) {
-                                acceptFriendRequest($_GET['user'], $_GET['friend']);
-				echo "Follow request sent to " . $_GET['user'] . " <a href='?do=friends'>redirecting</a> in 3 seconds";
+                                acceptFriendRequest(stripslashes($_GET['user']), stripslashes($_GET['friend']));
+				echo "Accepted friend request from  " . htmlentities(stripslashes($_GET['friend'])) . " <a href='?do=friends'>redirecting</a> in 3 seconds";
 				header("refresh: 3;url=?do=friends");
                         } else {
                                 echo "Error: users not set in GET &amp; SESSION value...";
@@ -808,7 +874,6 @@ else if(isset($_GET['do']))
 			// Send the server function the input
 			var userInput = document.getElementById('msg');
 			serverWrite(userInput.value);
-			
 			// Clean out the input values
 			var msgBar = document.getElementById("msg");
 			msgBar.value = "";
@@ -854,13 +919,13 @@ else if(isset($_GET['do']))
 		?>
 		</div>
 		<div id="msgbox" onkeyup="keypressed(event);">
-
-		<button onclick="javascript:wrapBBCode('i');">Italic</button>
+			<button onclick="javascript:wrapBBCode('i');">Italic</button>
      		<button onclick="javascript:wrapBBCode('u');">Underline</button>
         	<button onclick="javascript:wrapBBCode('b');">Bold</button>
+        	<button onclick="javascript:wrapBBCode('img');">Image</button>
     		<button onclick="javascript:wrapBBCode('url');">URL</button><br />
-		<textarea style="width: 98%;" name="msg" id="msg"></textarea>
-		<button style="width: 50px;" onclick="getInput();">Send</button>
+			<textarea style="width: 98%;" name="msg" id="msg"></textarea>
+			<button style="width: 50px;" onclick="getInput();">Send</button>
 		</div>
 </div>
 
@@ -877,7 +942,11 @@ else if(isset($_GET['do']))
 		if(isset($_GET['user'])) {
 			$user = htmlentities(stripslashes($_GET['user']));
 			include "ssb_db/users/" . $user . ".php";
-			header("Location: ssb_db/uploads/" . $user_avatar);
+			if(file_exists("ssb_db/uploads/" . $user_avatar)) {
+				header("Location: ssb_db/uploads/" . $user_avatar);
+			} else {
+				header("Location: data/defaultprofile.png");
+			}
 		}
 	}
 
@@ -968,11 +1037,11 @@ else if(isset($_GET['do']))
 					if(!file_exists("ssb_db/users/" . $_POST['username'] . ".php")) {
 						$colors = array("0000ff", "9900cc", "0080ff", "008000", "ededed");
 						$acct = $_POST['acct'];
-						file_put_contents("ssb_db/users/" . $_POST['username'] . ".php", "<?php\n\$accttype = \"" . $acct . "\";\n\$user_password = \"" . sha1(md5($_POST['password'])) . "\";\n \$user_color = \"" . $colors[array_rand($colors)] . "\"; \$user_fullname = \"" . $_POST['fullname'] . "\"; \$user_avatar = \"../../data/defaultprofile.png\"; \n?>");
-						file_put_contents("ssb_db/users/" . $_POST['username'] . ".name", $_POST['username']);
-						file_put_contents("ssb_db/users/" . $_POST['username'] . ".postnumber", "0");
-						file_put_contents("ssb_db/friends/" . $_POST['username'] . ".count", "0");
-						file_put_contents("ssb_db/friends/" . $_POST['username'] . ".php", "<?php ?>\n");
+						file_put_contents("ssb_db/users/" . stripslashes(htmlentities($_POST['username'])) . ".php", "<?php\n\$accttype = \"" . $acct . "\";\n\$user_password = \"" . sha1(md5($_POST['password'])) . "\";\n \$user_color = \"" . $colors[array_rand($colors)] . "\"; \$user_fullname = \"" . stripslashes(htmlentities($_POST['fullname'])) . "\"; \$user_avatar = \"../../data/defaultprofile.png\"; \n?>");
+						file_put_contents("ssb_db/users/" . stripslashes(htmlentities($_POST['username'])) . ".name", stripslashes(htmlentities($_POST['username'])));
+						file_put_contents("ssb_db/users/" . stripslashes(htmlentities($_POST['username'])) . ".postnumber", "0");
+						file_put_contents("ssb_db/friends/" . stripslashes(htmlentities($_POST['username'])) . ".count", "0");
+						file_put_contents("ssb_db/friends/" . stripslashes(htmlentities($_POST['username'])) . ".php", "<?php ?>\n");
 						header("Location: index.php");
 					} else {
 						header("Location: index.php?notify=6");
@@ -1006,17 +1075,17 @@ else
         		if($postowner == ${"friend" . $x}) {
 				echo bbcode_format($postcontent);
 				$imgExts = array("gif", "jpeg", "jpg", "png", "bmp", "ico", "png");
-        			foreach(array_reverse(glob("ssb_db/uploads/" . $postowner . "_" . $postid . ".*")) as $postfile)
-        			{
-        			        if(in_array(end(explode(".", $postfile)), $imgExts))
-                			{
-						echo "<div class='attachment'>";
-  			               		echo "Attachment: left click to enlarge, right click to download...<br />";
-                        			echo "<a href='ssb_db/uploads/" . $postowner . "_" . $postid . "." . end(explode(".", $postfile)) . "'>";
-                        			echo "<img src='ssb_db/uploads/" . $postowner . "_" . $postid . "." . end(explode(".", $postfile)) . "'>";
-                        			echo "</a></div>";
-                			}
-        			}
+        			//foreach(array_reverse(glob("ssb_db/uploads/" . $postowner . "_" . $postid . ".*")) as $postfile)
+        			//{
+        			//        if(in_array(end(explode(".", $postfile)), $imgExts))
+                		//	{
+				//		echo "<div class='attachment'>";
+  			        //		echo "Attachment: left click to enlarge, right click to download...<br />";
+                        	//		echo "<a href='ssb_db/uploads/" . $postowner . "_" . $postid . "." . end(explode(".", $postfile)) . "'>";
+                        	//		echo "<img src='ssb_db/uploads/" . $postowner . "_" . $postid . "." . end(explode(".", $postfile)) . "'>";
+                        	//		echo "</a></div>";
+                		//	}
+        			//}
 				echo "<br />\n";
 			}
               	}
@@ -1025,17 +1094,17 @@ else
 		{
 			echo bbcode_format($postcontent);
 			$imgExts = array("gif", "jpeg", "jpg", "png", "bmp", "ico", "png");
-                        foreach(array_reverse(glob("ssb_db/uploads/" . $postowner . "_" . $postid . ".*")) as $postfile)
-                        {
-                   		if(in_array(end(explode(".", $postfile)), $imgExts))
-                    		{
-                                	echo "<div class='attachment'>";
-                                        echo "Attachment: left click to enlarge, right click to download...<br />";
-                                        echo "<a href='ssb_db/uploads/" . $postowner . "_" . $postid . "." . end(explode(".", $postfile)) . "'>";
-                                       	echo "<img src='ssb_db/uploads/" . $postowner . "_" . $postid . "." . end(explode(".", $postfile)) . "'>";
-                                       	echo "</a></div>";
-                               	}
-                     	}
+                        //foreach(array_reverse(glob("ssb_db/uploads/" . $postowner . "_" . $postid . ".*")) as $postfile)
+                        //{
+                   	//	if(in_array(end(explode(".", $postfile)), $imgExts))
+                    	//	{
+   			//		echo "<div class='attachment'>";
+                        //               	echo "Attachment: left click to enlarge, right click to download...<br />";
+                        //               	echo "<a href='ssb_db/uploads/" . $postowner . "_" . $postid . "." . end(explode(".", $postfile)) . "'>";
+                        //               	echo "<img src='ssb_db/uploads/" . $postowner . "_" . $postid . "." . end(explode(".", $postfile)) . "'>";
+                        //               	echo "</a></div>";
+                        //       	}
+                     	//}
 			echo "<br />\n";
 		}
 	}
