@@ -29,9 +29,9 @@ function bbcode_format($str) {
                 "<em>$1</em>",  
                 "<u>$1</u>",  
 		"<u>$1</u>",
-                "<a onclick='doLogout();' href='$1' title='$2 - $1'>$2</a>",  
-				"<a href='$1'><img src='$1' class='attachment_chat' /></a>",
-                "<a onclick='doLogout();' href='$1' title='$1'>$1</a>",  
+                "<a href='$1' title='$2 - $1'>$2</a>",  
+		"<a href='$1'><img src='$1' class='attachment_chat' /></a>",
+                "<a href='$1' title='$1'>$1</a>",  
                 "<span style='font-family: $1;'>$2</span>", 
                 "<span style='color: $1;'>$2</span>", 
                 );  

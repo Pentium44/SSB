@@ -9,6 +9,12 @@ SSB was written by Chris Dorman, 2012-2020 <https://cddo.cf>
 
 ChangeLog
 ----
+10/10/2020 -v2.0.3 - minor version bump - release
+* Removed unneeded HTML from bbcode parser
+* Added user reacts (notifications send with react, checks if trying to react multiple times)
+* Added minimal user page for outdated browsers (minimum.php, does most everything index.php can handle)
+* Some CSS modifications
+
 10/10/2020 -v2.0.2 - minor version bump - release
 * BBCode image addition (***boldtext***) (___underlinetext___)
 * Bugfixes with notification menu, and user profile avatar linking

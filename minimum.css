@@ -1,14 +1,10 @@
-@import url('https://fonts.googleapis.com/css2?family=Roboto&family=Ubuntu&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono&display=swap');
 html, body {
 	background-color: #d5d5d5;
-	background-repeat: no-repeat;
-	background-attachment: fixed;
-	background-position: center;
-	background-image: url('data/bg.jpg');
 	color: #e3e3e3;
 	margin: 0 auto;
-	font-size: 18px;
-	font-family: "Ubuntu", "Roboto", sans-serif;
+	font-size: 14px;
+	font-family: "IBM Plex Mono", sans-serif;
 	padding-bottom: 40px;
 }
 .title {
@@ -23,53 +19,41 @@ html, body {
 	/*background-color: #ffffff;*/
 	top: 1px;
 	left: 1px;
+	text-align: center;
 	padding-bottom: 0px;
-}
-
-#navcontainer {
-	width: 702px;
-	max-width: 702px;
-	min-width: 702px;
-	margin: 0 auto;
-	background-color: #ffffff;
 }
 
 #navbar a {
 	text-decoration: none;
-	font-family: "Ubuntu", "Roboto", sans-serif;
-	font-size: 28px;
+	font-size: 16px;
 	text-align: center;
 	padding-top: 4px;
 	padding-bottom: 5px;
-	background-color: #ffffff;
 	color: #5577ff;
-	width: 125px;
-	display: inline-block;
 }
 
 #navbar a:hover {
-	background-color: #999999;
-	color: #323232;
+	color: #2266cc;
 }
 
 .notifications {
-	background-color: #171717;
+	background-color: #bbbbbb;
 	border-radius: 4px;
-	border: solid 1px #222222;
+	border: solid 1px #cccccc;
 	padding: 4px;
+	color: #121212;
 }
 
 table { padding: 1px; }
 tr, td { padding: 2px; }
 
 textarea {
-	background-color: #222222;
-	border-radius: 10px;
-	border: 1px solid #323232;
-	font-family: "Roboto Sans", Ubuntu, sans-serif;
+	background-color: #bbbbbb;
+	border-radius: 4px;
+	border: solid 1px #cccccc;
 	outline: none;
 	resize: none;
-	color: #d7d7d7;
+	color: #111111;
 	width: 98%;
 	padding: 4px;
 }
@@ -80,18 +64,14 @@ textarea {
 	text-align: center;
 }
 
-input[type="file"] {
-	display: none;
-}
-
 input, button, select, label {
-	background-color: #222222;
-	border: solid 1px #323232;
+	background-color: #dddddd;
+    border: solid 1px #bbbbbb;
 	outline: none;
-	border-radius: 6px;
-	color: #d7d7d7;
+	border-radius: 4px;
+	color: #565656;
 	padding: 4px; 
-	font-size: 18px;
+	font-size: 14px;
 }
 
 .input-upload {
@@ -101,12 +81,11 @@ input, button, select, label {
 }
 
 .button {
-        background-color: #222222;
-        border: solid 1px #323232;
-        outline: none;
-	font-size: 18px;
-        border-radius: 6px;
-        color: #d7d7d7;
+    background-color: #dddddd;
+    border: solid 1px #bbbbbb;
+	outline: none;
+	border-radius: 4px;
+	color: #565656;
 	margin: auto;
 	padding: 4px;
 	display: inline-flex;
@@ -135,14 +114,14 @@ input, button, select, label {
 }
 
 .avatar_chat {
-        border-radius: 50%;
-        background: 50% 50% no-repeat; /* 50% 50% centers image in div */
+	border-radius: 50%;
+	background: 50% 50% no-repeat; /* 50% 50% centers image in div */
 	background-position: center;
-        background-repeat: no-repeat;
-        background-size: cover;
-        object-fit: cover;
-        width: 28px;
-        height: 28px;
+	background-repeat: no-repeat;
+	background-size: cover;
+	object-fit: cover;
+	width: 28px;
+	height: 28px;
 }
 
 #msgbox {
@@ -161,9 +140,9 @@ input, button, select, label {
 }
 
 #msgs { 
-	background: #222222;
-	border-radius: 5px; 
-	border: solid 1px #323232;
+	background-color: #bbbbbb;
+    border: solid 1px #cccccc;
+	border-radius: 4px; 
 	padding: 6px;
 	height: 400px;
 	width: 578px;
@@ -181,7 +160,7 @@ input, button, select, label {
 	display: block;
 	margin: 0 auto;
 	padding: 6px;
-	border-radius: 5px;
+	border-radius: 4px;
 	border: solid 1px #424242;
 	background-color: #333333;
 }
@@ -205,33 +184,33 @@ input, button, select, label {
 }
 
 .post {
+	background-color: #666666;
+	border-radius: 4px 10px 10px;
+	border: solid 1px #545454;
 	padding: 6px;
-	border-radius: 5px;
-	border: solid 1px #424242;
-	background-color: #333333;
-	color: #ffffff;
-	font-size: 16px;
+	color: #dddddd;
 }
 
 .reply {
-	background-color: #222222;
+	background-color: #666666;
 	border-radius: 4px 10px 10px;
-	border: solid 1px #323232;
+	border: solid 1px #545454;
 	padding: 6px;
-	color: #d7d7d7;
+	color: #dddddd;
 }
 
 a {
 	color: #5577ff;
+	font-size: 14px;
 	text-decoration: none;
 }
 a:hover {
-	color: #aabbff;
+	color: #2266cc;
 	text-decoration: none;
 }
 .contain {
-	background-color: #121212;
-	border: solid 1px #565656;
+	background-color: #555555;
+	border: solid 1px #434343;
 	width: 690px;
 	max-width: 690px;
 	min-width: 690px;

@@ -1,5 +1,5 @@
 <?php
-//	SSB - Simple Social Board
+//	SSB - Simple Social Board - Simple layout
 //	(C) Chris Dorman, 2012 - 2020
 //	License: CC-BY-NC-SA version 3.0
 //	http://github.com/Pentium44/SSB
@@ -50,8 +50,7 @@ $username = $_SESSION['ssb-user'];
 <title><?php echo htmlentities(stripslashes($ssbtitle)); ?></title>
 <meta http-equiv="content-type" content="text/html; charset=utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=.55, shrink-to-fit=yes"><meta name="description" content="<?php echo htmlentities($ssbtitle) . " - " . $desc; ?>">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-<link rel="stylesheet" type="text/css" href="style.css">
+<link rel="stylesheet" type="text/css" href="minimum.css">
 </head>
 <body <?php if($_GET['do']=="pubmsg" || $_GET['do']=="privmsg") { echo "onload=\"UpdateTimer();\""; } ?>>
 
@@ -74,26 +73,22 @@ $username = $_SESSION['ssb-user'];
                 msgInput.value = beforeContent + '@' + tag + afterContent;
         }
 </script>
-<div class="maincontain">
-<div id="navcontainer">
-        <div id="navbar"><!--
-        <?php if(isset($_SESSION['ssb-user']) && isset($_SESSION['ssb-pass'])) { ?>
-	--><a style="width:50px;" href="?forms=post" title="Post on your feed!"><i style="padding:2px 2px 2px 2px;" class="fa fa-plus-square"></i></a><!--
-        --><a style="width:50px;" href="?do=pubmsg" title="Public chat!"><i style="padding:2px 2px 2px 2px;" class="fa fa-comments-o"></i></a><!--
-        --><a style="width:50px;" href="?userfeed=<?php echo $username; ?>" title="Your profile!"><i style="padding:2px 2px 2px 2px;" class="fa fa-user"></i></a><!--
-        --><a href="index.php">Feed</a><!--
-        --><a href="?do=friends">Friends</a><!--
-        --><a href="?do=about">About</a><!--
-	--><a style="width:50px;" href="?do=users" title="Public users!"><i style="padding:2px 2px 2px 2px;" class="fa fa-users"></i></a><!--
-        --><a style="width:50px;" href="?do=userctrl"><i style="padding:2px 2px 2px 2px;" class="fa fa-cog"></i></a><!--
-        --><a style="width:50px;" href="?do=logout"><i style="padding:2px 2px 2px 2px;" class="fa fa-sign-out"></i></a><!--
-        <?php } else { ?>
-        --><a href="?forms=login">Login</a><!--
-        --><a href="?do=about">About</a><!--
-        <?php } ?>
-        --></div>
-</div>
 <div class='contain'>
+<div id="navbar">
+        <?php if(isset($_SESSION['ssb-user']) && isset($_SESSION['ssb-pass'])) { ?>
+	<a href="minimum.php?forms=post">create post</a> &bull;
+	<a href="minimum.php?userfeed=<?php echo $username; ?>">your profile</a> &bull;
+	<a href="minimum.php?do=userctrl">settings</a> &bull;
+    <a href="minimum.php?do=logout">logout</a><br />
+	<a href="minimum.php">feed</a> &bull;
+	<a href="minimum.php?do=friends">friends</a> &bull;
+	<a href="minimum.php?do=about">about</a> &bull;
+	<a href="minimum.php?do=users" title="Public users!">users</a> 
+	<?php } else { ?>
+	<a href="minimum.php?forms=login">login</a> &bull;
+	<a href="minimum.php?do=about">about</a>
+	<?php } ?>
+</div>
 <div class='title'><?php echo $ssbtitle; ?></div>
 
 <?php
@@ -108,7 +103,7 @@ if(isset($username) && isset($_SESSION['ssb-pass']) && $_GET['do']!="avatarlocat
 
 	if ($handle) {
 		while (($line = fgets($handle)) !== false) {
-			echo "<tr><td><i class='fa fa-exclamation' aria-hidden='true'></i> " . $line . "</td></tr>";
+			echo "<tr><td>" . $line . "</td></tr>";
 		}
 		fclose($handle);
 	} else {
@@ -210,7 +205,7 @@ else if(isset($_GET['userfeed']))
 				for($x = 1; $x <= $friendcount; $x++)
 				{
 					if($postowner == ${"friend" . $x}) {
-						echo "<div class='post'><table><tr><td><div class='avatar_small' style=\"background-image: url('index.php?do=avatarlocation&user=$postowner');\" title='User Avatar'></div></td><td><h3>$postowner<span style='font-size: 11px; padding-left: 6px; color: #808080;'>$postdate</span><br /><a href='index.php?view=$postid&user=$postowner'><i class='fa fa-reply'></i></a></h3></td></tr></table>";
+						echo "<div class='post'><table><tr><td><div class='avatar_small' style=\"background-image: url('index.php?do=avatarlocation&user=$postowner');\" title='User Avatar'></div></td><td><h3>$postowner<span style='font-size: 11px; padding-left: 6px; color: #808080;'>$postdate</span><br /><a href='minimum.php?view=$postid&user=$postowner'>&nbsp;reply</a></h3></td></tr></table>";
 						echo "" . bbcode_format($postcontent) . "";
 						echo "</div><br />\n";
 					}
@@ -218,7 +213,7 @@ else if(isset($_GET['userfeed']))
 
 				if($postowner == $username)
 				{
-					echo "<div class='post'><table><tr><td><div class='avatar_small' style=\"background-image: url('index.php?do=avatarlocation&user=$postowner');\" title='User Avatar'></div></td><td><h3>$postowner<span style='font-size: 11px; padding-left: 6px; color: #808080;'>$postdate</span><br /><a href='index.php?view=$postid&user=$postowner'><i class='fa fa-reply'></i></a> <a href='index.php?do=delpost&user=$username&pid=$postid'><i class='fa fa-trash-o'></i></a></h3></td></tr></table>";
+					echo "<div class='post'><table><tr><td><div class='avatar_small' style=\"background-image: url('index.php?do=avatarlocation&user=$postowner');\" title='User Avatar'></div></td><td><h3>$postowner<span style='font-size: 11px; padding-left: 6px; color: #808080;'>$postdate</span><br /><a href='minimum.php?view=$postid&user=$postowner'>&nbsp;reply</a> &bull; <a href='minimum.php?do=delpost&user=$username&pid=$postid'>delete post</i></a></h3></td></tr></table>";
 					echo "" . bbcode_format($postcontent) . "";
 					echo "</div><br />\n";
 				}
@@ -232,36 +227,35 @@ else if(isset($_GET['userfeed']))
 		echo "<table><tr><td>";
 		// Get user avatar if set
 		if(isset($user_avatar)) { echo "<img class='avatar' src='ssb_db/uploads/" . $user_avatar . "' title='User Avatar'><br />"; }
-		// DONE
-		
-		echo "</td><td>";
-		// If not friend, allow to send friend request from right here!
-		$friend = 0;
-		$friendcount = file_get_contents("ssb_db/friends/" . $username . ".count");
-		include "ssb_db/friends/" . $username . ".php";
-		for($x = 1; $x <= $friendcount; $x++)
-		{
-			// If private, and user is following. Allow
-			if($userid == ${"friend" . $x}) {
-				$friend = 1;
-			}
-		}	
+			// DONE
+			echo "</td><td>";
+			// If not friend, allow to send friend request from right here!
+			$friend = 0;
+			$friendcount = file_get_contents("ssb_db/friends/" . $username . ".count");
+			include "ssb_db/friends/" . $username . ".php";
+			for($x = 1; $x <= $friendcount; $x++)
+			{
+				// If private, and user is following. Allow
+				if($userid == ${"friend" . $x}) {
+					$friend = 1;
+				}
+			}	
 				
-		if($friend!=1) {
-			echo "<a class='button' href='index.php?do=sendfr&user=$userid'>Send friend request</a><br /><br />";
-		}
+			if($friend!=1) {
+				echo "<a class='button' href='minimum.php?do=sendfr&user=$userid'>Send friend request</a><br /><br />";
+			}
              	
-		echo "Username: " . $userid . "@" . $domain . "<br />";
-		echo "Full name: " . $user_fullname;
-		echo "</td></tr></table>";
+			echo "Username: " . $userid . "@" . $domain . "<br />";
+			echo "Full name: " . $user_fullname;
+			echo "</td></tr></table>";
 
 		foreach(array_reverse(glob("ssb_db/posts/post_" . $userid . "_" . "*.php")) as $postfile) {
-			echo "<div class='post'><table><tr><td><div class='avatar_small' style=\"background-image: url('index.php?do=avatarlocation&user=$postowner');\" title='User Avatar'></div></td><td><h3>$postowner<span style='font-size: 11px; padding-left: 6px; color: #808080;'>$postdate</span><br /><a href='index.php?view=$postid&user=$postowner'><i class='fa fa-reply'></i></a></h3></td></tr></table>";
+			//echo $postfile;
+			include $postfile;
+			echo "<div class='post'><table><tr><td><div class='avatar_small' style=\"background-image: url('index.php?do=avatarlocation&user=$postowner');\" title='User Avatar'></div></td><td><h3>$postowner<span style='font-size: 11px; padding-left: 6px; color: #808080;'>$postdate</span><br /><a href='minimum.php?view=$postid&user=$postowner'>&nbsp;reply</a></h3></td></tr></table>";
 			echo "" . bbcode_format($postcontent) . "";
 			echo "</div><br />\n";
 		}
-				
-		echo "<!-- Gen done...-->";
 	}
 }
 else if(isset($_GET['view']) && isset($_GET['user']))
@@ -281,7 +275,7 @@ else if(isset($_GET['view']) && isset($_GET['user']))
 		$reply_date = ${"reply" . $x . "_date"};
 		
 		echo "<div class='reply'>";
-		echo "<table><tr><td><div class='avatar_small' style='background-image: url(\"index.php?do=avatarlocation&user=$reply_user\");' title='User Avatar'></div></td><td><h4>$reply_user <a onclick=\"userTag('$reply_user');\"><i class='fa fa-tag'></i></a> <span style='font-size: 8px; padding-left: 6px; color: #808080;'>$reply_date</span></h4></td></tr></table>";
+		echo "<table><tr><td><div class='avatar_small' style='background-image: url(\"index.php?do=avatarlocation&user=$reply_user\");' title='User Avatar'></div></td><td><h4><a onclick=\"userTag('$reply_user');\">$reply_user</a><span style='font-size: 8px; padding-left: 6px; color: #808080;'>$reply_date</span></h4></td></tr></table>";
 		echo "<div class='reply_content'>" . bbcode_format($reply_content) . "</div>";
 		echo "</div>\n";
 	}
@@ -420,7 +414,7 @@ else if(isset($_GET['do']))
 				file_put_contents($post_file, $post_string . $post_attachments . $post_string_end);
 				file_put_contents("ssb_db/posts/" . $date . ".post", "post_" . $username . "_" . $date . ".php");
 				file_put_contents("ssb_db/posts/reply_" . $username . "_" . $date . ".count", "0");
-				echo "Post processed... Redirecting in 3 seconds, if redirection fails, <a href=\"?view=$date&user=$username\">Click Here</a><br />";
+				echo "Post processed... Redirecting in 3 seconds, if redirection fails, <a href=\"minimum.php?view=$date&user=$username\">Click Here</a><br />";
 				//header( "refresh: 3; url=?view=$date&user=$username" );
 			}
 			else
@@ -471,8 +465,8 @@ else if(isset($_GET['do']))
 							"ssb_db/uploads/" . $username . "_" . $date . "." . $extension);
 							$oldcontent = file_get_contents("ssb_db/users/" . $username . ".php");
 							file_put_contents("ssb_db/users/" . $username . ".php", $oldcontent . "<?php \$user_avatar = \"" . $username . "_" . $date . "." . $extension . "\"; ?>\n");
-							echo "Avatar uploaded and set! <a href='index.php'>Redirecting</a> in 3 seconds...";
-							header("refresh: 3;url=index.php");
+							echo "Avatar uploaded and set! <a href='minimum.php'>Redirecting</a> in 3 seconds...";
+							header("refresh: 3;url=minimum.php");
 						}
 					}
 				} else {
@@ -493,7 +487,7 @@ else if(isset($_GET['do']))
 				include "ssb_db/users/" . $userhandle . ".php";
                                 if($accttype == "public") {
 					echo "<div class='attachment'>";
-                                	echo "<a href='index.php?userfeed=$userhandle'>$userhandle</a>";
+                                	echo "<a href='minimum.php?userfeed=$userhandle'>$userhandle</a>";
 					echo "</div>";
 				}
 			}
@@ -538,7 +532,7 @@ else if(isset($_GET['do']))
 					}
 
 					echo "If you're seeing this; redirection failed: <a href=\"?view=$pid&user=$postowner\">Click Here</a><br>";
-					header( "Location: index.php?view=$pid&user=$postowner" );
+					header( "Location: minimum.php?view=$pid&user=$postowner" );
 				}
 				else
 				{
@@ -561,64 +555,9 @@ else if(isset($_GET['do']))
 						unlink("ssb_db/posts/post_" . $postuser . "_" . $pid . ".php");
 						unlink("ssb_db/posts/reply_" . $postuser . "_" . $pid . ".count");
 						echo "Post successfully deleted! <a href='index.php'>redirecting</a> in 3 seconds...<br />";
-						header("refresh: 3;url=index.php");
+						header("refresh: 3;url=minimum.php");
 						exit;
 					} else { echo "ERROR: post doesn't exist or YOU ARE NOT THE OWNER OF SAID POST... THIS incident has been recorded!"; file_put_contents("ssb_db/log.txt", "Post deletion error: IP <" . $_SERVER['REMOTE_ADDR'] . "> post not found or not users post: post_" . $postuser . "_" . $pid . ".php\n"); }
-				} else { echo "ERROR: USER and PID variables not set!"; }
-			} else { echo "ERROR: PASSWORD FOR USER INCORRECT! IP LOGGED!"; file_put_contents("ssb_db/log.txt", "PASS MISMATCH: IP <" . $_SERVER['REMOTE_ADDR'] . "> Cookie spoofing detected from remote client!!!\n"); }
-		}
-	}
-	
-	if($do=="react") 
-	{
-		if (!isset($_SESSION['ssb-user']) || !isset($_SESSION['ssb-pass'])) { loginForm(); } else {
-			include "ssb_db/users/" . $username . ".php";
-			if($user_password === $_SESSION['ssb-pass']) {
-				if(isset($_GET['user']) && $_GET['user']!="" && isset($_GET['pid']) && $_GET['pid']!="") {
-					if(file_exists("ssb_db/posts/post_" . stripslashes($_GET['user']) . "_" . stripslashes($_GET['pid']) . ".php")) {
-						$postuser = $_GET['user'];
-						$pid = $_GET['pid'];
-						$handle = fopen("ssb_db/posts/$pid.reacted", "r");
-						
-						if ($handle) {
-							while (($line = fgets($handle)) !== false) {
-								$line = str_replace(array("\n", "\r"), '', $line);
-								if($line == $username) {
-									echo "You've already reacted to this post... <a href='index.php?view=$pid&user=$postuser'>redirecting</a>";
-									header("refresh: 3;url=index.php?view=$pid&user=$postuser");
-									exit;
-								}
-							}
-							fclose($handle);
-						} else {
-							echo "<!-- Haven't reacted, continuing -->";
-						}
-						
-						if(file_exists("ssb_db/posts/$pid.reacted")) {
-							$reactedPrev = file_get_contents("ssb_db/posts/$pid.reacted");
-							file_put_contents("ssb_db/posts/$pid.reacted", $reactedPrev . $username . "\n"); // You reacted
-						} else {
-							file_put_contents("ssb_db/posts/$pid.reacted", $username . "\n"); // First react
-						}
-								
-						if(file_exists("ssb_db/posts/$pid.reactcount")) {
-							$reactCount = file_get_contents("ssb_db/posts/$pid.reactcount");
-							$reactCurrent = $reactCount + 1;
-							file_put_contents("ssb_db/posts/$pid.reactcount", $reactCurrent); // You reacted
-						} else {
-							file_put_contents("ssb_db/posts/$pid.reactcount", "1"); // First react
-						}
-								
-						// Don't send yourself a notification, you know you liked your own post ;)
-						if($postuser != $username) {
-							$owner_notifications = file_get_contents("ssb_db/friends/" . $postuser . ".notifications");
-							file_put_contents("ssb_db/friends/" . $postuser . ".notifications", "<b>$username</b> loved your <a href='index.php?view=$pid&user=$postuser'>post</a>\n" . $owner_notifications);
-						}
-						
-						echo "Reacted!";
-						header("Location: index.php");
-						exit;
-					} else { echo "ERROR: post doesn't exist..."; }
 				} else { echo "ERROR: USER and PID variables not set!"; }
 			} else { echo "ERROR: PASSWORD FOR USER INCORRECT! IP LOGGED!"; file_put_contents("ssb_db/log.txt", "PASS MISMATCH: IP <" . $_SERVER['REMOTE_ADDR'] . "> Cookie spoofing detected from remote client!!!\n"); }
 		}
@@ -630,7 +569,7 @@ else if(isset($_GET['do']))
 			include "ssb_db/users/" . $username . ".php";
 			if($user_password === $_SESSION['ssb-pass']) {
 				unlink("ssb_db/friends/" . $username . ".notifications");
-				header("Location: index.php");
+				header("Location: minimum.php");
 				exit;
 			} else { echo "ERROR: PASSWORD FROM COOKIE INCORRECT! IP RECORDED!"; file_put_contents("ssb_db/log.txt", "PASS MISMATCH: IP <" . $_SERVER['REMOTE_ADDR'] . "> Cookie spoofing detected from remote client!!!\n"); }
 		}
@@ -642,7 +581,7 @@ else if(isset($_GET['do']))
 			include "ssb_db/users/" . $username . ".php";
 			if($user_password === $_SESSION['ssb-pass']) {
 				unlink("ssb_db/friends/" . $username . ".pending");
-				header("Location: index.php?do=friends");
+				header("Location: minimum.php?do=friends");
 				exit;
 			} else { echo "ERROR: PASSWORD FROM COOKIE INCORRECT! IP RECORDED!"; file_put_contents("ssb_db/log.txt", "PASS MISMATCH: IP <" . $_SERVER['REMOTE_ADDR'] . "> Cookie spoofing detected from remote client!!!\n"); }
 		}
@@ -686,11 +625,11 @@ else if(isset($_GET['do']))
 
 					if($accttype == "private") {
 						sendFriendRequest($_SESSION['ssb-user'], $givenUser);
-						echo "Follow request sent to " . $givenUser . " <a href='?do=friends'>redirecting</a> in 3 seconds";
-						header("refresh: 3;url=?do=friends");
+						echo "Follow request sent to " . $givenUser . " <a href='minimum.php?do=friends'>redirecting</a> in 3 seconds";
+						header("refresh: 3;url=minimum.php?do=friends");
 					} else if($accttype == "public") {
 						acceptPublicFriendRequest($username, $givenUser);
-						header("Location: ?do=friends");
+						header("Location: minimum.php?do=friends");
 					} else {
 						echo "ERROR: Issues parsing account type...";
 					}
@@ -707,8 +646,8 @@ else if(isset($_GET['do']))
                 if (!isset($_SESSION['ssb-user']) || !isset($_SESSION['ssb-pass'])) { loginForm(); } else {
                         if(isset($_GET['user']) && isset($_GET['friend'])) {
                                 acceptFriendRequest(stripslashes($_GET['user']), stripslashes($_GET['friend']));
-				echo "Accepted friend request from  " . htmlentities(stripslashes($_GET['friend'])) . " <a href='?do=friends'>redirecting</a> in 3 seconds";
-				header("refresh: 3;url=?do=friends");
+				echo "Accepted friend request from  " . htmlentities(stripslashes($_GET['friend'])) . " <a href='minimum.php?do=friends'>redirecting</a> in 3 seconds";
+				header("refresh: 3;url=minimum.php?do=friends");
                         } else {
                                 echo "Error: users not set in GET &amp; SESSION value...";
                         }
@@ -720,8 +659,8 @@ else if(isset($_GET['do']))
 		if (!isset($_SESSION['ssb-user']) || !isset($_SESSION['ssb-pass'])) { loginForm(); } else {
                         // Beginning of user control panel
 			echo "<h3>User control panel</h3>";
-			echo "<a class='button' href='?forms=changepass'>Change password</a><br />";
-			echo "<a class='button' href='?forms=avatarupload'>Upload avatar</a><br />";
+			echo "<a class='button' href='minimum.php?forms=changepass'>Change password</a><br />";
+			echo "<a class='button' href='minimum.php?forms=avatarupload'>Upload avatar</a><br />";
                 }
 	}
 
@@ -739,127 +678,12 @@ else if(isset($_GET['do']))
 					$oldcontent = file_get_contents("ssb_db/users/" . $username . ".php");
 					$passString = "<?php \$user_password = \"" . sha1(md5($newPassInput)) . "\"; ?>\n";
 					file_put_contents("ssb_db/users/" . $username . ".php", $oldcontent . $passString);
-					echo "Password changed, <a href='index.php'>redirecting</a> in 3 seconds";
+					echo "Password changed, <a href='minimum.php'>redirecting</a> in 3 seconds";
 					$_SESSION['ssb-user'] = null;
 					$_SESSION['ssb-pass'] = null;
-					header("refresh: 3;url=index.php");
+					header("refresh: 3;url=minimum.php");
 				}
 			} else { echo "ERROR: password incorrect! IP recorded for constant monitoring of possible bots!"; file_put_contents("ssb_db/log.txt", "PASS MISMATCH: IP <" . $_SERVER['REMOTE_ADDR'] . "> Cookie spoofing detected from remote client!!!\n"); }
-		}
-	}
-
-	if($do=="pubmsg")
-	{
-		if (!isset($_SESSION['ssb-user']) || !isset($_SESSION['ssb-pass'])) { loginForm(); } else {
-		?>
-<script language="javascript" type="text/javascript">
-    <!--
-		var httpObject = null;
-		var link = "";
-		var timerID = 0;
-		var nickName = "<?php echo $_SESSION['ssb-user']; ?>";
-		var userColor = "<?php echo $_SESSION['ssb-color'];; ?>";
-
-		// Get the HTTP Object
-		function getHTTPObject() {
-			if (window.ActiveXObject) return new ActiveXObject("Microsoft.XMLHTTP");
-			else if (window.XMLHttpRequest) return new XMLHttpRequest();
-			else {
-				alert("Your browser does not support AJAX.");
-				return null;
-			}
-		}   
-
-		// Change the value of the outputText field
-		function setHtml() {
-			if(ajaxVar.readyState == 4){
-				var response = ajaxVar.responseText;
-				var msgBox = document.getElementById("msgs");
-				msgBox.innerHTML += response;
-				msgBox.scrollTop = msgBox.scrollHeight;
-			}
-		}
-
-		// Change the value of the outputText field
-		function setAll() {
-			if(ajaxVar.readyState == 4){
-				var response = ajaxVar.responseText;
-				var msgBox = document.getElementById("msgs");
-				msgBox.innerHTML = response;
-				msgBox.scrollTop = msgBox.scrollHeight;
-			}
-		}
-
-		// Implement business logic    
-		function serverWrite() {    
-			ajaxVar = getHTTPObject();
-			if (ajaxVar != null) {
-				link = "chatserver.php?nick="+nickName+"&msg="+document.getElementById('msg').value; 
-				ajaxVar.open("GET", link , true);
-				ajaxVar.onreadystatechange = setHtml;
-				ajaxVar.send(null);
-			}
-		}
-      
-		function getInput() {
-			// Send the server function the input
-			var userInput = document.getElementById('msg');
-			serverWrite(userInput.value);
-			
-			// Clean out the input values
-			var msgBar = document.getElementById("msg");
-			msgBar.value = "";
-            msgBar.focus();
-		}
-
-		// Implement business logic    
-		function serverReload() {    
-			ajaxVar = getHTTPObject();
-			//var randomnumber=Math.floor(Math.random()*10000);
-			if (ajaxVar != null) {
-				link = "chatserver.php?all=1";
-				ajaxVar.open("GET", link , true);
-				ajaxVar.onreadystatechange = setAll;
-				ajaxVar.send(null);
-			}
-		}
-	
-		function UpdateTimer() {
-			serverReload();   
-			setTimeout(UpdateTimer, 1000);
-		}
-    
-		function keypressed(e) {
-			if(e.keyCode=='13'){
-				getInput();
-			}
-		}
-    //-->
-    </script> 
-<div class="replycontain">
-		<div id="msgs">
-		<?php 
-			echo "<div class=\"msgbox\">";
-			$get = file_get_contents($chat_db);
-			echo $get;
-			echo "</div>";
-		?>
-		</div>
-		<div id="msgbox" onkeyup="keypressed(event);">
-
-		<button onclick="javascript:wrapBBCode('i');">Italic</button>
-     		<button onclick="javascript:wrapBBCode('u');">Underline</button>
-        	<button onclick="javascript:wrapBBCode('b');">Bold</button>
-    		<button onclick="javascript:wrapBBCode('url');">URL</button><br />
-		<textarea style="width: 98%;" name="msg" id="msg"></textarea>
-		<button style="width: 50px;" onclick="getInput();">Send</button>
-		</div>
-</div>
-
-	<?php
-
-
-
 		}
 	}
 	
@@ -976,7 +800,7 @@ else if(isset($_GET['do']))
 			echo "</div>";
 		?>
 		</div>
-		<div id="msgbox" onkeyup="keypressed(event);">
+		<div id="msgbox" style="padding-left: 6px;" onkeyup="keypressed(event);">
 			<button onclick="javascript:wrapBBCode('i');">Italic</button>
      		<button onclick="javascript:wrapBBCode('u');">Underline</button>
         	<button onclick="javascript:wrapBBCode('b');">Bold</button>
@@ -993,26 +817,6 @@ else if(isset($_GET['do']))
 		} // GET friend set end
 		} // session check end
 	} // function end
-
-	// Push user avatar to specific avatar image location
-	if($do=="avatarlocation")
-	{
-		if(isset($_GET['user'])) {
-			$user = htmlentities(stripslashes($_GET['user']));
-			include "ssb_db/users/" . $user . ".php";
-			if(file_exists("ssb_db/uploads/" . $user_avatar)) {
-				echo "Direct to: ssb_db/uploads/" . $user_avatar;
-				header("Location: ssb_db/uploads/" . $user_avatar . "");
-				exit;
-			} else {
-				echo "Direct to: data/defaultprofile.png";
-				header("Location: data/defaultprofile.png");
-				exit;
-			}
-		} else {
-			echo "User is NOT set!";
-		}
-	}
 
 	if($do=="about")
 	{
@@ -1085,7 +889,7 @@ else if(isset($_GET['do']))
 				$_SESSION['ssb-user'] = $user;
 				$_SESSION['ssb-pass'] = $pass;
 				$_SESSION['ssb-color'] = $color;
-				header("Location: index.php");
+				header("Location: minimum.php");
 			} else {
 				echo "Wrong password!";
 			}
@@ -1093,12 +897,32 @@ else if(isset($_GET['do']))
 			echo "User $username not found!";
 		}
 	}
+	
+	// Push user avatar to specific avatar image location
+	if($do=="avatarlocation")
+	{
+		if(isset($_GET['user'])) {
+			$user = htmlentities(stripslashes($_GET['user']));
+			include "ssb_db/users/" . $user . ".php";
+			if(file_exists("ssb_db/uploads/" . $user_avatar)) {
+				echo "Direct to: ssb_db/uploads/" . $user_avatar;
+				header("Location: ssb_db/uploads/" . $user_avatar . "");
+				exit;
+			} else {
+				echo "Direct to: data/defaultprofile.png";
+				header("Location: data/defaultprofile.png");
+				exit;
+			}
+		} else {
+			echo "User is NOT set!";
+		}
+	}
 
 	if($do=="logout")
 	{
 	        $_SESSION['ssb-user'] = null;
 	        $_SESSION['ssb-pass'] = null;
-		header("Location: index.php?forms=login");
+		header("Location: minimum.php?forms=login");
 	}
 
 	if($do=="register")
@@ -1114,20 +938,20 @@ else if(isset($_GET['do']))
 						file_put_contents("ssb_db/users/" . stripslashes(htmlentities($_POST['username'])) . ".postnumber", "0");
 						file_put_contents("ssb_db/friends/" . stripslashes(htmlentities($_POST['username'])) . ".count", "0");
 						file_put_contents("ssb_db/friends/" . stripslashes(htmlentities($_POST['username'])) . ".php", "<?php ?>\n");
-						header("Location: index.php");
+						header("Location: minimum.php");
 					} else {
-						header("Location: index.php?notify=6");
+						header("Location: minimum.php?notify=6");
 					}
 				} else {
-					header("Location: index.php?notify=5");
+					header("Location: minimum.php?notify=5");
 				}
 			} else {
-				header("Location: index.php?notify=4");
+				header("Location: minimum.php?notify=4");
 			}
 		} else {
-			header("Location: index.php?notify=3");
+			header("Location: minimum.php?notify=3");
 		}
-		header("Location: index.php");
+		header("Location: minimum.php");
 	}
 }
 else if (!isset($_SESSION['ssb-user']) || !isset($_SESSION['ssb-pass']))
@@ -1171,23 +995,13 @@ else
 				$postcount++;
 				
 				if($poststart == "1" && $postcount < ($poststart + 15)) {
-					echo "<div class='post'><table><tr><td><div class='avatar_small' style=\"background-image: url('index.php?do=avatarlocation&user=$postowner');\" title='User Avatar'></div></td><td><h3>$postowner<span style='font-size: 11px; padding-left: 6px; color: #808080;'>$postdate &nbsp;&nbsp;";
-					if(file_exists("ssb_db/posts/$postid.reactcount")) {
-						$reacts = file_get_contents("ssb_db/posts/$postid.reactcount");
-						echo "<i class='fa fa-heart' style='color: red;'></i> $reacts";
-					}
-					echo "</span><br /><a href='index.php?do=react&user=$postowner&pid=$postid'><i class='fa fa-heart'></i></a> <a href='index.php?view=$postid&user=$postowner'><i class='fa fa-reply'></i></a></h3></td></tr></table>";
+					echo "<div class='post'><table><tr><td><div class='avatar_small' style=\"background-image: url('index.php?do=avatarlocation&user=$postowner');\" title='User Avatar'></div></td><td><h3>$postowner<span style='font-size: 11px; padding-left: 6px; color: #808080;'>$postdate</span><br /><a href='minimum.php?view=$postid&user=$postowner'>reply</a></h3></td></tr></table>";
 					echo "" . bbcode_format($postcontent) . "";
 					echo "</div><br />\n";
 				}
 				
 				if($poststart > "1" && $postcount > $poststart && $postcount < ($poststart + 15)) {
-					echo "<div class='post'><table><tr><td><div class='avatar_small' style=\"background-image: url('index.php?do=avatarlocation&user=$postowner');\" title='User Avatar'></div></td><td><h3>$postowner<span style='font-size: 11px; padding-left: 6px; color: #808080;'>$postdate &nbsp;&nbsp;";
-					if(file_exists("ssb_db/posts/$postid.reactcount")) {
-						$reacts = file_get_contents("ssb_db/posts/$postid.reactcount");
-						echo "<i class='fa fa-heart' style='color: red;'></i> $reacts";
-					}
-					echo "</span><br /><a href='index.php?do=react&user=$postowner&pid=$postid'><i class='fa fa-heart'></i></a> <a href='index.php?view=$postid&user=$postowner'><i class='fa fa-reply'></i></a></h3></td></tr></table>";
+					echo "<div class='post'><table><tr><td><div class='avatar_small' style=\"background-image: url('index.php?do=avatarlocation&user=$postowner');\" title='User Avatar'></div></td><td><h3>$postowner<span style='font-size: 11px; padding-left: 6px; color: #808080;'>$postdate</span><br /><a href='minimum.php?view=$postid&user=$postowner'>reply</a></h3></td></tr></table>";
 					echo "" . bbcode_format($postcontent) . "";
 					echo "</div><br />\n";
 				}
@@ -1200,23 +1014,13 @@ else
 			$postcount++;
 			
 			if($poststart == "1" && $postcount < ($poststart + 15)) {
-				echo "<div class='post'><table><tr><td><div class='avatar_small' style=\"background-image: url('index.php?do=avatarlocation&user=$postowner');\" title='User Avatar'></div></td><td><h3>$postowner<span style='font-size: 11px; padding-left: 6px; color: #808080;'>$postdate &nbsp;&nbsp;";
-				if(file_exists("ssb_db/posts/$postid.reactcount")) {
-					$reacts = file_get_contents("ssb_db/posts/$postid.reactcount");
-					echo "<i class='fa fa-heart' style='color: red;'></i> $reacts";
-				}
-				echo "</span><br /><a href='index.php?do=react&user=$postowner&pid=$postid'><i class='fa fa-heart'></i></a> <a href='index.php?view=$postid&user=$postowner'><i class='fa fa-reply'></i></a> <a href='index.php?do=delpost&user=$username&pid=$postid'><i class='fa fa-trash-o'></i></a></h3></td></tr></table>";
+				echo "<div class='post'><table><tr><td><div class='avatar_small' style=\"background-image: url('index.php?do=avatarlocation&user=$postowner');\" title='User Avatar'></div></td><td><h3>$postowner<span style='font-size: 11px; padding-left: 6px; color: #808080;'>$postdate</span><br /><a href='minimum.php?view=$postid&user=$postowner'>reply</a> &bull; <a href='minimum.php?do=delpost&user=$username&pid=$postid'>delete post</a></h3></td></tr></table>";
 				echo "" . bbcode_format($postcontent) . "";
 				echo "</div><br />\n";
 			}
 			
 			if($poststart > "1" && $postcount > $poststart && $postcount < ($poststart + 15)) {
-				echo "<div class='post'><table><tr><td><div class='avatar_small' style=\"background-image: url('index.php?do=avatarlocation&user=$postowner');\" title='User Avatar'></div></td><td><h3>$postowner<span style='font-size: 11px; padding-left: 6px; color: #808080;'>$postdate &nbsp;&nbsp;";
-				if(file_exists("ssb_db/posts/$postid.reactcount")) {
-					$reacts = file_get_contents("ssb_db/posts/$postid.reactcount");
-					echo "<i class='fa fa-heart' style='color: red;'></i> $reacts";
-				}
-				echo "</span><br /><a href='index.php?do=react&user=$postowner&pid=$postid'><i class='fa fa-heart'></i></a> <a href='index.php?view=$postid&user=$postowner'><i class='fa fa-reply'></i></a> <a href='index.php?do=delpost&user=$username&pid=$postid'><i class='fa fa-trash-o'></i> </a></h3></td></tr></table>";
+				echo "<div class='post'><table><tr><td><div class='avatar_small' style=\"background-image: url('index.php?do=avatarlocation&user=$postowner');\" title='User Avatar'></div></td><td><h3>$postowner<span style='font-size: 11px; padding-left: 6px; color: #808080;'>$postdate</span><br /><a href='minimum.php?view=$postid&user=$postowner'>reply</a> &bull; <a href='minimum.php?do=delpost&user=$username&pid=$postid'>delete post</a></h3></td></tr></table>";
 				echo "" . bbcode_format($postcontent) . "";
 				echo "</div><br />\n";
 			}
@@ -1229,18 +1033,16 @@ else
 	
 	if($poststart > "1") {
 		$prevpage = $poststart / 15;
-		echo "<a href='index.php?page=$prevpage'><i class='fa fa-arrow-left'></i> &nbsp; Prev page</a>";
+		echo "<a href='minimum.php?page=$prevpage'>Prev page</a>";
 	}
 	
-	echo "&nbsp;&nbsp;&nbsp;";
-	
 	if($poststart == "1" && $postcount > ($poststart + 15)) {
-		echo "<a href='index.php?page=2'>Next page &nbsp; <i class='fa fa-arrow-right'></i></a>";
+		echo "<a href='minimum.php?page=2'>Next page</i></a>";
 	}
 	
 	if($poststart > "1" && $postcount > ($poststart + 15)) {
 		$nextpage = ($poststart / 15) + 2;
-		echo "<a href='index.php?page=$nextpage'>Next page &nbsp; <i class='fa fa-arrow-right'></i></a>";
+		echo "&bull; <a href='minimum.php?page=$nextpage'>Next page</i></a>";
 	}
 	
 	echo "</div>";
@@ -1250,7 +1052,6 @@ else
 
 <br /><br />
 <center style="background-color: #555555; padding 3px;">Powered By SSB <?php echo $version; ?></center>
-</div>
 </div> <!-- main contain -->
 </body>
 </html>
