@@ -11,9 +11,11 @@
 function bbcode_format($str) {   
   
     $simple_search = array(   
-                '/\[b\](.*?)\[\/b\]/is',  
-                '/\[i\](.*?)\[\/i\]/is',  
-                '/\[u\](.*?)\[\/u\]/is',  
+                '/\[b\](.*?)\[\/b\]/is',
+		'/\*\*\*(.*?)\*\*\*/is',
+                '/\[i\](.*?)\[\/i\]/is',
+                '/\[u\](.*?)\[\/u\]/is',
+		'/___(.*?)___/is',
                 '/\[url\=(.*?)\](.*?)\[\/url\]/is',
                 '/\[img\](.*?)\[\/img\]/is',   
                 '/\[url\](.*?)\[\/url\]/is',   
@@ -22,9 +24,11 @@ function bbcode_format($str) {
                 );  
   
     $simple_replace = array(  
-                "<strong>$1</strong>",  
+                "<strong>$1</strong>",
+		"<strong>$1</strong>",
                 "<em>$1</em>",  
                 "<u>$1</u>",  
+		"<u>$1</u>",
                 "<a onclick='doLogout();' href='$1' title='$2 - $1'>$2</a>",  
 				"<a href='$1'><img src='$1' class='attachment_chat' /></a>",
                 "<a onclick='doLogout();' href='$1' title='$1'>$1</a>",  

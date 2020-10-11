@@ -4,40 +4,44 @@
 //	License: CC-BY-NC-SA version 3.0
 //	http://github.com/Pentium44/SSB
 
+//error_reporting(E_ALL); 
+//ini_set('display_errors', 1);
+
 session_start();
 include "config.php";
 include "functions.php";
 include "bbcode.php";
 
 // check if flatfile database location is populated
-if(!file_exists(ssb_db))
+if(!file_exists("ssb_db"))
 {
 	mkdir("ssb_db", 0777);
 }
 
-if(!file_exists(ssb_db/users))
+if(!file_exists("ssb_db/users"))
 {
 	mkdir("ssb_db/users", 0777);
 }
 
-if(!file_exists(ssb_db/posts))
+if(!file_exists("ssb_db/posts"))
 {
 	mkdir("ssb_db/posts", 0777);
 }
 
-if(!file_exists(ssb_db/uploads))
+if(!file_exists("ssb_db/uploads"))
 {
 	mkdir("ssb_db/uploads", 0777);
 }
 
-if(!file_exists(ssb_db/friends))
+if(!file_exists("ssb_db/friends"))
 {
 	mkdir("ssb_db/friends", 0777);
 }
 
 $username = $_SESSION['ssb-user'];
+//$_SESSION['ssb-topic'] = $ssbtopic;
 
-$_SESSION['ssb-topic'] = $ssbtopic;
+
 
 ?>
 <!DOCTYPE html>
@@ -61,6 +65,14 @@ $_SESSION['ssb-topic'] = $ssbtopic;
 		var afterContent = content.substring(msgInput.selectionEnd, content.length);
 		msgInput.value = beforeContent + '[' + tag + ']' + selectedContent + '[/' + tag + ']' + afterContent;
 	}
+
+	function userTag(tag) {
+                var msgInput = document.getElementById('msg');
+                var content = msgInput.value;
+                var beforeContent = content.substring(0, msgInput.selectionStart);
+                var afterContent = content.substring(msgInput.selectionEnd, content.length);
+                msgInput.value = beforeContent + '@' + tag + afterContent;
+        }
 </script>
 <div class="maincontain">
 <div id="navcontainer">
@@ -75,7 +87,7 @@ $_SESSION['ssb-topic'] = $ssbtopic;
 	--><a style="width:50px;" href="?do=users" title="Public users!"><i style="padding:2px 2px 2px 2px;" class="fa fa-users"></i></a><!--
         --><a style="width:50px;" href="?do=userctrl"><i style="padding:2px 2px 2px 2px;" class="fa fa-cog"></i></a><!--
         --><a style="width:50px;" href="?do=logout"><i style="padding:2px 2px 2px 2px;" class="fa fa-sign-out"></i></a><!--
-        <?php } else {?>
+        <?php } else { ?>
         --><a href="?forms=login">Login</a><!--
         --><a href="?do=about">About</a><!--
         <?php } ?>
@@ -86,7 +98,7 @@ $_SESSION['ssb-topic'] = $ssbtopic;
 
 <?php
 
-if(isset($username) && isset($_SESSION['ssb-pass'])) {
+if(isset($username) && isset($_SESSION['ssb-pass']) && $_GET['do']!="avatarlocation") {
 	// PM notifications
 	$notifications = "ssb_db/friends/" . $username . ".notifications";
 	$handle = fopen($notifications, "r");
@@ -193,43 +205,23 @@ else if(isset($_GET['userfeed']))
 
 			// Lets generate the users feed now.
 			foreach(array_reverse(glob("ssb_db/posts/post_" . $userid . "_" . "*.php")) as $postfile) {
-			//echo $postfile;
-               		include $postfile;
-                	for($x = 1; $x <= $friendcount; $x++)
-                	{
-                        if($postowner == ${"friend" . $x}) {
-							echo bbcode_format($postcontent);
-							$imgExts = array("gif", "jpeg", "jpg", "png", "bmp", "ico", "png");
-							foreach(array_reverse(glob("ssb_db/uploads/" . $postowner . "_" . $postid . ".*")) as $postfile)
-							{
-								if(in_array(end(explode(".", $postfile)), $imgExts))
-								{
-									echo "<div class='attachment'>";
-									echo "<a href='ssb_db/uploads/" . $postowner . "_" . $postid . "." . end(explode(".", $postfile)) . "' title='Attachment: left click to enlarge, right click to download...'>";
-									echo "<img src='ssb_db/uploads/" . $postowner . "_" . $postid . "." . end(explode(".", $postfile)) . "'>";
-									echo "</a></div>";
-								}
-							}
-						
-							echo "<br />";
-						}
+				//echo $postfile;
+				include $postfile;
+				for($x = 1; $x <= $friendcount; $x++)
+				{
+					if($postowner == ${"friend" . $x}) {
+						echo "<div class='post'><table><tr><td><div class='avatar_small' style=\"background-image: url('index.php?do=avatarlocation&user=$postowner');\" title='User Avatar'></div></td><td><h3>$postowner<span style='font-size: 11px; padding-left: 6px; color: #808080;'>$postdate</span><br /><a href='index.php?view=$postid&user=$postowner'><i class='fa fa-reply'></i></a></h3></td></tr></table>";
+						echo "" . bbcode_format($postcontent) . "";
+						echo "</div><br />\n";
 					}
+				}
 
-				if($postowner == $username) {
-					echo bbcode_format($postcontent);
-					$imgExts = array("gif", "jpeg", "jpg", "png", "bmp", "ico", "png");
-					foreach(array_reverse(glob("ssb_db/uploads/" . $postowner . "_" . $postid . ".*")) as $postfile)
-					{
-						if(in_array(end(explode(".", $postfile)), $imgExts))
-						{
-							echo "<div class='attachment'>";
-							echo "<a href='ssb_db/uploads/" . $postowner . "_" . $postid . "." . end(explode(".", $postfile)) . "' title='Attachment: left click to enlarge, right click to download...'>";
-							echo "<img src='ssb_db/uploads/" . $postowner . "_" . $postid . "." . end(explode(".", $postfile)) . "'>";
-							echo "</a></div>";
-						}
-                 	}
-					echo "<br />";
-              	}
+				if($postowner == $username)
+				{
+					echo "<div class='post'><table><tr><td><div class='avatar_small' style=\"background-image: url('index.php?do=avatarlocation&user=$postowner');\" title='User Avatar'></div></td><td><h3>$postowner<span style='font-size: 11px; padding-left: 6px; color: #808080;'>$postdate</span><br /><a href='index.php?view=$postid&user=$postowner'><i class='fa fa-reply'></i></a> <a href='index.php?do=delpost&user=$username&pid=$postid'><i class='fa fa-trash-o'></i></a></h3></td></tr></table>";
+					echo "" . bbcode_format($postcontent) . "";
+					echo "</div><br />\n";
+				}
 			}
 			echo "<!-- Gen done...-->";
 		}
@@ -237,49 +229,38 @@ else if(isset($_GET['userfeed']))
 	else
 	{
 		echo "<h3>User information</h3>";
-               	echo "<table><tr><td>";
-               	// Get user avatar if set
-          	if(isset($user_avatar)) { echo "<img class='avatar' src='ssb_db/uploads/" . $user_avatar . "' title='User Avatar'><br />"; }
-               	// DONE
-             	echo "</td><td>";
-             	// If not friend, allow to send friend request from right here!
-             	$friend = 0;
-             	$friendcount = file_get_contents("ssb_db/friends/" . $username . ".count");
-				include "ssb_db/friends/" . $username . ".php";
-				for($x = 1; $x <= $friendcount; $x++)
-				{
-					// If private, and user is following. Allow
-					if($userid == ${"friend" . $x}) {
-						$friend = 1;
-					}
-				}	
-				
-				if($friend!=1) {
-					echo "<a class='button' href='index.php?do=sendfr&user=$userid'>Send friend request</a><br /><br />";
+		echo "<table><tr><td>";
+		// Get user avatar if set
+		if(isset($user_avatar)) { echo "<img class='avatar' src='ssb_db/uploads/" . $user_avatar . "' title='User Avatar'><br />"; }
+			// DONE
+			echo "</td><td>";
+			// If not friend, allow to send friend request from right here!
+			$friend = 0;
+			$friendcount = file_get_contents("ssb_db/friends/" . $username . ".count");
+			include "ssb_db/friends/" . $username . ".php";
+			for($x = 1; $x <= $friendcount; $x++)
+			{
+				// If private, and user is following. Allow
+				if($userid == ${"friend" . $x}) {
+					$friend = 1;
 				}
+			}	
+				
+			if($friend!=1) {
+				echo "<a class='button' href='index.php?do=sendfr&user=$userid'>Send friend request</a><br /><br />";
+			}
              	
-              	echo "Username: " . $userid . "@" . $domain . "<br />";
-             	echo "Full name: " . $user_fullname;
-              	echo "</td></tr></table>";
+			echo "Username: " . $userid . "@" . $domain . "<br />";
+			echo "Full name: " . $user_fullname;
+			echo "</td></tr></table>";
 
 		foreach(array_reverse(glob("ssb_db/posts/post_" . $userid . "_" . "*.php")) as $postfile) {
-                        //echo $postfile;
-                        include $postfile;
-    			echo bbcode_format($postcontent);
-   			$imgExts = array("gif", "jpeg", "jpg", "png", "bmp", "ico", "png");
-                 	foreach(array_reverse(glob("ssb_db/uploads/" . $postowner . "_" . $postid . ".*")) as $postfile)
-         		{
-                        	if(in_array(end(explode(".", $postfile)), $imgExts))
-                              	{
-                               		echo "<div class='attachment'>";
-                                   	echo "<a href='ssb_db/uploads/" . $postowner . "_" . $postid . "." . end(explode(".", $postfile)) . "' title='Attachment: left click to enlarge, right click to download...'>";
-                                       	echo "<img src='ssb_db/uploads/" . $postowner . "_" . $postid . "." . end(explode(".", $postfile)) . "'>";
-                                       	echo "</a></div>";
-                                }
-                        }
-                        echo "<br />";
-      		}
-     	}
+			//echo $postfile;
+			include $postfile;
+			
+			echo bbcode_format($postcontent);
+		}
+	}
 }
 else if(isset($_GET['view']) && isset($_GET['user']))
 {
@@ -288,27 +269,19 @@ else if(isset($_GET['view']) && isset($_GET['user']))
 	$postc = file_get_contents("ssb_db/posts/reply_" . $puser . "_" . $id . ".count");
 	include "ssb_db/posts/post_" . $puser . "_" . $id . ".php";
 
-	echo "<div class='post'>";
+	echo "<div class='post'><table><tr><td><div class='avatar_small' style=\"background-image: url('index.php?do=avatarlocation&user=$postowner');\" title='User Avatar'></div></td><td><h3>$postowner<span style='font-size: 11px; padding-left: 6px; color: #808080;'>$postdate</span></h3></td></tr></table>";
+	echo "" . bbcode_format($postcontent) . "";
+	echo "</div><br />\n";
 
-	// Let the text process if no images xD
-        echo bbcode_format($postcontent) . "</div>";
-
-
-	$imgExts = array("gif", "jpeg", "jpg", "png", "bmp", "ico", "png");
-	foreach(array_reverse(glob("ssb_db/uploads/" . $puser . "_" . $id . ".*")) as $postfile) 
-	{
-		if(in_array(end(explode(".", $postfile)), $imgExts))
-		{
-			echo "<div class='attachment'>";
-			echo "Attachment: left click to enlarge, right click to download...<br />";
-			echo "<a href='ssb_db/uploads/" . $puser . "_" . $id . "." . end(explode(".", $postfile)) . "'>";
-			echo "<img src='ssb_db/uploads/" . $puser . "_" . $id . "." . end(explode(".", $postfile)) . "'>";
-			echo "</a></div>";
-		}
-	}
-
-	for($x = 0; $x <= $postc; $x++) {
-		echo bbcode_format(${"reply" . $x});
+	for($x = 1; $x <= $postc; $x++) {
+		$reply_content = ${"reply" . $x};
+		$reply_user = ${"reply" . $x . "_user"};
+		$reply_date = ${"reply" . $x . "_date"};
+		
+		echo "<div class='reply'>";
+		echo "<table><tr><td><div class='avatar_small' style='background-image: url(\"index.php?do=avatarlocation&user=$reply_user\");' title='User Avatar'></div></td><td><h4>$reply_user <a onclick=\"userTag('$reply_user');\"><i class='fa fa-tag'></i></a> <span style='font-size: 8px; padding-left: 6px; color: #808080;'>$reply_date</span></h4></td></tr></table>";
+		echo "<div class='reply_content'>" . bbcode_format($reply_content) . "</div>";
+		echo "</div>\n";
 	}
 
 	echo "<br />";
@@ -391,7 +364,7 @@ else if(isset($_GET['do']))
 							}
 							else
 							{
-								$randstring = getRandString("12");
+								$randstring = getRandString("32");
 								move_uploaded_file($_FILES["file"]["tmp_name"][$i],
 								"ssb_db/uploads/" . $randstring . "." . $extension);
 								array_push($uploaded, $randstring . "." . $extension);
@@ -409,12 +382,14 @@ else if(isset($_GET['do']))
 					}
 				} // end of for loop
 		
-				$checkForUserTag = searchForUserTag($_POST['body']);
+				$srchcont = stripslashes(htmlentities($_POST['body']));
+				$srchcont .= " "; // doesn't find tag if there's not a fucking whitespace
+				$checkForUserTag = searchForUserTag($srchcont);
 				$taggedUser = substr($checkForUserTag, 1, -1);
 				if(file_exists("ssb_db/users/" . $taggedUser . ".name")) {
-					if($taggedUser!=$username) {
-						$tagged_notification = file_get_contents("ssb_db/friends/" . $taggedUser . ".notifications");
-						file_put_contents("ssb_db/friends/" . $taggedUser . ".notifications", "<b>$username</b> <a href='index.php?view=$date&user=$username'>tagged you in a post</a><br />" . $tagged_notification);
+					if($taggedUser!=$postowner) {
+						$tagged_notifications = file_get_contents("ssb_db/friends/" . $taggedUser . ".notifications");
+						file_put_contents("ssb_db/friends/" . $taggedUser . ".notifications", "<b>$username</b> <a href='index.php?view=$pid&user=$postowner'>tagged you in a comment</a>\n" . $tagged_notifications);
 					}
 				}
 
@@ -422,8 +397,8 @@ else if(isset($_GET['do']))
 				//$username = stripcslashes(htmlentities($username));
 				include "ssb_db/users/" . $username . ".php";
 				$post_file = "ssb_db/posts/post_" . $username . "_" . $date . ".php";
-				$post_attachments = "";
-				$post_string = "<?php\n\$postowner = \"" . $username . "\";\n\$postid=\"" . $date . "\";\n\$postcontent = \"<div class='post'><table><tr><td><div class='avatar_small' style=\\\"background-image: url('index.php?do=avatarlocation&user=" . $username . "');\\\" title='User Avatar'></div></td><td><h3>" . $username . " <a href='?view=" . $date . "&user=" . $username . "'> <i class='fa fa-reply'></i></a> <span style='font-size: 10px; color: #888888;'>" . $titledate . "</span></h3><p>" . $body . "</p></td></tr></table></div>";
+				$post_attachments = "<br />";
+				$post_string = "<?php\n\$postowner = \"" . $username . "\";\$postid=\"" . $date . "\";\$postdate=\"" . $titledate . "\";\$postcontent = \"" . $body . "<br />";
 					
 				$attachments = array();
 				foreach($uploaded as &$upload)
@@ -531,15 +506,17 @@ else if(isset($_GET['do']))
 				{
 					$pid = $_GET['pid'];
 					$post_file_name = file_get_contents("ssb_db/posts/$pid.post");
-                                        include "ssb_db/posts/" . $post_file_name;
-					$checkForUserTag = searchForUserTag($_POST['body']);
-                                	$taggedUser = substr($checkForUserTag, 1, -1);
-                                	if(file_exists("ssb_db/users/" . $taggedUser . ".name")) {
-                                	        if($taggedUser!=$postowner) {
-                                                	$tagged_notifications = file_get_contents("ssb_db/friends/" . $taggedUser . ".notifications");
-                                                	file_put_contents("ssb_db/friends/" . $taggedUser . ".notifications", "<b>$username</b> <a href='index.php?view=$pid&user=$postowner'>tagged you in a comment</a><br />" . $tagged_notifications);
-                                   		}
-                                	}
+                    include "ssb_db/posts/" . $post_file_name;
+					$srchcont = stripslashes(htmlentities($_POST['body']));
+					$srchcont .= " ";
+					$checkForUserTag = searchForUserTag($srchcont);
+					$taggedUser = substr($checkForUserTag, 1, -1);
+					if(file_exists("ssb_db/users/" . $taggedUser . ".name")) {
+						if($taggedUser!=$postowner) {
+							$tagged_notifications = file_get_contents("ssb_db/friends/" . $taggedUser . ".notifications");
+							file_put_contents("ssb_db/friends/" . $taggedUser . ".notifications", "<b>$username</b> <a href='index.php?view=$pid&user=$postowner'>tagged you in a comment</a>\n" . $tagged_notifications);
+						}
+					}
 
 					$replydate = date("m-d-Y h:i:sa"); // time stamp for people to read xD
 					$body = nl2br(htmlentities(stripcslashes($_POST['body'])));
@@ -549,13 +526,13 @@ else if(isset($_GET['do']))
 
 					$reply_count = $reply_count+1;
 
-					$post_string = "<?php \n\$reply" . $reply_count . " = \"<div class='reply'><b>" . $username . "</b>&nbsp;<span style='font-size: 8px; color: #888888;'>" . $replydate . "</span><br />" . $body . "</div>\";\n?>\n";
+					$post_string = "<?php \n\$reply" . $reply_count . " = \"" . $body . "\";\$reply" . $reply_count . "_user = \"" . $username . "\"; \$reply" . $reply_count . "_date = \"" . $replydate . "\";\n?>\n";
 					file_put_contents("ssb_db/posts/" . $post_file_name, $old_content . $post_string);
 					file_put_contents("ssb_db/posts/reply_" . $postowner . "_" . $pid . ".count", $reply_count);
 
 					if($username!=$postowner) {
 						$owner_notifications = file_get_contents("ssb_db/friends/" . $postowner . ".notifications");
-						file_put_contents("ssb_db/friends/" . $postowner . ".notifications", "<b>$username</b> <a href='index.php?view=$pid&user=$postowner'>replied to your post</a><br />" . $owner_notifications);
+						file_put_contents("ssb_db/friends/" . $postowner . ".notifications", "<b>$username</b> <a href='index.php?view=$pid&user=$postowner'>replied to your post</a>\n" . $owner_notifications);
 					}
 
 					echo "If you're seeing this; redirection failed: <a href=\"?view=$pid&user=$postowner\">Click Here</a><br>";
@@ -569,6 +546,27 @@ else if(isset($_GET['do']))
 		}
 	}
 	
+	if($do=="delpost") 
+	{
+		 if (!isset($_SESSION['ssb-user']) || !isset($_SESSION['ssb-pass'])) { loginForm(); } else {
+			include "ssb_db/users/" . $username . ".php";
+			if($user_password === $_SESSION['ssb-pass']) {
+				if(isset($_GET['user']) && $_GET['user']!="" && isset($_GET['pid']) && $_GET['pid']!="") {
+					if(file_exists("ssb_db/posts/post_" . stripslashes($_GET['user']) . "_" . stripslashes($_GET['pid']) . ".php") && $username == stripslashes($_GET['user'])) {
+						$postuser = $_GET['user'];
+						$pid = $_GET['pid'];
+						unlink("ssb_db/posts/" . $pid . ".post");
+						unlink("ssb_db/posts/post_" . $postuser . "_" . $pid . ".php");
+						unlink("ssb_db/posts/reply_" . $postuser . "_" . $pid . ".count");
+						echo "Post successfully deleted! <a href='index.php'>redirecting</a> in 3 seconds...<br />";
+						header("refresh: 3;url=index.php");
+						exit;
+					} else { echo "ERROR: post doesn't exist or YOU ARE NOT THE OWNER OF SAID POST... THIS incident has been recorded!"; file_put_contents("ssb_db/log.txt", "Post deletion error: IP <" . $_SERVER['REMOTE_ADDR'] . "> post not found or not users post: post_" . $postuser . "_" . $pid . ".php\n"); }
+				} else { echo "ERROR: USER and PID variables not set!"; }
+			} else { echo "ERROR: PASSWORD FOR USER INCORRECT! IP LOGGED!"; file_put_contents("ssb_db/log.txt", "PASS MISMATCH: IP <" . $_SERVER['REMOTE_ADDR'] . "> Cookie spoofing detected from remote client!!!\n"); }
+		}
+	}
+	
 	if($do=="clrnote") 
 	{
 		 if (!isset($_SESSION['ssb-user']) || !isset($_SESSION['ssb-pass'])) { loginForm(); } else {
@@ -576,7 +574,8 @@ else if(isset($_GET['do']))
 			if($user_password === $_SESSION['ssb-pass']) {
 				unlink("ssb_db/friends/" . $username . ".notifications");
 				header("Location: index.php");
-			}
+				exit;
+			} else { echo "ERROR: PASSWORD FROM COOKIE INCORRECT! IP RECORDED!"; file_put_contents("ssb_db/log.txt", "PASS MISMATCH: IP <" . $_SERVER['REMOTE_ADDR'] . "> Cookie spoofing detected from remote client!!!\n"); }
 		}
 	}
 	
@@ -587,7 +586,8 @@ else if(isset($_GET['do']))
 			if($user_password === $_SESSION['ssb-pass']) {
 				unlink("ssb_db/friends/" . $username . ".pending");
 				header("Location: index.php?do=friends");
-			}
+				exit;
+			} else { echo "ERROR: PASSWORD FROM COOKIE INCORRECT! IP RECORDED!"; file_put_contents("ssb_db/log.txt", "PASS MISMATCH: IP <" . $_SERVER['REMOTE_ADDR'] . "> Cookie spoofing detected from remote client!!!\n"); }
 		}
 	}
 
@@ -615,6 +615,7 @@ else if(isset($_GET['do']))
 	if($do=="sendfr") {
 		if (!isset($_SESSION['ssb-user']) || !isset($_SESSION['ssb-pass'])) { loginForm(); } else {
 			if(isset($_POST['user']) || isset($_GET['user'])) {
+				
 				//check if user exists first lol
 				if(isset($_POST['user'])) { 
 					$givenUser = htmlentities(stripcslashes($_POST['user']));
@@ -668,9 +669,9 @@ else if(isset($_GET['do']))
 	}
 
 	if($do=="changepass")
-        {
-                if (!isset($_SESSION['ssb-user']) || !isset($_SESSION['ssb-pass'])) { loginForm(); } else {
-                        // Beginning password change
+	{
+		if (!isset($_SESSION['ssb-user']) || !isset($_SESSION['ssb-pass'])) { loginForm(); } else {
+			// Beginning password change
 			// inputs
 			$oldPassInput = htmlentities(stripslashes($_POST['oldpass']));
 			$newPassInput = htmlentities(stripslashes($_POST['password']));
@@ -686,9 +687,9 @@ else if(isset($_GET['do']))
 					$_SESSION['ssb-pass'] = null;
 					header("refresh: 3;url=index.php");
 				}
-			} 
-                }
-        }
+			} else { echo "ERROR: password incorrect! IP recorded for constant monitoring of possible bots!"; file_put_contents("ssb_db/log.txt", "PASS MISMATCH: IP <" . $_SERVER['REMOTE_ADDR'] . "> Cookie spoofing detected from remote client!!!\n"); }
+		}
+	}
 
 	if($do=="pubmsg")
 	{
@@ -943,16 +944,23 @@ else if(isset($_GET['do']))
 			$user = htmlentities(stripslashes($_GET['user']));
 			include "ssb_db/users/" . $user . ".php";
 			if(file_exists("ssb_db/uploads/" . $user_avatar)) {
-				header("Location: ssb_db/uploads/" . $user_avatar);
+				echo "Direct to: ssb_db/uploads/" . $user_avatar;
+				header("Location: ssb_db/uploads/" . $user_avatar . "");
+				exit;
 			} else {
+				echo "Direct to: data/defaultprofile.png";
 				header("Location: data/defaultprofile.png");
+				exit;
 			}
+		} else {
+			echo "User is NOT set!";
 		}
 	}
 
 	if($do=="about")
         {
                 echo "<h2>About</h2>";
+		echo "<div class='dllink'><a class='button' href='download/securespace-v1.0.0.apk'>Download for Android!</a></div>";
 		echo $desc;
         }
 
@@ -1064,50 +1072,94 @@ else if (!isset($_SESSION['ssb-user']) || !isset($_SESSION['ssb-pass']))
 } 
 else
 {
+	// Watch feed, lets generate pages while we're at it
+	$pagecall = $_GET['page'];
+	$postcount = 1;
+	if(isset($pagecall) && $pagecall!="")
+	{
+		if($pagecall == "1")
+		{
+			$poststart = $postcount;
+		}
+		else
+		{
+			$poststart = ($pagecall - 1) * 15; // 15 posts per page
+		}
+	}
+	else
+	{
+		$poststart = $postcount;
+	}
+	
+	
+	
 	// Lets actually generate some feed now.
 	foreach(array_reverse(glob("ssb_db/posts/*.post")) as $postfile) {
 		$postphp = file_get_contents($postfile);
 		include "ssb_db/posts/$postphp";
 		$friendcount = file_get_contents("ssb_db/friends/" . $username . ".count");
-               	include "ssb_db/friends/" . $username . ".php";
-             	for($x = 1; $x <= $friendcount; $x++)
-           	{
-        		if($postowner == ${"friend" . $x}) {
-				echo bbcode_format($postcontent);
-				$imgExts = array("gif", "jpeg", "jpg", "png", "bmp", "ico", "png");
-        			//foreach(array_reverse(glob("ssb_db/uploads/" . $postowner . "_" . $postid . ".*")) as $postfile)
-        			//{
-        			//        if(in_array(end(explode(".", $postfile)), $imgExts))
-                		//	{
-				//		echo "<div class='attachment'>";
-  			        //		echo "Attachment: left click to enlarge, right click to download...<br />";
-                        	//		echo "<a href='ssb_db/uploads/" . $postowner . "_" . $postid . "." . end(explode(".", $postfile)) . "'>";
-                        	//		echo "<img src='ssb_db/uploads/" . $postowner . "_" . $postid . "." . end(explode(".", $postfile)) . "'>";
-                        	//		echo "</a></div>";
-                		//	}
-        			//}
-				echo "<br />\n";
+		include "ssb_db/friends/" . $username . ".php";
+		
+		for($x = 1; $x <= $friendcount; $x++)
+		{
+			if($postowner == ${"friend" . $x}) {
+				// Found a post, post count goes up!
+				$postcount++;
+				
+				if($poststart == "1" && $postcount < ($poststart + 15)) {
+					echo "<div class='post'><table><tr><td><div class='avatar_small' style=\"background-image: url('index.php?do=avatarlocation&user=$postowner');\" title='User Avatar'></div></td><td><h3>$postowner<span style='font-size: 11px; padding-left: 6px; color: #808080;'>$postdate</span><br /><a href='index.php?view=$postid&user=$postowner'><i class='fa fa-reply'></i></a></h3></td></tr></table>";
+					echo "" . bbcode_format($postcontent) . "";
+					echo "</div><br />\n";
+				}
+				
+				if($poststart > "1" && $postcount > $poststart && $postcount < ($poststart + 15)) {
+					echo "<div class='post'><table><tr><td><div class='avatar_small' style=\"background-image: url('index.php?do=avatarlocation&user=$postowner');\" title='User Avatar'></div></td><td><h3>$postowner<span style='font-size: 11px; padding-left: 6px; color: #808080;'>$postdate</span><br /><a href='index.php?view=$postid&user=$postowner'><i class='fa fa-reply'></i></a></h3></td></tr></table>";
+					echo "" . bbcode_format($postcontent) . "";
+					echo "</div><br />\n";
+				}
 			}
-              	}
+		}
 
 		if($postowner == $username)
 		{
-			echo bbcode_format($postcontent);
-			$imgExts = array("gif", "jpeg", "jpg", "png", "bmp", "ico", "png");
-                        //foreach(array_reverse(glob("ssb_db/uploads/" . $postowner . "_" . $postid . ".*")) as $postfile)
-                        //{
-                   	//	if(in_array(end(explode(".", $postfile)), $imgExts))
-                    	//	{
-   			//		echo "<div class='attachment'>";
-                        //               	echo "Attachment: left click to enlarge, right click to download...<br />";
-                        //               	echo "<a href='ssb_db/uploads/" . $postowner . "_" . $postid . "." . end(explode(".", $postfile)) . "'>";
-                        //               	echo "<img src='ssb_db/uploads/" . $postowner . "_" . $postid . "." . end(explode(".", $postfile)) . "'>";
-                        //               	echo "</a></div>";
-                        //       	}
-                     	//}
-			echo "<br />\n";
+			// Found a post, post count goes up!
+			$postcount++;
+			
+			if($poststart == "1" && $postcount < ($poststart + 15)) {
+				echo "<div class='post'><table><tr><td><div class='avatar_small' style=\"background-image: url('index.php?do=avatarlocation&user=$postowner');\" title='User Avatar'></div></td><td><h3>$postowner<span style='font-size: 11px; padding-left: 6px; color: #808080;'>$postdate</span><br /><a href='index.php?view=$postid&user=$postowner'><i class='fa fa-reply'></i></a> <a href='index.php?do=delpost&user=$username&pid=$postid'><i class='fa fa-trash-o'></i></a></h3></td></tr></table>";
+				echo "" . bbcode_format($postcontent) . "";
+				echo "</div><br />\n";
+			}
+			
+			if($poststart > "1" && $postcount > $poststart && $postcount < ($poststart + 15)) {
+				echo "<div class='post'><table><tr><td><div class='avatar_small' style=\"background-image: url('index.php?do=avatarlocation&user=$postowner');\" title='User Avatar'></div></td><td><h3>$postowner<span style='font-size: 11px; padding-left: 6px; color: #808080;'>$postdate</span><br /><a href='index.php?view=$postid&user=$postowner'><i class='fa fa-reply'></i></a> <a href='index.php?do=delpost&user=$username&pid=$postid'><i class='fa fa-trash-o'></i></a></h3></td></tr></table>";
+				echo "" . bbcode_format($postcontent) . "";
+				echo "</div><br />\n";
+			}
 		}
 	}
+	
+	
+	// Page button generation
+	echo "<div class='page-controls'>";
+	
+	if($poststart > "1") {
+		$prevpage = $poststart / 15;
+		echo "<a href='index.php?page=$prevpage'><i class='fa fa-arrow-left'></i> &nbsp; Prev page</a>";
+	}
+	
+	echo "&nbsp;&nbsp;&nbsp;";
+	
+	if($poststart == "1" && $postcount > ($poststart + 15)) {
+		echo "<a href='index.php?page=2'>Next page &nbsp; <i class='fa fa-arrow-right'></i></a>";
+	}
+	
+	if($poststart > "1" && $postcount > ($poststart + 15)) {
+		$nextpage = ($poststart / 15) + 2;
+		echo "<a href='index.php?page=$nextpage'>Next page &nbsp; <i class='fa fa-arrow-right'></i></a>";
+	}
+	
+	echo "</div>";
 }
 
 ?>

@@ -49,7 +49,7 @@ if (isset($_GET['msg']) && $_GET['msg']!="" && isset($_GET['nick']) && !isset($_
 			// conents into database
 			file_put_contents("ssb_db/friends/" . ${"friend_chat_db" . $x} . ".php", $old_content . $line_start . $line_end);
 			// notifications!
-			file_put_contents("ssb_db/friends/" . ${"friend" . $x} . ".notifications", "<b>" . $nick . "</b> sent you a <a href='?do=privmsg&friend=" . $nick . "'>message</a><br />\n" . $notifications);
+			file_put_contents("ssb_db/friends/" . ${"friend" . $x} . ".notifications", "<b>" . $nick . "</b> sent you a <a href='?do=privmsg&friend=" . $nick . "'>message</a>\n" . $notifications);
 		}
 	}
 } else if (isset($_GET['get'])){

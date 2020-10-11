@@ -9,6 +9,15 @@ SSB was written by Chris Dorman, 2012-2020 <https://cddo.cf>
 
 ChangeLog
 ----
+10/10/2020 -v2.0.2 - minor version bump - release
+* BBCode image addition (***boldtext***) (___underlinetext___)
+* Bugfixes with notification menu, and user profile avatar linking
+* Added post removal abilities for post owners
+* Database speed enhancements (removed a ton of HTML out of the database to free space)
+* Reworked post / reply generation code
+* Updated some errors in user profile generation
+* New BG, hope you like!
+
 9/20/2020 -v2.0.0 - major version bump - release
 * BBCode IMG addition for chat
 * Multi image uploads added
