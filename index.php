@@ -1380,14 +1380,14 @@ else
 					echo "<a style='padding-top: 6px;' onclick=\"userReact('" . $postowner . "','" . $postid . "');\" class='button'><i class='fa fa-heart'></i>&nbsp;React</a>";
 					echo "<br />"; // line break
 					if(file_exists("ssb_db/posts/reply_" . $postowner . "_" . $postid . ".count")) {
-						$postcount = file_get_contents("ssb_db/posts/reply_" . $postowner . "_" . $postid . ".count");
+						$pcount = file_get_contents("ssb_db/posts/reply_" . $postowner . "_" . $postid . ".count");
 						// If there's a reply, show them.
-						if($postcount == 0) {
+						if($pcount == 0) {
 							echo "no replies";
-						} else if($postcount == 1) {
-							echo "$postcount reply";
-						} else if ($postcount > 0) {
-							echo "$postcount replies";
+						} else if($pcount == 1) {
+							echo "$pcount reply";
+						} else if ($pcount > 0) {
+							echo "$pcount replies";
 						}
 					}
 					
@@ -1431,14 +1431,14 @@ else
 					echo "<a style='padding-top: 6px;' onclick=\"userReact('" . $postowner . "','" . $postid . "');\" class='button'><i class='fa fa-heart'></i>&nbsp;React</a>";
 					echo "<br />"; // line break
 					if(file_exists("ssb_db/posts/reply_" . $postowner . "_" . $postid . ".count")) {
-						$postcount = file_get_contents("ssb_db/posts/reply_" . $postowner . "_" . $postid . ".count");
+						$pcount = file_get_contents("ssb_db/posts/reply_" . $postowner . "_" . $postid . ".count");
 						// If there's a reply, show them.
-						if($postcount == 0) {
+						if($pcount == 0) {
 							echo "no replies";
-						} else if($postcount == 1) {
-							echo "$postcount reply";
-						} else if ($postcount > 0) {
-							echo "$postcount replies";
+						} else if($pcount == 1) {
+							echo "$pcount reply";
+						} else if ($pcount > 0) {
+							echo "$pcount replies";
 						}
 					}
 					
@@ -1489,14 +1489,14 @@ else
 				echo "<a style='padding-top: 6px;' onclick=\"userReact('" . $postowner . "','" . $postid . "');\" class='button'><i class='fa fa-heart'></i>&nbsp;React</a>";
 				echo "<br />"; // line break
 				if(file_exists("ssb_db/posts/reply_" . $postowner . "_" . $postid . ".count")) {
-					$postcount = file_get_contents("ssb_db/posts/reply_" . $postowner . "_" . $postid . ".count");
+					$pcount = file_get_contents("ssb_db/posts/reply_" . $postowner . "_" . $postid . ".count");
 					// If there's a reply, show them.
-					if($postcount == 0) {
+					if($pcount == 0) {
 						echo "no replies";
-					} else if($postcount == 1) {
-						echo "$postcount reply";
-					} else if ($postcount > 0) {
-						echo "$postcount replies";
+					} else if($pcount == 1) {
+						echo "$pcount reply";
+					} else if ($pcount > 0) {
+						echo "$pcount replies";
 					}
 				}
 						
@@ -1540,14 +1540,14 @@ else
 				echo "<a style='padding-top: 6px;' onclick=\"userReact('" . $postowner . "','" . $postid . "');\" class='button'><i class='fa fa-heart'></i>&nbsp;React</a>";
 				echo "<br />"; // line break
 				if(file_exists("ssb_db/posts/reply_" . $postowner . "_" . $postid . ".count")) {
-					$postcount = file_get_contents("ssb_db/posts/reply_" . $postowner . "_" . $postid . ".count");
+					$pcount = file_get_contents("ssb_db/posts/reply_" . $postowner . "_" . $postid . ".count");
 					// If there's a reply, show them.
-					if($postcount == 0) {
+					if($pcount == 0) {
 						echo "no replies";
-					} else if($postcount == 1) {
-						echo "$postcount reply";
-					} else if ($postcount > 0) {
-						echo "$postcount replies";
+					} else if($pcount == 1) {
+						echo "$pcount reply";
+					} else if ($pcount > 0) {
+						echo "$pcount replies";
 					}
 				}
 					
