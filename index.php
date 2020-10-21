@@ -57,6 +57,22 @@ $username = $_SESSION['ssb-user'];
 
 <script type="text/javascript">
 
+	var elems = document.body.getElementsByTagName("video");
+	for(var i = 0; i < elems.length; i++)
+	{
+		elems[i].setAttribute("preload","none");
+	}
+
+	// Get the HTTP Object
+   	function getHTTPObject() {
+      		if (window.ActiveXObject) return new ActiveXObject("Microsoft.XMLHTTP");
+      		else if (window.XMLHttpRequest) return new XMLHttpRequest();
+         	else {
+                	alert("Your browser does not support AJAX.");
+                	return null;
+      		}
+     	}
+
 	function wrapBBCode(tag) {
 		var msgInput = document.getElementById('msg');
 		var content = msgInput.value;
@@ -67,12 +83,34 @@ $username = $_SESSION['ssb-user'];
 	}
 
 	function userTag(tag) {
-                var msgInput = document.getElementById('msg');
-                var content = msgInput.value;
-                var beforeContent = content.substring(0, msgInput.selectionStart);
-                var afterContent = content.substring(msgInput.selectionEnd, content.length);
-                msgInput.value = beforeContent + '@' + tag + afterContent;
-        }
+		var msgInput = document.getElementById('msg');
+		var content = msgInput.value;
+		var beforeContent = content.substring(0, msgInput.selectionStart);
+		var afterContent = content.substring(msgInput.selectionEnd, content.length);
+		msgInput.value = beforeContent + '@' + tag + afterContent;
+	}
+
+	// For dynamic reacting without leaving page.
+	function userReact(user, postid) {
+		ajaxGet = getHTTPObject();
+		if (ajaxGet != null) {
+			link = "index.php?do=react&user="+user+"&pid="+postid;
+			ajaxGet.open("GET", link , true);
+			ajaxGet.send(null);
+			window.location.reload()
+		}
+	}
+	
+	// For dynamic reacting without leaving page.
+	function userClrNotifications() {
+		ajaxGet = getHTTPObject();
+		if (ajaxGet != null) {
+			link = "index.php?do=clrnote";
+			ajaxGet.open("GET", link , true);
+			ajaxGet.send(null);
+			window.location.reload()
+		}
+	}
 </script>
 <div class="maincontain">
 <div id="navcontainer">
@@ -104,7 +142,7 @@ if(isset($username) && isset($_SESSION['ssb-pass']) && $_GET['do']!="avatarlocat
 	$handle = fopen($notifications, "r");
 
 	echo "<div class='notifications'>";
-	echo "<table><tr><td><a class='button' href='?do=clrnote'>Clear notifications</a></td></tr>";
+	echo "<table><tr><td><a class='button' onclick=\"userClrNotifications();\">Clear notifications</a></td></tr>";
 
 	if ($handle) {
 		while (($line = fgets($handle)) !== false) {
@@ -138,17 +176,17 @@ if(isset($_GET['forms']))
 		deleteAcctForm();
 	}
 	else if($forms=="avatarupload") {
-                uploadAvatarForm();
-        }
-        else if($forms=="post")
-        {
-                postForm();
-        }
-        else if($forms=="clean")
-        {
-                cleanForm();
-        }
-        else { echo "ERROR: Unknown form-name<br>"; }
+		uploadAvatarForm();
+	}
+	else if($forms=="post") {
+		postForm();
+	}
+	else if($forms=="clean") {
+		cleanForm();
+	}
+	else { 
+		echo "ERROR: Unknown form-name<br>"; 
+	}
 }
 else if(isset($_GET['notify']))
 {
@@ -210,17 +248,109 @@ else if(isset($_GET['userfeed']))
 				for($x = 1; $x <= $friendcount; $x++)
 				{
 					if($postowner == ${"friend" . $x}) {
-						echo "<div class='post'><table><tr><td><div class='avatar_small' style=\"background-image: url('index.php?do=avatarlocation&user=$postowner');\" title='User Avatar'></div></td><td><h3>$postowner<span style='font-size: 11px; padding-left: 6px; color: #808080;'>$postdate</span><br /><a href='index.php?view=$postid&user=$postowner'><i class='fa fa-reply'></i></a></h3></td></tr></table>";
+						echo "<div class='post'><table><tr><td><div class='avatar_small' style=\"background-image: url('index.php?do=avatarlocation&user=$postowner');\" title='User Avatar'></div></td><td><h3>$postowner<span class='date'>$postdate &nbsp;&nbsp;";
+						if(file_exists("ssb_db/posts/$postid.reactcount")) {
+							$reacts = file_get_contents("ssb_db/posts/$postid.reactcount");
+							echo "<div class='reacts'><i class='fa fa-heart' style='color: red;'></i> $reacts <div class='react-list'>";
+							// Pull up users who reacted, and generate dropdown list.
+							$reactlist = fopen("ssb_db/posts/$postid.reacted", "r");
+							if($reactlist) {
+								while (($reactor = fgets($reactlist)) !== false) {
+									echo "<b>$reactor</b>";
+								}
+								fclose($reactlist);
+							}
+							echo "</div></div>";
+						}
+						echo "</span><br /><a onclick=\"userReact('" . $postowner . "', '" . $postid . "');\"><i class='fa fa-heart'></i></a> <a href='index.php?view=$postid&user=$postowner'><i class='fa fa-reply'></i></a></h3></td></tr></table>";
 						echo "" . bbcode_format($postcontent) . "";
-						echo "</div><br />\n";
+						
+						// Footer
+						echo "<div class='post-footer'>";
+						echo "<a style='padding-top: 6px;' href='index.php?view=$postid&user=$postowner' class='button'><i class='fa fa-reply'></i>&nbsp;Comment</a>";
+						echo "<a style='padding-top: 6px;' onclick=\"userReact('" . $postowner . "','" . $postid . "');\" class='button'><i class='fa fa-heart'></i>&nbsp;React</a>";
+						echo "<br />"; // line break
+						if(file_exists("ssb_db/posts/reply_" . $postowner . "_" . $postid . ".count")) {
+							$postcount = file_get_contents("ssb_db/posts/reply_" . $postowner . "_" . $postid . ".count");
+							// If there's a reply, show them.
+							if($postcount == 0) {
+								echo "no replies";
+							} else if($postcount == 1) {
+								echo "$postcount reply";
+							} else if ($postcount > 0) {
+								echo "$postcount replies";
+							}
+						}
+						
+						echo " &bull; ";
+						
+						// Show reaction count in footer as well.
+						if(file_exists("ssb_db/posts/" . $postid . ".reactcount")) {
+							$reactcount = file_get_contents("ssb_db/posts/" . $postid . ".reactcount");
+							if($reactcount == 1) {
+								echo "$reactcount reaction";
+							} else if ($reactcount > 0) {
+								echo "$reactcount reactions";
+							}
+						} else {
+							echo "no reactions";
+						}
+						
+						echo "</div></div><br />\n";
 					}
 				}
 
 				if($postowner == $username)
 				{
-					echo "<div class='post'><table><tr><td><div class='avatar_small' style=\"background-image: url('index.php?do=avatarlocation&user=$postowner');\" title='User Avatar'></div></td><td><h3>$postowner<span style='font-size: 11px; padding-left: 6px; color: #808080;'>$postdate</span><br /><a href='index.php?view=$postid&user=$postowner'><i class='fa fa-reply'></i></a> <a href='index.php?do=delpost&user=$username&pid=$postid'><i class='fa fa-trash-o'></i></a></h3></td></tr></table>";
+					echo "<div class='post'><table><tr><td><div class='avatar_small' style=\"background-image: url('index.php?do=avatarlocation&user=$postowner');\" title='User Avatar'></div></td><td><h3>$postowner<span class='date'>$postdate &nbsp;&nbsp;";
+					if(file_exists("ssb_db/posts/$postid.reactcount")) {
+						$reacts = file_get_contents("ssb_db/posts/$postid.reactcount");
+						echo "<div class='reacts'><i class='fa fa-heart' style='color: red;'></i> $reacts <div class='react-list'>";
+						// Pull up users who reacted, and generate dropdown list.
+						$reactlist = fopen("ssb_db/posts/$postid.reacted", "r");
+						if($reactlist) {
+							while (($reactor = fgets($reactlist)) !== false) {
+								echo "<b>$reactor</b>";
+							}
+							fclose($reactlist);
+						}
+						echo "</div></div>";
+					}
+					
+					echo "</span><br /><a onclick=\"userReact('" . $postowner . "', '" . $postid ."');\"><i class='fa fa-heart'></i></a> <a href='index.php?view=$postid&user=$postowner'><i class='fa fa-reply'></i></a> <a href='index.php?do=delpost&user=$username&pid=$postid'><i class='fa fa-trash-o'></i></a></h3></td></tr></table>";
 					echo "" . bbcode_format($postcontent) . "";
-					echo "</div><br />\n";
+					// Footer
+					echo "<div class='post-footer'>";
+					echo "<a style='padding-top: 6px;' href='index.php?view=$postid&user=$postowner' class='button'><i class='fa fa-reply'></i>&nbsp;Comment</a>";
+					echo "<a style='padding-top: 6px;' onclick=\"userReact('" . $postowner . "','" . $postid . "');\" class='button'><i class='fa fa-heart'></i>&nbsp;React</a>";
+					echo "<br />"; // line break
+					if(file_exists("ssb_db/posts/reply_" . $postowner . "_" . $postid . ".count")) {
+						$postcount = file_get_contents("ssb_db/posts/reply_" . $postowner . "_" . $postid . ".count");
+						// If there's a reply, show them.
+						if($postcount == 0) {
+							echo "no replies";
+						} else if($postcount == 1) {
+							echo "$postcount reply";
+						} else if ($postcount > 0) {
+							echo "$postcount replies";
+						}
+					}
+					
+					echo " &bull; ";
+					
+					// Show reaction count in footer as well.
+					if(file_exists("ssb_db/posts/" . $postid . ".reactcount")) {
+						$reactcount = file_get_contents("ssb_db/posts/" . $postid . ".reactcount");
+						if($reactcount == 1) {
+							echo "$reactcount reaction";
+						} else if ($reactcount > 0) {
+							echo "$reactcount reactions";
+						}
+					} else {
+						echo "no reactions";
+					}
+						
+					echo "</div></div><br />\n";
 				}
 			}
 			echo "<!-- Gen done...-->";
@@ -256,9 +386,56 @@ else if(isset($_GET['userfeed']))
 		echo "</td></tr></table>";
 
 		foreach(array_reverse(glob("ssb_db/posts/post_" . $userid . "_" . "*.php")) as $postfile) {
-			echo "<div class='post'><table><tr><td><div class='avatar_small' style=\"background-image: url('index.php?do=avatarlocation&user=$postowner');\" title='User Avatar'></div></td><td><h3>$postowner<span style='font-size: 11px; padding-left: 6px; color: #808080;'>$postdate</span><br /><a href='index.php?view=$postid&user=$postowner'><i class='fa fa-reply'></i></a></h3></td></tr></table>";
+			include $postfile;
+			echo "<div class='post'><table><tr><td><div class='avatar_small' style=\"background-image: url('index.php?do=avatarlocation&user=$postowner');\" title='User Avatar'></div></td><td><h3>$postowner<span class='date'>$postdate &nbsp;&nbsp;";
+			if(file_exists("ssb_db/posts/$postid.reactcount")) {
+				$reacts = file_get_contents("ssb_db/posts/$postid.reactcount");
+				echo "<div class='reacts'><i class='fa fa-heart' style='color: red;'></i> $reacts <div class='react-list'>";
+				// Pull up users who reacted, and generate dropdown list.
+				$reactlist = fopen("ssb_db/posts/$postid.reacted", "r");
+				if($reactlist) {
+					while (($reactor = fgets($reactlist)) !== false) {
+						echo "<b>$reactor</b>";
+					}
+					fclose($reactlist);
+				}
+				echo "</div></div>";
+			}
+			
+			echo "</span><br /><a onclick=\"userReact('" . $postowner . "', '" . $postid . "');\"><i class='fa fa-heart'></i></a> <a href='index.php?view=$postid&user=$postowner'><i class='fa fa-reply'></i></a></h3></td></tr></table>";
 			echo "" . bbcode_format($postcontent) . "";
-			echo "</div><br />\n";
+			// Footer
+			echo "<div class='post-footer'>";
+			echo "<a style='padding-top: 6px;' href='index.php?view=$postid&user=$postowner' class='button'><i class='fa fa-reply'></i>&nbsp;Comment</a>";
+			echo "<a style='padding-top: 6px;' onclick=\"userReact('" . $postowner . "','" . $postid . "');\" class='button'><i class='fa fa-heart'></i>&nbsp;React</a>";
+			echo "<br />"; // line break
+			if(file_exists("ssb_db/posts/reply_" . $postowner . "_" . $postid . ".count")) {
+				$postcount = file_get_contents("ssb_db/posts/reply_" . $postowner . "_" . $postid . ".count");
+				// If there's a reply, show them.
+				if($postcount == 0) {
+					echo "no replies";
+				} else if($postcount == 1) {
+					echo "$postcount reply";
+				} else if ($postcount > 0) {
+					echo "$postcount replies";
+				}
+			}
+					
+			echo " &bull; ";
+					
+			// Show reaction count in footer as well.
+			if(file_exists("ssb_db/posts/" . $postid . ".reactcount")) {
+				$reactcount = file_get_contents("ssb_db/posts/" . $postid . ".reactcount");
+				if($reactcount == 1) {
+					echo "$reactcount reaction";
+				} else if ($reactcount > 0) {
+					echo "$reactcount reactions";
+				}
+			} else {
+				echo "no reactions";
+			}
+						
+			echo "</div></div><br />\n";
 		}
 				
 		echo "<!-- Gen done...-->";
@@ -271,8 +448,25 @@ else if(isset($_GET['view']) && isset($_GET['user']))
 	$postc = file_get_contents("ssb_db/posts/reply_" . $puser . "_" . $id . ".count");
 	include "ssb_db/posts/post_" . $puser . "_" . $id . ".php";
 
-	echo "<div class='post'><table><tr><td><div class='avatar_small' style=\"background-image: url('index.php?do=avatarlocation&user=$postowner');\" title='User Avatar'></div></td><td><h3>$postowner<span style='font-size: 11px; padding-left: 6px; color: #808080;'>$postdate</span></h3></td></tr></table>";
+	echo "<div class='post'><table><tr><td><div class='avatar_small' style=\"background-image: url('index.php?do=avatarlocation&user=$postowner');\" title='User Avatar'></div></td><td><h3>$postowner<span class='date'>$postdate &nbsp;&nbsp;";
+	if(file_exists("ssb_db/posts/$postid.reactcount")) {
+		$reacts = file_get_contents("ssb_db/posts/$postid.reactcount");
+		echo "<div class='reacts'><i class='fa fa-heart' style='color: red;'></i> $reacts <div class='react-list'>";
+		// Pull up users who reacted, and generate dropdown list.
+		$reactlist = fopen("ssb_db/posts/$postid.reacted", "r");
+		if($reactlist) {
+			while (($reactor = fgets($reactlist)) !== false) {
+				echo "<b>$reactor</b>";
+			}
+			fclose($reactlist);
+		}
+		echo "</div></div>";
+	}
+
+	echo "</span><br /><a onclick=\"userReact('" . $postowner . "', '" . $postid . "');\" class='reacts'><i class='fa fa-heart'></i></a></h3></td></tr></table>";
 	echo "" . bbcode_format($postcontent) . "";
+	// Footer
+						
 	echo "</div><br />\n";
 
 	for($x = 1; $x <= $postc; $x++) {
@@ -325,11 +519,12 @@ else if(isset($_GET['do']))
 
 			if(isset($_FILES["file"]["name"]) && isset($username)) {
 				
-				$uploaded = array(); // empty array for upload names
+				$uploaded = array(); // empty array for upload file names
+				$uploaded_name = array(); // empty array for upload names
 				// File selected, upload!
 				for($i=0; $i<count($_FILES["file"]["name"]); $i++)
 				{
-					$allowedExts = array("gif", "jpeg", "jpg", "png", "bmp", "ico", "GIF", "JPEG", "JPG", "PNG", "BMP", "ICO");
+					$allowedExts = array("gif", "jpeg", "jpg", "png", "bmp", "ico", "GIF", "JPEG", "JPG", "PNG", "BMP", "ICO", "mp4", "MP4");
 					$temp = explode(".", $_FILES["file"]["name"][$i]);
 					$extension = end($temp);
 					if ((($_FILES["file"]["type"][$i] == "image/gif")
@@ -343,7 +538,7 @@ else if(isset($_GET['do']))
 					|| ($_FILES["file"]["type"][$i] == "image/bmp")
 					|| ($_FILES["file"]["type"][$i] == "image/x-icon")
 					|| ($_FILES["file"]["type"][$i] == "application/octet-stream")
-//					|| ($_FILES["file"]["type"][$i] == "video/mp4")
+					|| ($_FILES["file"]["type"][$i] == "video/mp4")
 //					|| ($_FILES["file"]["type"][$i] == "video/ogg")
 //					|| ($_FILES["file"]["type"][$i] == "video/webm")
 //					|| ($_FILES["file"]["type"][$i] == "video/x-flv")
@@ -370,6 +565,7 @@ else if(isset($_GET['do']))
 								move_uploaded_file($_FILES["file"]["tmp_name"][$i],
 								"ssb_db/uploads/" . $randstring . "." . $extension);
 								array_push($uploaded, $randstring . "." . $extension);
+								array_push($uploaded_name, pathinfo($_FILES["file"]["name"][$i], PATHINFO_FILENAME));
 								echo "Success: " . $_FILES["file"]["name"][$i] . " (" . tomb($_FILES["file"]["size"][$i]) . ") uploaded...<br />";
 								//rename("ssb_db/uploads/" . $FILES["file"]["name"][$i], "ssb_db/uploads/" . $username . "_" . $date . $extension);
 							}
@@ -391,7 +587,7 @@ else if(isset($_GET['do']))
 				if(file_exists("ssb_db/users/" . $taggedUser . ".name")) {
 					if($taggedUser!=$postowner) {
 						$tagged_notifications = file_get_contents("ssb_db/friends/" . $taggedUser . ".notifications");
-						file_put_contents("ssb_db/friends/" . $taggedUser . ".notifications", "<b>$username</b> <a href='index.php?view=$pid&user=$postowner'>tagged you in a comment</a>\n" . $tagged_notifications);
+						file_put_contents("ssb_db/friends/" . $taggedUser . ".notifications", "<b>$username</b> <a href='index.php?view=$date&user=$username'>tagged you in a post</a>\n" . $tagged_notifications);
 					}
 				}
 
@@ -403,11 +599,21 @@ else if(isset($_GET['do']))
 				$post_string = "<?php\n\$postowner = \"" . $username . "\";\$postid=\"" . $date . "\";\$postdate=\"" . $titledate . "\";\$postcontent = \"" . $body . "<br />";
 					
 				$attachments = array();
+				$fileCount = 0;
 				foreach($uploaded as &$upload)
 				{
 					if(file_exists("ssb_db/uploads/" . $upload)) {
-						array_push($attachments, "<div class='attachment'><a href='ssb_db/uploads/" . $upload . "'><img src='ssb_db/uploads/" . $upload . "'></a></div>");
+						$ext = pathinfo("ssb_db/uploads/ . $upload", PATHINFO_EXTENSION);
+						if($ext == "mp4" || $ext == "MP4") {
+							array_push($attachments, "<div class='attachment'>" . $uploaded_name[$fileCount] . "<video width='560' height='315' controls><source src='ssb_db/uploads/$upload' type='video/mp4'>HTML5 video not supported :(</video></div>");
+						}
+						else
+						{
+							array_push($attachments, "<div class='attachment'><a href='ssb_db/uploads/" . $upload . "'><img src='ssb_db/uploads/" . $upload . "'></a></div>");
+						}
 					}
+					
+					$fileCount++; // Add it up
 				}
 				
 				foreach($attachments as &$attachvar)
@@ -420,8 +626,8 @@ else if(isset($_GET['do']))
 				file_put_contents($post_file, $post_string . $post_attachments . $post_string_end);
 				file_put_contents("ssb_db/posts/" . $date . ".post", "post_" . $username . "_" . $date . ".php");
 				file_put_contents("ssb_db/posts/reply_" . $username . "_" . $date . ".count", "0");
-				echo "Post processed... Redirecting in 3 seconds, if redirection fails, <a href=\"?view=$date&user=$username\">Click Here</a><br />";
-				//header( "refresh: 3; url=?view=$date&user=$username" );
+				echo "Post processed... if redirection fails, <a href=\"?view=$date&user=$username\">Click Here</a><br />";
+				header( "refresh: 1;url=?view=$date&user=$username" );
 			}
 			else
 			{
@@ -538,7 +744,7 @@ else if(isset($_GET['do']))
 					}
 
 					echo "If you're seeing this; redirection failed: <a href=\"?view=$pid&user=$postowner\">Click Here</a><br>";
-					header( "Location: index.php?view=$pid&user=$postowner" );
+					header( "refresh: 1;url=index.php?view=$pid&user=$postowner" );
 				}
 				else
 				{
@@ -615,8 +821,8 @@ else if(isset($_GET['do']))
 							file_put_contents("ssb_db/friends/" . $postuser . ".notifications", "<b>$username</b> loved your <a href='index.php?view=$pid&user=$postuser'>post</a>\n" . $owner_notifications);
 						}
 						
-						echo "Reacted!";
-						header("Location: index.php");
+						echo "Reacted! <a href='index.php'>Redirecting</a> in 1 second...";
+						header("refresh: 1;url=index.php");
 						exit;
 					} else { echo "ERROR: post doesn't exist..."; }
 				} else { echo "ERROR: USER and PID variables not set!"; }
@@ -760,16 +966,6 @@ else if(isset($_GET['do']))
 		var nickName = "<?php echo $_SESSION['ssb-user']; ?>";
 		var userColor = "<?php echo $_SESSION['ssb-color'];; ?>";
 
-		// Get the HTTP Object
-		function getHTTPObject() {
-			if (window.ActiveXObject) return new ActiveXObject("Microsoft.XMLHTTP");
-			else if (window.XMLHttpRequest) return new XMLHttpRequest();
-			else {
-				alert("Your browser does not support AJAX.");
-				return null;
-			}
-		}   
-
 		// Change the value of the outputText field
 		function setHtml() {
 			if(ajaxVar.readyState == 4){
@@ -886,16 +1082,6 @@ else if(isset($_GET['do']))
 		var friendNick = "<?php echo $friendNick; ?>";
 		var nickName = "<?php echo $_SESSION['ssb-user']; ?>";
 		var userColor = "<?php echo $_SESSION['ssb-color'];; ?>";
-
-		// Get the HTTP Object
-		function getHTTPObject() {
-			if (window.ActiveXObject) return new ActiveXObject("Microsoft.XMLHTTP");
-			else if (window.XMLHttpRequest) return new XMLHttpRequest();
-			else {
-				alert("Your browser does not support AJAX.");
-				return null;
-			}
-		}   
 
 		// Change the value of the outputText field
 		function setHtml() {
@@ -1017,8 +1203,8 @@ else if(isset($_GET['do']))
 	if($do=="about")
 	{
 		echo "<h2>About</h2>";
-		echo "<div class='dllink'><a class='button' href='download/securespace-v1.0.0.apk'>Download for Android!</a></div>";
-		echo $desc;
+		echo "<div class='dllink'><a class='button' href='download/secure-space-v1.0.0.apk'>Download for Android!</a></div>";
+		echo "<p>" . $desc;
 		echo "<br /><br />";
 		echo "$ssbtitle statistics: ";
 		getUserCount(); 
@@ -1026,6 +1212,7 @@ else if(isset($_GET['do']))
 		getPostCount(); 
 		echo "; ";
 		getUploadFileCount();
+		echo "</p>";
 	}
 
 	if($do=="friends")
@@ -1065,7 +1252,7 @@ else if(isset($_GET['do']))
 				for($x = 1; $x <= $friendcount; $x++)
 				{
 					if(isset(${"friend" . $x})) {
-						echo "<tr><td>" . ${"friend" . $x} . "</td><td><a class='button' href='?userfeed=" . ${"friend" . $x} . "'>View user profile</a></td><td><a class='button' href='?do=privmsg&friend=" . ${"friend" . $x} . "'>Private message</a></td></tr>";
+						echo "<tr><td><div class='avatar_small' style=\"background-image: url('index.php?do=avatarlocation&user=" . ${"friend" . $x} . "');\" title='User Avatar'></div></td><td><a class='button' href='index.php?userfeed=" . ${"friend" . $x} . "'>" . ${"friend" . $x} . "</a></td><td><a class='button' href='?do=privmsg&friend=" . ${"friend" . $x} . "'>Private message</a></td></tr>";
 					}
 				}
 				echo "</table>";
@@ -1171,25 +1358,105 @@ else
 				$postcount++;
 				
 				if($poststart == "1" && $postcount < ($poststart + 15)) {
-					echo "<div class='post'><table><tr><td><div class='avatar_small' style=\"background-image: url('index.php?do=avatarlocation&user=$postowner');\" title='User Avatar'></div></td><td><h3>$postowner<span style='font-size: 11px; padding-left: 6px; color: #808080;'>$postdate &nbsp;&nbsp;";
+					echo "<div class='post'><table><tr><td><div class='avatar_small' style=\"background-image: url('index.php?do=avatarlocation&user=$postowner');\" title='User Avatar'></div></td><td><h3>$postowner<span class='date'>$postdate &nbsp;&nbsp;";
 					if(file_exists("ssb_db/posts/$postid.reactcount")) {
 						$reacts = file_get_contents("ssb_db/posts/$postid.reactcount");
-						echo "<i class='fa fa-heart' style='color: red;'></i> $reacts";
+						echo "<div class='reacts'><i class='fa fa-heart' style='color: red;'></i> $reacts <div class='react-list'>";
+						// Pull up users who reacted, and generate dropdown list.
+						$reactlist = fopen("ssb_db/posts/$postid.reacted", "r");
+						if($reactlist) {
+							while (($reactor = fgets($reactlist)) !== false) {
+								echo "<b>$reactor</b>";
+							}
+							fclose($reactlist);
+						}
+						echo "</div></div>";
 					}
-					echo "</span><br /><a href='index.php?do=react&user=$postowner&pid=$postid'><i class='fa fa-heart'></i></a> <a href='index.php?view=$postid&user=$postowner'><i class='fa fa-reply'></i></a></h3></td></tr></table>";
+					echo "</span><br /><a onclick=\"userReact('" . $postowner . "', '" . $postid . "');\"><i class='fa fa-heart'></i></a> <a href='index.php?view=$postid&user=$postowner'><i class='fa fa-reply'></i></a></h3></td></tr></table>";
 					echo "" . bbcode_format($postcontent) . "";
-					echo "</div><br />\n";
+					// Footer
+					echo "<div class='post-footer'>";
+					echo "<a style='padding-top: 6px;' href='index.php?view=$postid&user=$postowner' class='button'><i class='fa fa-reply'></i>&nbsp;Comment</a>";
+					echo "<a style='padding-top: 6px;' onclick=\"userReact('" . $postowner . "','" . $postid . "');\" class='button'><i class='fa fa-heart'></i>&nbsp;React</a>";
+					echo "<br />"; // line break
+					if(file_exists("ssb_db/posts/reply_" . $postowner . "_" . $postid . ".count")) {
+						$postcount = file_get_contents("ssb_db/posts/reply_" . $postowner . "_" . $postid . ".count");
+						// If there's a reply, show them.
+						if($postcount == 0) {
+							echo "no replies";
+						} else if($postcount == 1) {
+							echo "$postcount reply";
+						} else if ($postcount > 0) {
+							echo "$postcount replies";
+						}
+					}
+					
+					echo " &bull; ";
+					
+					// Show reaction count in footer as well.
+					if(file_exists("ssb_db/posts/" . $postid . ".reactcount")) {
+						$reactcount = file_get_contents("ssb_db/posts/" . $postid . ".reactcount");
+						if($reactcount == 1) {
+							echo "$reactcount reaction";
+						} else if ($reactcount > 0) {
+							echo "$reactcount reactions";
+						}
+					} else {
+						echo "no reactions";
+					}
+						
+					echo "</div></div><br />\n";
 				}
 				
 				if($poststart > "1" && $postcount > $poststart && $postcount < ($poststart + 15)) {
-					echo "<div class='post'><table><tr><td><div class='avatar_small' style=\"background-image: url('index.php?do=avatarlocation&user=$postowner');\" title='User Avatar'></div></td><td><h3>$postowner<span style='font-size: 11px; padding-left: 6px; color: #808080;'>$postdate &nbsp;&nbsp;";
+					echo "<div class='post'><table><tr><td><div class='avatar_small' style=\"background-image: url('index.php?do=avatarlocation&user=$postowner');\" title='User Avatar'></div></td><td><h3>$postowner<span class='date'>$postdate &nbsp;&nbsp;";
 					if(file_exists("ssb_db/posts/$postid.reactcount")) {
 						$reacts = file_get_contents("ssb_db/posts/$postid.reactcount");
-						echo "<i class='fa fa-heart' style='color: red;'></i> $reacts";
+						echo "<div class='reacts'><i class='fa fa-heart' style='color: red;'></i> $reacts <div class='react-list'>";
+						// Pull up users who reacted, and generate dropdown list.
+						$reactlist = fopen("ssb_db/posts/$postid.reacted", "r");
+						if($reactlist) {
+							while (($reactor = fgets($reactlist)) !== false) {
+								echo "<b>$reactor</b>";
+							}
+							fclose($reactlist);
+						}
+						echo "</div></div>";
 					}
-					echo "</span><br /><a href='index.php?do=react&user=$postowner&pid=$postid'><i class='fa fa-heart'></i></a> <a href='index.php?view=$postid&user=$postowner'><i class='fa fa-reply'></i></a></h3></td></tr></table>";
+					echo "</span><br /><a onclick=\"userReact('" . $postowner . "', '" . $postid . "');\"><i class='fa fa-heart'></i></a> <a href='index.php?view=$postid&user=$postowner'><i class='fa fa-reply'></i></a></h3></td></tr></table>";
 					echo "" . bbcode_format($postcontent) . "";
-					echo "</div><br />\n";
+					// Footer
+					echo "<div class='post-footer'>";
+					echo "<a style='padding-top: 6px;' href='index.php?view=$postid&user=$postowner' class='button'><i class='fa fa-reply'></i>&nbsp;Comment</a>";
+					echo "<a style='padding-top: 6px;' onclick=\"userReact('" . $postowner . "','" . $postid . "');\" class='button'><i class='fa fa-heart'></i>&nbsp;React</a>";
+					echo "<br />"; // line break
+					if(file_exists("ssb_db/posts/reply_" . $postowner . "_" . $postid . ".count")) {
+						$postcount = file_get_contents("ssb_db/posts/reply_" . $postowner . "_" . $postid . ".count");
+						// If there's a reply, show them.
+						if($postcount == 0) {
+							echo "no replies";
+						} else if($postcount == 1) {
+							echo "$postcount reply";
+						} else if ($postcount > 0) {
+							echo "$postcount replies";
+						}
+					}
+					
+					echo " &bull; ";
+					
+					// Show reaction count in footer as well.
+					if(file_exists("ssb_db/posts/" . $postid . ".reactcount")) {
+						$reactcount = file_get_contents("ssb_db/posts/" . $postid . ".reactcount");
+						if($reactcount == 1) {
+							echo "$reactcount reaction";
+						} else if ($reactcount > 0) {
+							echo "$reactcount reactions";
+						}
+					} else {
+						echo "no reactions";
+					}
+						
+					echo "</div></div><br />\n";
 				}
 			}
 		}
@@ -1200,25 +1467,105 @@ else
 			$postcount++;
 			
 			if($poststart == "1" && $postcount < ($poststart + 15)) {
-				echo "<div class='post'><table><tr><td><div class='avatar_small' style=\"background-image: url('index.php?do=avatarlocation&user=$postowner');\" title='User Avatar'></div></td><td><h3>$postowner<span style='font-size: 11px; padding-left: 6px; color: #808080;'>$postdate &nbsp;&nbsp;";
+				echo "<div class='post'><table><tr><td><div class='avatar_small' style=\"background-image: url('index.php?do=avatarlocation&user=$postowner');\" title='User Avatar'></div></td><td><h3>$postowner<span class='date'>$postdate &nbsp;&nbsp;";
 				if(file_exists("ssb_db/posts/$postid.reactcount")) {
 					$reacts = file_get_contents("ssb_db/posts/$postid.reactcount");
-					echo "<i class='fa fa-heart' style='color: red;'></i> $reacts";
+					echo "<div class='reacts'><i class='fa fa-heart' style='color: red;'></i> $reacts <div class='react-list'>";
+					// Pull up users who reacted, and generate dropdown list.
+					$reactlist = fopen("ssb_db/posts/$postid.reacted", "r");
+					if($reactlist) {
+						while (($reactor = fgets($reactlist)) !== false) {
+							echo "<b>$reactor</b>";
+						}
+						fclose($reactlist);
+					}
+					echo "</div></div>";
 				}
-				echo "</span><br /><a href='index.php?do=react&user=$postowner&pid=$postid'><i class='fa fa-heart'></i></a> <a href='index.php?view=$postid&user=$postowner'><i class='fa fa-reply'></i></a> <a href='index.php?do=delpost&user=$username&pid=$postid'><i class='fa fa-trash-o'></i></a></h3></td></tr></table>";
+				echo "</span><br /><a onclick=\"userReact('" . $postowner . "', '" . $postid . "');\"><i class='fa fa-heart'></i></a> <a href='index.php?view=$postid&user=$postowner'><i class='fa fa-reply'></i></a> <a href='index.php?do=delpost&user=$username&pid=$postid'><i class='fa fa-trash-o'></i></a></h3></td></tr></table>";
 				echo "" . bbcode_format($postcontent) . "";
-				echo "</div><br />\n";
+				// Footer
+				echo "<div class='post-footer'>";
+				echo "<a style='padding-top: 6px;' href='index.php?view=$postid&user=$postowner' class='button'><i class='fa fa-reply'></i>&nbsp;Comment</a>";
+				echo "<a style='padding-top: 6px;' onclick=\"userReact('" . $postowner . "','" . $postid . "');\" class='button'><i class='fa fa-heart'></i>&nbsp;React</a>";
+				echo "<br />"; // line break
+				if(file_exists("ssb_db/posts/reply_" . $postowner . "_" . $postid . ".count")) {
+					$postcount = file_get_contents("ssb_db/posts/reply_" . $postowner . "_" . $postid . ".count");
+					// If there's a reply, show them.
+					if($postcount == 0) {
+						echo "no replies";
+					} else if($postcount == 1) {
+						echo "$postcount reply";
+					} else if ($postcount > 0) {
+						echo "$postcount replies";
+					}
+				}
+						
+				echo " &bull; ";
+					
+				// Show reaction count in footer as well.
+				if(file_exists("ssb_db/posts/" . $postid . ".reactcount")) {
+					$reactcount = file_get_contents("ssb_db/posts/" . $postid . ".reactcount");
+					if($reactcount == 1) {
+						echo "$reactcount reaction";
+					} else if ($reactcount > 0) {
+						echo "$reactcount reactions";
+					}
+				} else {
+					echo "no reactions";
+				}
+						
+				echo "</div></div><br />\n";
 			}
 			
 			if($poststart > "1" && $postcount > $poststart && $postcount < ($poststart + 15)) {
-				echo "<div class='post'><table><tr><td><div class='avatar_small' style=\"background-image: url('index.php?do=avatarlocation&user=$postowner');\" title='User Avatar'></div></td><td><h3>$postowner<span style='font-size: 11px; padding-left: 6px; color: #808080;'>$postdate &nbsp;&nbsp;";
+				echo "<div class='post'><table><tr><td><div class='avatar_small' style=\"background-image: url('index.php?do=avatarlocation&user=$postowner');\" title='User Avatar'></div></td><td><h3>$postowner<span class='date'>$postdate &nbsp;&nbsp;";
 				if(file_exists("ssb_db/posts/$postid.reactcount")) {
 					$reacts = file_get_contents("ssb_db/posts/$postid.reactcount");
-					echo "<i class='fa fa-heart' style='color: red;'></i> $reacts";
+					echo "<div class='reacts'><i class='fa fa-heart' style='color: red;'></i> $reacts <div class='react-list'>";
+					// Pull up users who reacted, and generate dropdown list.
+					$reactlist = fopen("ssb_db/posts/$postid.reacted", "r");
+					if($reactlist) {
+						while (($reactor = fgets($reactlist)) !== false) {
+							echo "<b>$reactor</b>";
+						}
+						fclose($reactlist);
+					}
+					echo "</div></div>";
 				}
-				echo "</span><br /><a href='index.php?do=react&user=$postowner&pid=$postid'><i class='fa fa-heart'></i></a> <a href='index.php?view=$postid&user=$postowner'><i class='fa fa-reply'></i></a> <a href='index.php?do=delpost&user=$username&pid=$postid'><i class='fa fa-trash-o'></i> </a></h3></td></tr></table>";
+				echo "</span><br /><a onclick=\"userReact('" . $postowner . "', '" . $postid . "');\"><i class='fa fa-heart'></i></a> <a href='index.php?view=$postid&user=$postowner'><i class='fa fa-reply'></i></a> <a href='index.php?do=delpost&user=$username&pid=$postid'><i class='fa fa-trash-o'></i> </a></h3></td></tr></table>";
 				echo "" . bbcode_format($postcontent) . "";
-				echo "</div><br />\n";
+				// Footer
+				echo "<div class='post-footer'>";
+				echo "<a style='padding-top: 6px;' href='index.php?view=$postid&user=$postowner' class='button'><i class='fa fa-reply'></i>&nbsp;Comment</a>";
+				echo "<a style='padding-top: 6px;' onclick=\"userReact('" . $postowner . "','" . $postid . "');\" class='button'><i class='fa fa-heart'></i>&nbsp;React</a>";
+				echo "<br />"; // line break
+				if(file_exists("ssb_db/posts/reply_" . $postowner . "_" . $postid . ".count")) {
+					$postcount = file_get_contents("ssb_db/posts/reply_" . $postowner . "_" . $postid . ".count");
+					// If there's a reply, show them.
+					if($postcount == 0) {
+						echo "no replies";
+					} else if($postcount == 1) {
+						echo "$postcount reply";
+					} else if ($postcount > 0) {
+						echo "$postcount replies";
+					}
+				}
+					
+				echo " &bull; ";
+					
+				// Show reaction count in footer as well.
+				if(file_exists("ssb_db/posts/" . $postid . ".reactcount")) {
+					$reactcount = file_get_contents("ssb_db/posts/" . $postid . ".reactcount");
+					if($reactcount == 1) {
+						echo "$reactcount reaction";
+					} else if ($reactcount > 0) {
+						echo "$reactcount reactions";
+					}
+				} else {
+					echo "no reactions";
+				}
+						
+				echo "</div></div><br />\n";
 			}
 		}
 	}

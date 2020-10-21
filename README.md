@@ -9,6 +9,16 @@ SSB was written by Chris Dorman, 2012-2020 <https://cddo.cf>
 
 ChangeLog
 ----
+10/20/2020 -v2.1.0 - version bump - feature release
+* Remove jquery from data folder (didn't need that for a while)
+* Add bg.jpg to data folder (oops)
+* Bug fixes
+* Dynamic notification clearing and post reacting
+* Reaction lists on hover VIA CSS
+* Post footers added
+* CSS cleanup for mobile usage
+* Allow for user chat scrolling
+
 10/10/2020 -v2.0.3 - minor version bump - release
 * Removed unneeded HTML from bbcode parser
 * Added user reacts (notifications send with react, checks if trying to react multiple times)

@@ -11,10 +11,37 @@ html, body {
 	font-family: "Ubuntu", "Roboto", sans-serif;
 	padding-bottom: 40px;
 }
+
+p {
+	font-size: 18px;
+}
+
+h1 {
+	font-size: 36px;
+}
+
+h2 {
+	font-size: 32px;
+}
+
+h3 {
+	font-size: 26px;
+}
+
+h4 {
+	font-size: 22px;
+}
+
 .title {
 	font-size: 46px;
 	text-align: center;
 	padding: 8px;
+}
+
+.date {
+	font-size: 12px;
+	padding-left: 8px; 
+	color: #808080;
 }
 
 #navbar {
@@ -37,7 +64,7 @@ html, body {
 #navbar a {
 	text-decoration: none;
 	font-family: "Ubuntu", "Roboto", sans-serif;
-	font-size: 28px;
+	font-size: 32px;
 	text-align: center;
 	padding-top: 4px;
 	padding-bottom: 5px;
@@ -101,15 +128,17 @@ input, button, select, label {
 }
 
 .button {
-        background-color: #222222;
-        border: solid 1px #323232;
-        outline: none;
+	background-color: #222222;
+	border: solid 1px #323232;
+	text-align: center;
+	outline: none;
 	font-size: 18px;
-        border-radius: 6px;
-        color: #d7d7d7;
+	border-radius: 6px;
+	color: #d7d7d7;
 	margin: auto;
 	padding: 4px;
 	display: inline-flex;
+	cursor: pointer;
 }
 
 .avatar {
@@ -130,8 +159,8 @@ input, button, select, label {
         background-repeat: no-repeat;
         background-size: cover;
         object-fit: cover;
-        width: 48px;
-        height: 48px;
+        width: 56px;
+        height: 56px;
 }
 
 .avatar_chat {
@@ -168,7 +197,8 @@ input, button, select, label {
 	height: 400px;
 	width: 578px;
 	margin: auto;
-	overflow-y: hidden;
+	font-size: 16px;
+	overflow-y: scroll;
 }
 
 .replycontain {
@@ -213,12 +243,39 @@ input, button, select, label {
 	font-size: 16px;
 }
 
+.post-footer {
+	font-size: 16px;
+	padding-top: 10px;
+	border-top: solid 1px #424242;
+}
+
 .reply {
 	background-color: #222222;
 	border-radius: 4px 10px 10px;
 	border: solid 1px #323232;
 	padding: 6px;
 	color: #d7d7d7;
+}
+
+.reacts {
+	position: relative;
+	display: inline-block;
+}
+
+.react-list {
+	color: #cccccc;
+	display: none;
+	font-size: 12px;
+	position: absolute;
+	max-width: 160px;
+	background-color: #222222;
+	border: solid 1px #434343;
+	border-radius: 4px;
+	padding: 5px;
+}
+
+.reacts:hover .react-list {
+	display: block;
 }
 
 a {
@@ -241,12 +298,18 @@ a:hover {
 
 .friendslist {
 	padding: 4px;
-	width: 100%;
 	text-align: center;
 }
 
 .friendslist tr,td {
-	padding: 2px;
+	padding-left: 10px;
+	padding-right: 10px;
+}
+
+.friendslist a {
+	display: inline-block;
+	text-align: center;
+	width: 160px;
 }
 
 .maincontain {
